@@ -11,3 +11,5 @@ include ':CustomVnc-app'
 include ':remoteClientLib'
 include ':Opaque-app'
 include ':common'
+include ':x'
+
