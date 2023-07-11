@@ -7,6 +7,7 @@
     >
 
 <com.iiordanov.bVNC.RemoteCanvas
+	android:layout_marginTop="40dp"
     android:id="@+id/canvas"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -159,6 +160,7 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignParentBottom="true"
 		android:orientation="vertical"
+		android:visibility="gone"
 		android:padding="0sp"
 		>
 		<ImageButton android:id="@+id/keyUpArrow"

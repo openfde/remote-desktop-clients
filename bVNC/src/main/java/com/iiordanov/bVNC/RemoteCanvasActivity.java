@@ -186,9 +186,10 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    );
                 }
 
             } catch (Exception e) {
@@ -214,7 +215,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                     canvas.setSystemUiVisibility(
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    );
                 }
 
             } catch (Exception e) {
@@ -484,6 +486,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
+                    relayoutViews(rootView);
                 }
             }
         });
@@ -573,7 +576,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                 if (!connection.getUseLastPositionToolbar() || !connection.getUseLastPositionToolbarMoved()) {
                     toolbar.offsetTopAndBottom(diffToolbarPosition);
                 } else {
-                    toolbar.makeVisible(connection.getUseLastPositionToolbarX(),
+                    toolbar.makeVisible(canvas.getWidth() - toolbar.getWidth(),
                             connection.getUseLastPositionToolbarY(),
                             r.right,
                             r.bottom,
@@ -1044,8 +1047,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
         if (!extraKeysHidden && makeVisible &&
                 connection.getExtraKeysToggleType() == Constants.EXTRA_KEYS_ON) {
-            layoutKeys.setVisibility(View.VISIBLE);
-            layoutKeys.invalidate();
+//            layoutKeys.setVisibility(View.VISIBLE);
+//            layoutKeys.invalidate();
             return;
         }
 
@@ -1262,7 +1265,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make sure extra keys stow item is gone if extra keys are disabled and vice versa.
-        setKeyStowDrawableAndVisibility(menu.findItem(R.id.extraKeysToggle));
+//        setKeyStowDrawableAndVisibility(menu.findItem(R.id.extraKeysToggle));
         return true;
     }
 
@@ -1298,9 +1301,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             ImageButton moveButton = new ImageButton(this);
 
             moveButton.setBackgroundResource(R.drawable.ic_all_out_gray_36dp);
-            MenuItem moveToolbar = menu.findItem(R.id.moveToolbar);
-            moveToolbar.setActionView(moveButton);
-            moveToolbar.getActionView().setOnTouchListener(moveListener);
+//            MenuItem moveToolbar = menu.findItem(R.id.moveToolbar);
+//            moveToolbar.setActionView(moveButton);
+//            moveToolbar.getActionView().setOnTouchListener(moveListener);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
