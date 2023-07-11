@@ -77,7 +77,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
                     InputHandlerDirectSwipePan.ID);
             preferSendingUnicode = Utils.querySharedPreferenceBoolean(context, Constants.preferSendingUnicode);
         } else {
-            Log.e(TAG, "Failed to query defaults from shared preferences, context is null.");
+            android.util.Log.e(TAG, "Failed to query defaults from shared preferences, context is null.");
         }
 
         showOnlyConnectionNicknames = Utils.querySharedPreferenceBoolean(context, Constants.showOnlyConnectionNicknames);
@@ -123,7 +123,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
         setCertSubject("");
         setColorModel(COLORMODEL.C24bit.nameString());
         setPrefEncoding(RfbProto.EncodingTight);
-        setScaleMode(ScaleType.MATRIX);
+        setScaleMode(ScaleType.CENTER);
         setInputMode(inputMode);
         setUseDpadAsArrows(true);
         setRotateDpad(false);
@@ -160,7 +160,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
         setPreferSendingUnicode(preferSendingUnicode);
         c = context;
 
-        // These two are not saved in the database since we always save the cert data. 
+        // These two are not saved in the database since we always save the cert data.
         setIdHashAlgorithm(Constants.ID_HASH_SHA1);
         setIdHash("");
 
@@ -169,6 +169,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
         setUseLastPositionToolbarX(0);
         setUseLastPositionToolbarY(0);
         setUseLastPositionToolbarMoved(false);
+        setAPP(0);
     }
 
     public int getIdHashAlgorithm() {
@@ -229,6 +230,16 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     @Override
     public String getId() {
         return Long.toString(get_Id());
+    }
+
+    @Override
+    public int getApp() {
+        return getAPP();
+    }
+
+    @Override
+    public void setApp(int app) {
+        setAPP(app);
     }
 
     @Override
@@ -356,7 +367,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public synchronized void save(Context c) {
-        Log.d(TAG, "save called");
+        android.util.Log.d(TAG, "save called");
         Database database = new Database(c);
         save(database.getWritableDatabase());
         database.close();
@@ -370,7 +381,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public void loadFromSharedPreferences(Context context) {
-        Log.d(TAG, "loadFromSharedPreferences called");
+        android.util.Log.d(TAG, "loadFromSharedPreferences called");
         SharedPreferences sp = context.getSharedPreferences(Long.toString(get_Id()), Context.MODE_PRIVATE);
         useLastPositionToolbar = sp.getBoolean("useLastPositionToolbar", true);
         useLastPositionToolbarX = sp.getInt("useLastPositionToolbarX", 0);
@@ -379,7 +390,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public void saveToSharedPreferences(Context context) {
-        Log.d(TAG, "saveToSharedPreferences called");
+        android.util.Log.d(TAG, "saveToSharedPreferences called");
         SharedPreferences sp = context.getSharedPreferences(Long.toString(get_Id()), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("useLastPositionToolbar", useLastPositionToolbar);
@@ -391,7 +402,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
 
 
     private synchronized void save(SQLiteDatabase database) {
-        Log.d(TAG, "save called with database");
+        android.util.Log.d(TAG, "save called with database");
         ContentValues values = Gen_getValues();
         values.remove(GEN_FIELD__ID);
         if (!getKeepSshPassword()) {
@@ -401,11 +412,11 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
         if (!getKeepPassword()) {
             values.put(GEN_FIELD_PASSWORD, "");
         }
-        if (isNew()) {
-            set_Id(database.insert(GEN_TABLE_NAME, null, values));
-        } else {
-            database.update(GEN_TABLE_NAME, values, GEN_FIELD__ID + " = ?", new String[]{Long.toString(get_Id())});
-        }
+//        if (isNew()) {
+        set_Id(database.insert(GEN_TABLE_NAME, null, values));
+//        } else {
+//            database.update(GEN_TABLE_NAME, values, GEN_FIELD__ID + " = ?", new String[]{Long.toString(get_Id())});
+//        }
     }
 
     public boolean isReadyForConnection() {
@@ -527,25 +538,25 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public void saveAndWriteRecent(boolean saveEmpty, Context c) {
-        Log.d(TAG, "saveAndWriteRecent called");
+        android.util.Log.d(TAG, "saveAndWriteRecent called");
         Database database = new Database(c);
         if ((getConnectionType() == Constants.CONN_TYPE_SSH && getSshServer().equals("")
                 || getAddress().equals("")) && !saveEmpty) {
-            Log.d(TAG, "saveAndWriteRecent not saving due to missing data");
+            android.util.Log.d(TAG, "saveAndWriteRecent not saving due to missing data");
         } else {
-            Log.d(TAG, "saveAndWriteRecent saving connection");
+            android.util.Log.d(TAG, "saveAndWriteRecent saving connection");
             saveAndWriteRecent(database);
             saveToSharedPreferences(c);
         }
     }
 
     private void saveAndWriteRecent(Database database) {
-        Log.d(TAG, "saveAndWriteRecent called with database");
+        android.util.Log.d(TAG, "saveAndWriteRecent called with database");
 
         SQLiteDatabase db = database.getWritableDatabase();
         db.beginTransaction();
         try {
-            save(db);
+//            save(db);
             MostRecentBean mostRecent = getMostRecent(db);
             if (mostRecent == null) {
                 mostRecent = new MostRecentBean();

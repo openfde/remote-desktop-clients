@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.iiordanov.bVNC"
+    package="com.ft.fdevnc"
     android:installLocation="auto"
     android:versionCode="115129"
     android:versionName="v5.1.2">
@@ -27,7 +27,8 @@
         android:banner="@drawable/banner_bvnc"
         android:icon="@drawable/icon"
         android:label="@string/bvnc_app_name"
-        android:theme="@android:style/Theme.DeviceDefault"
+        android:theme="@style/OverflowMenu1"
+        android:usesCleartextTraffic="true"
         tools:replace="android:label,android:theme">
         <activity
             android:name="com.undatech.opaque.ConnectionGridActivity"
@@ -35,30 +36,53 @@
             android:exported="true"
             android:label="@string/bvnc_app_name"
             android:resizeableActivity="true"
-            android:theme="@android:style/Theme.DeviceDefault">
+            android:theme="@style/OverflowMenu1">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />-->
+            <!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
+            <!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".AllAppActivity"
+            android:exported="true"
+            android:label="@string/bvnc_app_name">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />-->
+            <!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
+            <!--            </intent-filter>-->
+        </activity>
+
+
+        <activity
+            android:name="com.iiordanov.bVNC.bVNC"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="true"
+            android:label="@string/bvnc_app_name"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:theme="@style/OverflowMenu1"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity
-            android:name="com.iiordanov.bVNC.bVNC"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/bvnc_app_name"
-            android:resizeableActivity="true"
-            android:screenOrientation="unspecified"
-            android:theme="@android:style/Theme.DeviceDefault"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name="com.iiordanov.bVNC.RemoteCanvasActivity"
             android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
             android:exported="true"
             android:resizeableActivity="true"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -86,7 +110,7 @@
             android:exported="true"
             android:label="@string/shortcut_label_vnc"
             android:resizeableActivity="true"
-            android:theme="@android:style/Theme.DeviceDefault"
+            android:theme="@style/OverflowMenu1"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />

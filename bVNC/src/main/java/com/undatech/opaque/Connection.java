@@ -27,6 +27,10 @@ public interface Connection {
 
     String getId();
 
+    int getApp();
+
+    void setApp(int app);
+
     String getRuntimeId();
 
     void setRuntimeId(String id);

@@ -21,29 +21,65 @@
 
 package com.iiordanov.bVNC;
 
+import static com.ft.fdevnc.Constants.BASEURL;
+import static com.ft.fdevnc.Constants.BASIP;
+import static com.ft.fdevnc.Constants.URL_GETALLAPP;
+import static com.ft.fdevnc.Constants.URL_STOPAPP;
+
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import android.util.Log;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.ft.fdevnc.AllAppActivity;
+import com.ft.fdevnc.AppAdapter;
 import com.ft.fdevnc.AppListResult;
+import com.ft.fdevnc.VncResult;
 import com.iiordanov.bVNC.dialogs.AutoXCustomizeDialog;
+import com.iiordanov.bVNC.dialogs.ImportExportDialog;
 import com.iiordanov.bVNC.dialogs.RepeaterDialog;
-import com.undatech.remoteClientUi.R;
+import com.undatech.opaque.ConnectionSettings;
+import com.undatech.opaque.util.ConnectionLoader;
+import com.undatech.opaque.util.GeneralUtils;
+import com.undatech.remoteClientUi.*;
+import com.antlersoft.android.dbimpl.*;
+import com.xwdz.http.QuietOkHttp;
+import com.xwdz.http.callback.JsonCallBack;
+import com.yanzhenjie.recyclerview.OnItemClickListener;
+import com.yanzhenjie.recyclerview.SwipeRecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
 
 /**
  * bVNC is the Activity for setting up VNC connections.
@@ -80,11 +116,22 @@ public class bVNC extends MainConfiguration {
     private EditText resWidth;
     private EditText resHeight;
 
+    private SwipeRefreshLayout mRefreshLayout;
+    private SwipeRecyclerView mRecyclerView;
+    private AppAdapter mAdapter;
+    private List<AppListResult.DataBeanX.DataBean> mDataList = new ArrayList<>();
+
+    private int page = 1;
+    private int pageSize = 20;
+
     @Override
     public void onCreate(Bundle icicle) {
         Log.d(TAG, "onCreate called");
         layoutID = R.layout.main;
         super.onCreate(icicle);
+
+
+        initAppList();
 
         sshServer = (EditText) findViewById(R.id.sshServer);
         sshPort = (EditText) findViewById(R.id.sshPort);
@@ -124,7 +171,7 @@ public class bVNC extends MainConfiguration {
         connectionType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> ad, View view, int itemIndex, long id) {
-                Log.d(TAG, "connectionType onItemSelected called");
+                android.util.Log.d(TAG, "connectionType onItemSelected called");
                 selectedConnType = itemIndex;
                 selected.setConnectionType(selectedConnType);
                 selected.save(bVNC.this);
@@ -211,6 +258,152 @@ public class bVNC extends MainConfiguration {
 
         setConnectionTypeSpinnerAdapter(R.array.connection_type);
     }
+
+    private void initAppList() {
+        mRefreshLayout = findViewById(R.id.refresh_layout);
+        mRefreshLayout.setOnRefreshListener(mRefreshListener); // 刷新监听。
+
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+//        mRecyclerView.addItemDecoration(new DefaultItemDecoration(getColor( R.color.divider_color)));
+//        mRecyclerView.setOnItemClickListener(mItemClickListener); // RecyclerView Item点击监听。
+
+        mRecyclerView.useDefaultLoadMore(); // 使用默认的加载更多的View。
+        mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。
+        mRecyclerView.setAutoLoadMore(true);
+        mAdapter = new AppAdapter(this, mDataList, mItemClickListener);
+        mRecyclerView.setAdapter(mAdapter);
+        // 请求服务器加载数据。
+        getVncAllApp();
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            getVncAllApp();
+        }
+    };
+
+    private SwipeRecyclerView.LoadMoreListener mLoadMoreListener = new SwipeRecyclerView.LoadMoreListener() {
+        @Override
+        public void onLoadMore() {
+            getVncAllApp();
+        }
+    };
+
+    private void getVncAllApp() {
+        QuietOkHttp.get(BASEURL + URL_GETALLAPP)
+                .addParams("page", new Integer(page).toString())
+                .addParams("page_size", new Integer(pageSize).toString())
+                .setCallbackToMainUIThread(true)
+                .execute(new JsonCallBack<AppListResult>() {
+
+                    @Override
+                    public void onFailure(Call call, Exception e) {
+                        Log.d("huyang", "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        mRecyclerView.loadMoreFinish(false, false);
+                        mRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onSuccess(Call call, AppListResult response) {
+                        Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        List<AppListResult.DataBeanX.DataBean> data = response.getData().getData();
+                        mDataList.addAll(data);
+                        mAdapter.notifyDataSetChanged();
+                        if(data.size() > 0){
+                            page++;
+                        }
+                        mRecyclerView.loadMoreFinish(mDataList.size() == 0, response.getData().getPage().getTotal() > mDataList.size());
+                        mRefreshLayout.setRefreshing(false);
+                    }
+                });
+    }
+
+    public interface  ItemClickListener {
+        void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app);
+    }
+
+    ItemClickListener  mItemClickListener = new ItemClickListener() {
+        @Override
+        public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app) {
+            selected.setApp(app.id);
+            tryStartVncApp(app);
+        }
+    };
+
+    private void tryStartVncApp(AppListResult.DataBeanX.DataBean app) {
+        // todo mock
+        QuietOkHttp.post(BASEURL + URL_STOPAPP)
+                .setCallbackToMainUIThread(true)
+                .addParams("App", app.Name)
+                .addParams("Path", app.Path)
+                .addParams("SysOnly", "false")
+                .execute(new JsonCallBack<VncResult.GetPortResult>() {
+                    @Override
+                    public void onFailure(Call call, Exception e) {
+                        Log.d("huyang", "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                    }
+
+                    @Override
+                    public void onSuccess(Call call, VncResult.GetPortResult response) {
+                        Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        ipText.setText(BASIP);
+                        portText.setText(Integer.toString(response.Data.Port));
+                        save();
+                        tryLunchApp(app);
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void save() {
+        Log.d(TAG, "saveConnectionAndCloseLayout called");
+        if (selected != null) {
+            updateSelectedFromView();
+            selected.saveAndWriteRecent(false, this);
+        }
+    }
+
+    private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
+        //todo mock addr
+//        ipText.setText("192.168.253.129");
+//        portText.setText("5902");
+//        save();
+
+
+        Utils.hideKeyboard(this, getCurrentFocus());
+        android.util.Log.i(TAG, "Launch Connection");
+
+        ActivityManager.MemoryInfo info = Utils.getMemoryInfo(this);
+        if (info.lowMemory)
+            System.gc();
+
+        Intent intent = new Intent(this, GeneralUtils.getClassByName("com.iiordanov.bVNC.RemoteCanvasActivity"));
+        ConnectionLoader connectionLoader = getConnectionLoader(this);
+        if (Utils.isOpaque(this)) {
+            ConnectionSettings cs = (ConnectionSettings) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
+            cs.loadFromSharedPreferences(getApplicationContext());
+            intent.putExtra("com.undatech.opaque.ConnectionSettings", cs);
+        }
+        else{
+//            ConnectionBean conn = (ConnectionBean) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
+//            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), conn.Gen_getValues());
+            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
+        }
+        this.startActivity(intent);
+    }
+
+    private ConnectionLoader getConnectionLoader(Context context) {
+        boolean connectionsInSharedPrefs = Utils.isOpaque(context);
+        ConnectionLoader connectionLoader = new ConnectionLoader(context.getApplicationContext(), (Activity) context, connectionsInSharedPrefs);
+        return connectionLoader;
+    }
+
 
     /**
      * Makes the ssh-related widgets visible/invisible.
@@ -394,10 +587,6 @@ public class bVNC extends MainConfiguration {
         } else {
             selected.setUseRepeater(false);
         }
-    }
-
-    public interface  ItemClickListener {
-        void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app);
     }
 
     public void save(MenuItem item) {

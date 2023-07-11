@@ -18,7 +18,7 @@
         <item name="toolbarStyle">@style/ToolbarStyle</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
-    
+
     <style name="ToolbarStyle" parent="@style/Widget.AppCompat.Toolbar">
         <item name="contentInsetStart">0dp</item>
         <item name="android:background">@android:color/transparent</item>
@@ -44,4 +44,29 @@
     </style>
 
     <style name="ButtonBarButton" />
+
+    <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="overlapAnchor">false</item>  <!--设置不覆盖锚点-->
+        <item name="android:dropDownVerticalOffset">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:popupBackground">#ffffffff</item>
+        <!--        <item name="android:background">#000000</item>-->
+    </style>
+
+    <style name="OverflowMenu1" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="overlapAnchor">false</item>  <!--设置不覆盖锚点-->
+        <item name="android:dropDownVerticalOffset">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:popupBackground">#ffffffff</item>
+    </style>
+
+    <style name="Theme.MyApplication" parent="OverflowMenu" />
+
+    <!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+    <!-- Customize your theme here. -->
+    <!--    </style>-->
+
+    <style name="Theme.FloatActivity" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@drawable/float_box</item>
+    </style>
 </resources>

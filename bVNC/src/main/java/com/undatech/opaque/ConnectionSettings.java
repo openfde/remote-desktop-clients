@@ -78,12 +78,14 @@ public class ConnectionSettings implements Connection, Serializable {
 
     private int rdpWidth = 0;
     private int rdpHeight = 0;
-    private int rdpResType = Constants.VNC_GEOM_SELECT_AUTOMATIC;
+    private int rdpResType = Constants.RDP_GEOM_SELECT_CUSTOM;
 
     private boolean useLastPositionToolbar = true;
     private int useLastPositionToolbarX;
     private int useLastPositionToolbarY;
     private boolean useLastPositionToolbarMoved = false;
+
+    private int app;
 
     public ConnectionSettings(String filename) {
         super();
@@ -107,6 +109,16 @@ public class ConnectionSettings implements Connection, Serializable {
     @Override
     public String getId() {
         return getRuntimeId();
+    }
+
+    @Override
+    public int getApp() {
+        return app;
+    }
+
+    @Override
+    public void setApp(int app) {
+        this.app = app;
     }
 
     @Override
@@ -407,7 +419,7 @@ public class ConnectionSettings implements Connection, Serializable {
     }
 
     public void saveToSharedPreferences(Context context) {
-        Log.d(TAG, "Saving settings to file: " + filename);
+        android.util.Log.d(TAG, "Saving settings to file: " + filename);
         SharedPreferences sp = context.getSharedPreferences(filename, Context.MODE_PRIVATE);
         Editor editor = sp.edit();
         editor.putString("connectionType", connectionType);
@@ -615,7 +627,7 @@ public class ConnectionSettings implements Connection, Serializable {
     }
 
     public void loadFromSharedPreferences(Context context) {
-        Log.d(TAG, "Loading settings from file: " + filename);
+        android.util.Log.d(TAG, "Loading settings from file: " + filename);
         SharedPreferences sp = context.getSharedPreferences(filename, Context.MODE_PRIVATE);
         connectionType = sp.getString("connectionType", "").trim();
         hostname = sp.getString("hostname", "").trim();
@@ -675,12 +687,12 @@ public class ConnectionSettings implements Connection, Serializable {
                 fileName = context.getFilesDir() + "/ca" + Integer.toString(caCertData.hashCode()) + ".crt";
                 File file = new File(fileName);
                 if (!file.exists()) {
-                    Log.d(TAG, "Writing out CA to file: " + fileName);
+                    android.util.Log.d(TAG, "Writing out CA to file: " + fileName);
                     PrintWriter fout = new PrintWriter(fileName);
                     fout.println(caCertData);
                     fout.close();
                 } else {
-                    Log.d(TAG, "File already exists: " + fileName);
+                    android.util.Log.d(TAG, "File already exists: " + fileName);
                 }
             } catch (FileNotFoundException e) {
                 fileName = "";
@@ -1260,7 +1272,7 @@ public class ConnectionSettings implements Connection, Serializable {
     public static void exportPrefsToFile(
             Context context, String connections, OutputStream outputStream
     ) throws JSONException, IOException {
-        Log.d(TAG, "Exporting settings to file");
+        android.util.Log.d(TAG, "Exporting settings to file");
         connections += " " + RemoteClientLibConstants.DEFAULT_SETTINGS_FILE;
         String[] preferenceFiles = connections.split(" ");
         JSONObject allPrefs = new JSONObject();
@@ -1291,7 +1303,7 @@ public class ConnectionSettings implements Connection, Serializable {
      * @throws JSONException
      */
     public static String importPrefsFromFile(Context context, Reader r) throws IOException, JSONException {
-        Log.d(TAG, "Importing settings");
+        android.util.Log.d(TAG, "Importing settings");
         BufferedReader reader = new BufferedReader(r);
         String connections = "";
         StringBuilder sb = new StringBuilder();
@@ -1341,7 +1353,7 @@ public class ConnectionSettings implements Connection, Serializable {
             Reader reader = new InputStreamReader(fin);
             String connections = ConnectionSettings.importPrefsFromFile(context, reader);
             SharedPreferences sp = context.getSharedPreferences("generalSettings", Context.MODE_PRIVATE);
-            Editor editor = sp.edit();
+            SharedPreferences.Editor editor = sp.edit();
             editor.putString("connections", connections);
             editor.apply();
         } catch (JSONException e) {

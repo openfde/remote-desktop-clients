@@ -1,12 +1,21 @@
 package com.iiordanov.bVNC;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import net.sqlcipher.database.SQLiteDatabase;
+
+import com.iiordanov.pubkeygenerator.GeneratePubkeyActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
+
+import androidx.fragment.app.FragmentActivity;
+
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Display;
@@ -25,16 +34,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.FragmentActivity;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 
-import com.iiordanov.pubkeygenerator.GeneratePubkeyActivity;
+import com.iiordanov.util.PermissionGroups;
 import com.undatech.opaque.util.LogcatReader;
-import com.undatech.remoteClientUi.R;
+import com.iiordanov.util.PermissionsManager;
 
-import net.sqlcipher.database.SQLiteDatabase;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import com.undatech.remoteClientUi.*;
 
 public abstract class MainConfiguration extends FragmentActivity {
     private final static String TAG = "MainConfiguration";
@@ -119,7 +127,8 @@ public abstract class MainConfiguration extends FragmentActivity {
     public void onCreate(Bundle icicle) {
         Log.d(TAG, "onCreate called");
         Intent intent = getIntent();
-        isNewConnection = intent.getBooleanExtra("isNewConnection", false);
+//        isNewConnection = intent.getBooleanExtra("isNewConnection", false);
+        isNewConnection = true;
         if (!isNewConnection) {
             try {
                 connID = Long.parseLong(intent.getStringExtra("connID"));
@@ -339,7 +348,7 @@ public abstract class MainConfiguration extends FragmentActivity {
         int height = outSize.y;
         int value = height;
         if (android.os.Build.VERSION.SDK_INT >= 14) {
-            ViewConfiguration vc = ViewConfiguration.get(this);
+            android.view.ViewConfiguration vc = ViewConfiguration.get(this);
             if (vc.hasPermanentMenuKey())
                 value = bottom;
         }
@@ -364,7 +373,7 @@ public abstract class MainConfiguration extends FragmentActivity {
         d.getSize(outSize);
         int width = outSize.x;
         if (android.os.Build.VERSION.SDK_INT >= 14) {
-            ViewConfiguration vc = ViewConfiguration.get(this);
+            android.view.ViewConfiguration vc = ViewConfiguration.get(this);
             if (vc.hasPermanentMenuKey())
                 return right;
         }
@@ -375,24 +384,24 @@ public abstract class MainConfiguration extends FragmentActivity {
     /* (non-Javadoc)
      * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu called");
-        getMenuInflater().inflate(R.menu.connectionsetupmenu, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        Log.d(TAG, "onCreateOptionsMenu called");
+//        getMenuInflater().inflate(R.menu.connectionsetupmenu, menu);
+//        return true;
+//    }
 
     /* (non-Javadoc)
      * @see android.app.Activity#onMenuOpened(int, android.view.Menu)
      */
-    @Override
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        Log.d(TAG, "onMenuOpened called");
-        try {
-            menu.findItem(R.id.itemSaveAsCopy).setEnabled(selected != null && !selected.isNew());
-        } catch (NullPointerException e) {}
-        return true;
-    }
+//    @Override
+//    public boolean onMenuOpened(int featureId, Menu menu) {
+//        Log.d(TAG, "onMenuOpened called");
+//        try {
+//            menu.findItem(R.id.itemSaveAsCopy).setEnabled(selected != null && !selected.isNew());
+//        } catch (NullPointerException e) {}
+//        return true;
+//    }
 
 
     /**
@@ -403,18 +412,18 @@ public abstract class MainConfiguration extends FragmentActivity {
         Log.d(TAG, "onActivityResult called");
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
-        case (Constants.ACTIVITY_GEN_KEY):
-            if (resultCode == Activity.RESULT_OK && data != null && data.getExtras() != null) {
-                Bundle b = data.getExtras();
-                String privateKey = (String)b.get("PrivateKey");
-                if (!privateKey.equals(selected.getSshPrivKey()) && privateKey.length() != 0)
-                    Toast.makeText(getBaseContext(), getString(R.string.ssh_key_generated), Toast.LENGTH_LONG).show();
-                selected.setSshPrivKey(privateKey);
-                selected.setSshPubKey((String)b.get("PublicKey"));
-                selected.saveAndWriteRecent(true, this);
-            } else
-                Log.i (TAG, "The user cancelled SSH key generation.");
-            break;
+            case (Constants.ACTIVITY_GEN_KEY):
+                if (resultCode == Activity.RESULT_OK && data != null && data.getExtras() != null) {
+                    Bundle b = data.getExtras();
+                    String privateKey = (String)b.get("PrivateKey");
+                    if (!privateKey.equals(selected.getSshPrivKey()) && privateKey.length() != 0)
+                        Toast.makeText(getBaseContext(), getString(R.string.ssh_key_generated), Toast.LENGTH_LONG).show();
+                    selected.setSshPrivKey(privateKey);
+                    selected.setSshPubKey((String)b.get("PublicKey"));
+                    selected.saveAndWriteRecent(true, this);
+                } else
+                    Log.i (TAG, "The user cancelled SSH key generation.");
+                break;
         }
     }
 
@@ -445,7 +454,7 @@ public abstract class MainConfiguration extends FragmentActivity {
     }
 
     protected boolean useLastPositionToolbarDefault() {
-        Log.d(TAG, "UseLastPositionToolbarDefault called");
+        android.util.Log.d(TAG, "UseLastPositionToolbarDefault called");
         SharedPreferences sp = getSharedPreferences(Constants.generalSettingsTag, Context.MODE_PRIVATE);
         return sp.getBoolean(Constants.positionToolbarLastUsed, true);
     }
