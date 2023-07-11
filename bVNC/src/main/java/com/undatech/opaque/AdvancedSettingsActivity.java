@@ -93,7 +93,7 @@ public class AdvancedSettingsActivity extends FragmentActivity implements Manage
         toggleAutoRequestDisplayResolution.setChecked(currentConnection.isRequestingNewDisplayResolution());
 
         toggleCustomDisplayResolution = (ToggleButton)findViewById(R.id.toggleCustomDisplayResolution);
-        toggleCustomDisplayResolution.setChecked(currentConnection.getRdpResType() == Constants.RDP_GEOM_SELECT_CUSTOM);
+        toggleCustomDisplayResolution.setChecked(currentConnection.getRdpResType() == Constants.VNC_GEOM_SELECT_AUTOMATIC);
 
         toggleSslStrict = (ToggleButton)findViewById(R.id.toggleSslStrict);
         toggleSslStrict.setChecked(currentConnection.isSslStrict());

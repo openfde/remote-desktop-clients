@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.ft.fdevnc.AppListResult;
 import com.iiordanov.bVNC.dialogs.AutoXCustomizeDialog;
 import com.iiordanov.bVNC.dialogs.RepeaterDialog;
 import com.undatech.remoteClientUi.R;
@@ -393,6 +394,10 @@ public class bVNC extends MainConfiguration {
         } else {
             selected.setUseRepeater(false);
         }
+    }
+
+    public interface  ItemClickListener {
+        void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app);
     }
 
     public void save(MenuItem item) {

@@ -168,6 +168,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     RemoteToolbar toolbar;
     View rootView;
 
+    private int canvasWidth, canvasHight;
+
     /**
      * This runnable enables immersive mode.
      */
@@ -465,6 +467,24 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             @Override
             public void onGlobalLayout() {
                 relayoutViews(rootView);
+            }
+        });
+
+        canvas.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(canvasWidth == 0 || canvasHight == 0){
+                    canvasWidth = canvas.getWidth();
+                    canvasHight = canvas.getHeight();
+                } else if(canvasWidth != canvas.getWidth() || canvasHight != canvas.getHeight()){
+                    canvasWidth = canvas.getWidth();
+                    canvasHight = canvas.getHeight();
+                    try {
+                        canvas.rfb.requestResolution(canvasWidth, canvasHight);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         });
 

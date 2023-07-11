@@ -78,7 +78,7 @@ public class ConnectionSettings implements Connection, Serializable {
 
     private int rdpWidth = 0;
     private int rdpHeight = 0;
-    private int rdpResType = Constants.RDP_GEOM_SELECT_CUSTOM;
+    private int rdpResType = Constants.VNC_GEOM_SELECT_AUTOMATIC;
 
     private boolean useLastPositionToolbar = true;
     private int useLastPositionToolbarX;
