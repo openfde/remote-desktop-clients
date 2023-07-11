@@ -32,6 +32,7 @@ package com.iiordanov.bVNC;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -138,7 +139,8 @@ public class RemoteCanvas extends AppCompatImageView
     public ProgressDialog pd;
 
     // Used to set the contents of the clipboard.
-    ClipboardManager clipboard;
+    android.content.ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener;
+    android.content.ClipboardManager mClipboardManager;
     Timer clipboardMonitorTimer;
     ClipboardMonitor clipboardMonitor;
     public boolean serverJustCutText = false;
@@ -208,7 +210,6 @@ public class RemoteCanvas extends AppCompatImageView
     public RemoteCanvas(final Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         isVnc = Utils.isVnc(getContext());
         isRdp = Utils.isRdp(getContext());
         isSpice = Utils.isSpice(getContext());
@@ -247,7 +248,6 @@ public class RemoteCanvas extends AppCompatImageView
         this.hideKeyboardAndExtraKeys = hideKeyboardAndExtraKeys;
         this.vvFileName = vvFileName;
         checkNetworkConnectivity();
-        initializeClipboardMonitor();
         spicecomm = new SpiceCommunicator(getContext(), handler, this,
                 settings.isRequestingNewDisplayResolution() || settings.getRdpResType() == Constants.RDP_GEOM_SELECT_CUSTOM,
                 !Utils.isFree(getContext()) && settings.isUsbEnabled(), App.debugLog);
@@ -314,11 +314,28 @@ public class RemoteCanvas extends AppCompatImageView
      * Initializes the clipboard monitor.
      */
     private void initializeClipboardMonitor() {
-        clipboardMonitor = new ClipboardMonitor(getContext(), this);
+        mClipboardManager = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        mOnPrimaryClipChangedListener = new android.content.ClipboardManager.OnPrimaryClipChangedListener() {
+            @Override
+            public void onPrimaryClipChanged() {
+                if (mClipboardManager.hasPrimaryClip()
+                        && mClipboardManager.getPrimaryClip().getItemCount() > 0) {
+                    // 获取复制、剪切的文本内容
+                    CharSequence content =
+                            mClipboardManager.getPrimaryClip().getItemAt(0).getText();
+                    Log.d("TAG", "复制、剪切的内容为：" + content);
+                }
+            }
+        };
+        mClipboardManager.addPrimaryClipChangedListener(mOnPrimaryClipChangedListener);
+        clipboardMonitor = new ClipboardMonitor(getContext(), this, mClipboardManager);
         if (clipboardMonitor != null) {
             clipboardMonitorTimer = new Timer();
             if (clipboardMonitorTimer != null) {
-                clipboardMonitorTimer.schedule(clipboardMonitor, 0, 500);
+                try {
+                    clipboardMonitorTimer.schedule(clipboardMonitor, 0, 300);
+                } catch (NullPointerException e) {
+                }
             }
         }
     }
@@ -401,18 +418,7 @@ public class RemoteCanvas extends AppCompatImageView
             }
         };
         t.start();
-
-        clipboardMonitor = new ClipboardMonitor(getContext(), this);
-        if (clipboardMonitor != null) {
-            clipboardMonitorTimer = new Timer();
-            if (clipboardMonitorTimer != null) {
-                try {
-                    clipboardMonitorTimer.schedule(clipboardMonitor, 0, 500);
-                } catch (NullPointerException e) {
-                }
-            }
-        }
-
+        initializeClipboardMonitor();
         return pointer;
     }
 
@@ -1346,7 +1352,8 @@ public class RemoteCanvas extends AppCompatImageView
      */
     public void setClipboardText(String s) {
         if (s != null && s.length() > 0) {
-            clipboard.setText(s);
+            ClipData mClipData = ClipData.newPlainText("vnc", s);
+            mClipboardManager.setPrimaryClip(mClipData);
         }
     }
 
@@ -1401,7 +1408,6 @@ public class RemoteCanvas extends AppCompatImageView
             clipboardMonitorTimer = null;
         }
         clipboardMonitor = null;
-        clipboard = null;
         setModes = null;
         decoder = null;
         canvasZoomer = null;

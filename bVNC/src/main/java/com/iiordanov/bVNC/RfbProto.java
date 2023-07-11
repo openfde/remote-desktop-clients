@@ -23,6 +23,7 @@
 
 package com.iiordanov.bVNC;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.iiordanov.bVNC.input.RemoteVncKeyboard;
@@ -193,7 +194,8 @@ public class RfbProto extends RfbConnectable {
             EncodingLastRect = -224,
             EncodingNewFBSize = -223,
             EncodingClientRedirect = -311,
-            EncodingExtendedDesktopSize = -308;
+            EncodingExtendedDesktopSize = -308,
+            EncodingExtendedClipboard = 0xC0A1E5CE;
 
     final static String
             SigEncodingRaw = "RAW_____",
@@ -1201,6 +1203,26 @@ public class RfbProto extends RfbConnectable {
         preferredFramebufferHeight = height;
     }
 
+    public synchronized void writeClipboardNotify() {
+        try {
+            Log.d(TAG, "writeClipboardNotify() called");
+            int flags = RFB.EXTCLIP_FORMAT_UTF8;
+            byte[] b = new byte[12];
+            b[0] = (byte) ClientCutText;
+            b[4] = (byte) ((-4 >> 24) & 0xff);
+            b[5] = (byte) ((-4 >> 16) & 0xff);
+            b[6] = (byte) ((-4 >> 8) & 0xff);
+            b[7] = (byte) (-4 & 0xff);
+            b[8] = (byte) (((flags | RFB.EXTCLIP_ACTION_NOTIFY) >> 24) & 0xff);
+            b[9] = (byte) (((flags | RFB.EXTCLIP_ACTION_NOTIFY) >> 16) & 0xff);
+            b[10] = (byte) (((flags | RFB.EXTCLIP_ACTION_NOTIFY) >> 8) & 0xff);
+            b[11] = (byte) ((flags | RFB.EXTCLIP_ACTION_NOTIFY) & 0xff);
+            os.write(b);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     //
     // Read the server message type
@@ -1326,15 +1348,194 @@ public class RfbProto extends RfbConnectable {
     // Read a ServerCutText message
     //
 
-    String readServerCutText() throws IOException {
+    public String readServerCutText() throws Exception {
         byte[] pad = new byte[3];
         readFully(pad);
         int len = is.readInt();
-        byte[] text = new byte[len];
-        readFully(text);
-        return new String(text);
+
+        if ((len & 0x80000000) != 0) {
+            len = -len;
+            return readExtendedClipboard(len);
+        }
+        return null;
+    }
+    private String readExtendedClipboard(int len) throws Exception {
+        int action, flags;
+
+        if (len < 4) {
+            throw new Exception("Malformed Extended Clipboard message");
+        }
+//		if (len > params.maxClipboard.get()) {
+//			is.skip(len);
+//			return;
+//		}
+        flags = is.readInt();
+        action = flags & RFB.EXTCLIP_ACTION_MASK;
+
+        if ((action & RFB.EXTCLIP_ACTION_CAPS) != 0) {
+            int i, num;
+            int[] lengths = new int[16];
+            num = 0;
+            for (i = 0; i < 16; i++) {
+                if ((flags & (1 << i)) != 0)
+                    num++;
+            }
+            if (len < (4 + 4 * num)) {
+                throw new Exception("Malformed Extended Clipboard message");
+            }
+            num = 0;
+            for (i = 0; i < 16; i++) {
+                if ((flags & (1 << i)) != 0) {
+                    lengths[num++] = is.readInt();
+                }
+            }
+//			handler.handleClipboardCaps(flags, lengths);
+        } else if (action == RFB.EXTCLIP_ACTION_PROVIDE) {
+            ZlibInStream zis = new ZlibInStream();
+            byte[] zrleBuf = new byte[len-4];
+            is.readBytes(zrleBuf, 0, len-4);
+            int i, num, ignoredBytes = 0;
+            int[] lengths = new int[16];
+            byte[][] buffers = new byte[16][];
+
+            zis.setUnderlying(new MemInStream(zrleBuf, 0, len - 4), len - 4);
+
+            num = 0;
+            for (i = 0; i < 16; i++) {
+                if ((flags & (1 << i)) == 0) {
+                    continue;
+                }
+                lengths[num] = zis.readU32();
+
+//				if (lengths[num] > params.maxClipboard.get()) {
+//					vlog.error("Truncating " + lengths[num] +
+//							"-byte incoming clipboard update to " +
+//							params.maxClipboard.get() + " bytes.");
+//					ignoredBytes = lengths[num] - params.maxClipboard.get();
+//					lengths[num] = params.maxClipboard.get();
+//				}
+
+                buffers[num] = new byte[lengths[num]];
+                zis.readBytes(buffers[num], 0, lengths[num]);
+
+                if (ignoredBytes != 0) {
+                    zis.skip(ignoredBytes);
+                }
+                num++;
+            }
+            zis.reset();
+            if ((flags & RFB.EXTCLIP_FORMAT_UTF8) == 0) {
+                Log.d(TAG, "Ignoring Extended Clipboard provide message with " +
+                        "unsupported formats 0x" + Integer.toHexString(flags));
+                return null;
+            }
+            if (buffers[0][lengths[0] - 1] == 0)
+                lengths[0]--;
+            String serverClipboard =
+                    convertLF(new String(buffers[0], 0, lengths[0]));
+            Log.d(TAG, "readExtendedClipboard  EXTCLIP_ACTION_PROVIDE ");
+            Log.d(TAG, "readExtendedClipboard  " + serverClipboard);
+            return serverClipboard;
+        } else {
+            switch (action) {
+                case RFB.EXTCLIP_ACTION_REQUEST:
+                    Log.d(TAG, "readExtendedClipboard  EXTCLIP_ACTION_REQUEST " );
+                    sendClipboardData(ClipboardMonitor.knownClipboardContents);
+//                    writeClipboardProvide(RFB.EXTCLIP_FORMAT_UTF8, ClipboardMonitor.knownClipboardContents);
+                    break;
+                case RFB.EXTCLIP_ACTION_PEEK:
+                    Log.d(TAG, "readExtendedClipboard  EXTCLIP_ACTION_PEEK" );
+//					handler.handleClipboardPeek(flags);
+//					break;
+                case RFB.EXTCLIP_ACTION_NOTIFY:
+                    Log.d(TAG, "readExtendedClipboard  EXTCLIP_ACTION_NOTIFY ");
+                    writeClipboardRequest();
+                    break;
+//				default:
+//					throw new ErrorException("Invalid Extended Clipboard action");
+            }
+        }
+        return null;
     }
 
+    //        writer()->writeClipboardProvide(rfb::clipboardUTF8, sizes, data);
+    private void writeClipboardRequest() {
+        Log.d(TAG, "writeClipboardRequest() called");
+//        if ((cp.clipboardFlags() & RFB.EXTCLIP_ACTION_REQUEST) == 0)
+//            throw new ErrorException("Server does not support Extended Clipboard request message");
+        try {
+            byte[] b = new byte[12];
+            b[0] = (byte) ClientCutText;
+            b[4] = (byte) ((-4 >> 24));
+            b[5] = (byte) ((-4 >> 16));
+            b[6] = (byte) ((-4 >> 8));
+            b[7] = (byte) ((-4));
+            b[8] = (byte) (((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_REQUEST) >> 24));
+            b[9] = (byte) (((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_REQUEST) >> 16));
+            b[10] = (byte) (((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_REQUEST) >> 8));
+            b[11] = (byte) ((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_REQUEST));
+            os.write(b);
+        } catch (Exception e) {
+            Log.i(TAG, e.toString());
+        }
+    }
+
+
+    private void sendClipboardData(String data) {
+        String filtered = convertCRLF(data);
+        int[] lengths = new int[1];
+        byte[][] datas = new byte[1][];
+        byte[] filteredBytes = filtered.getBytes();
+        lengths[0] = filteredBytes.length + 1;
+        datas[0] = new byte[filteredBytes.length + 1];
+        System.arraycopy(filteredBytes, 0, datas[0], 0, filteredBytes.length);
+        try {
+            writeClipboardProvide(RFB.EXTCLIP_FORMAT_UTF8, lengths, datas);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void writeClipboardProvide(int flags, int[] lengths, byte[][] data) throws Exception {
+        MemOutStream mos = new MemOutStream();
+        ZlibOutStream zos = new ZlibOutStream();
+        int i, count;
+        zos.setUnderlying(mos);
+        count = 0;
+        for (i = 0; i < 16; i++) {
+            if ((flags & (1 << i)) == 0)
+                continue;
+            zos.writeU32(lengths[count]);
+            zos.writeBytes(data[count], 0, lengths[count]);
+            count++;
+        }
+//        zos.flush();
+//        zos.close();
+        byte[] b = new byte[12 + mos.length()];
+        b[0] = (byte) RFB.CLIENT_CUT_TEXT;
+        b[4] = (byte) ((-(4 + mos.length()) >> 24));
+        b[5] = (byte) ((-(4 + mos.length()) >> 16));
+        b[6] = (byte) ((-(4 + mos.length()) >> 8));
+        b[7] = (byte) (-(4 + mos.length()));
+        b[8] = (byte) (((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_PROVIDE) >> 24));
+        b[9] = (byte) (((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_PROVIDE) >> 16));
+        b[10] = (byte) (((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_PROVIDE) >> 8));
+        b[11] = (byte) ((RFB.EXTCLIP_FORMAT_UTF8 | RFB.EXTCLIP_ACTION_PROVIDE));
+        for (int l = 12; l < mos.length()+12; l++) {
+            b[l] = mos.data()[l - 12];
+        }
+        os.write(b);
+    }
+
+
+    public static String convertCRLF(String buf) {
+        return convertLF(buf).replaceAll("\\n", "\r\n");
+    }
+
+
+    public static String convertLF(String buf) {
+        return buf.replaceAll("\\r\\n?", "\n");
+    }
 
     //
     // Read an integer in compact representation (1..3 bytes).
@@ -1462,8 +1663,14 @@ public class RfbProto extends RfbConnectable {
     //
     // Write a SetEncodings message
     //
-
     synchronized void writeSetEncodings(int[] encs, int len) throws IOException {
+        StringBuilder builder1 = new StringBuilder();
+        for (int i = 0 ; i < len ; i ++){
+            String hexString = String.format("%d  ", encs[i]);
+            builder1.append(hexString);
+        }
+        Log.d(TAG, "writeSetEncodings() called with: builder1 = [" + builder1.toString() + "], len = [" + len + "]");
+
         byte[] b = new byte[4 + 4 * len];
 
         b[0] = (byte) SetEncodings;
@@ -1477,6 +1684,12 @@ public class RfbProto extends RfbConnectable {
             b[7 + 4 * i] = (byte) (encs[i] & 0xff);
         }
 
+        StringBuilder builder = new StringBuilder();
+        for (byte bt : b) {
+            String hexString = String.format("%02X  ", bt);
+            builder.append(hexString);
+        }
+        Log.d(TAG, "writeSetEncodings() called with: bytes = [" + builder.toString() + "]");
         os.write(b);
     }
 
@@ -1933,19 +2146,26 @@ public class RfbProto extends RfbConnectable {
         encodings[nEncodings++] = RfbProto.EncodingZlib;
         encodings[nEncodings++] = RfbProto.EncodingCoRRE;
         encodings[nEncodings++] = RfbProto.EncodingRRE;
-
         encodings[nEncodings++] = RfbProto.EncodingCopyRect;
-
         encodings[nEncodings++] = RfbProto.EncodingCompressLevel0 + compressLevel;
         encodings[nEncodings++] = RfbProto.EncodingQualityLevel0 + jpegQuality;
-
         encodings[nEncodings++] = RfbProto.EncodingXCursor;
         encodings[nEncodings++] = RfbProto.EncodingRichCursor;
-
         encodings[nEncodings++] = RfbProto.EncodingPointerPos;
         encodings[nEncodings++] = RfbProto.EncodingLastRect;
         encodings[nEncodings++] = RfbProto.EncodingNewFBSize;
         encodings[nEncodings++] = RfbProto.EncodingExtendedDesktopSize;
+        encodings[nEncodings++] = RfbProto.EncodingExtendedClipboard;
+        //16  5  6  4  2  -224  -223  -1063131698
+//        encodings[nEncodings++] = 16;
+//        encodings[nEncodings++] = 5;
+//        encodings[nEncodings++] = 6;
+//        encodings[nEncodings++] = 4;
+//        encodings[nEncodings++] = 2;
+//        encodings[nEncodings++] = -224;
+//        encodings[nEncodings++] = -223;
+//        encodings[nEncodings++] = -1063131698;
+
 
         // TODO: Disabling ClientRedirect encoding for now because of
         // it being reserved for CursorWithAlpha by RealVNC and for
@@ -1990,14 +2210,14 @@ public class RfbProto extends RfbConnectable {
             //
             while (maintainConnection) {
                 exitforloop = false;
-                if (!canvas.useFull) {
+//                if (!canvas.useFull) {
                     canvas.syncScroll();
                     // Read message type from the server.
                     msgType = readServerMessageType();
                     canvas.doneWaiting();
-                } else {
-                    msgType = readServerMessageType();
-                }
+//                } else {
+//                    msgType = readServerMessageType();
+//                }
 
                 // Process the message depending on its type.
                 switch (msgType) {
@@ -2087,9 +2307,11 @@ public class RfbProto extends RfbConnectable {
                         break;
 
                     case RfbProto.ServerCutText:
-                        remoteClipboardChanged(readServerCutText());
+                        String s = readServerCutText();
+                        if (!TextUtils.isEmpty(s)) {
+                            remoteClipboardChanged(s);
+                        }
                         break;
-
                     case RfbProto.TextChat:
                         // UltraVNC extension
                         String msg = readTextChatMsg();
@@ -2103,7 +2325,7 @@ public class RfbProto extends RfbConnectable {
                         throw new RfbUltraVncColorMapException("Only 24bpp color supported with UltraVNC");
 
                     default:
-                        throw new Exception("Unknown RFB message type " + msgType);
+//                        throw new Exception("Unknown RFB message type " + msgType);
                 }
             }
         } catch (Exception e) {

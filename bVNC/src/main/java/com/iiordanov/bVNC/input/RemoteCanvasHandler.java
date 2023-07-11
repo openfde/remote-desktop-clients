@@ -467,7 +467,7 @@ public class RemoteCanvasHandler extends Handler {
                 break;
             case RemoteClientLibConstants.SERVER_CUT_TEXT:
                 s = (Bundle) msg.obj;
-                c.serverJustCutText = true;
+//                c.serverJustCutText = true;
                 c.setClipboardText(s.getString("text"));
                 break;
             case RemoteClientLibConstants.REINIT_SESSION:

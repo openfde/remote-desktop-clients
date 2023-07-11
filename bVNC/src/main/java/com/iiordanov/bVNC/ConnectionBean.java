@@ -368,10 +368,10 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
 
     public synchronized void save(Context c) {
         android.util.Log.d(TAG, "save called");
-        Database database = new Database(c);
-        save(database.getWritableDatabase());
-        database.close();
-        saveToSharedPreferences(c);
+//        Database database = new Database(c);
+//        save(database.getWritableDatabase());
+//        database.close();
+//        saveToSharedPreferences(c);
         readyToBeSaved = true;
     }
 

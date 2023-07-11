@@ -23,6 +23,8 @@
 //
 package com.iiordanov.bVNC;
 
+import static com.undatech.opaque.util.GeneralUtils.debugLog;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -242,7 +244,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
     @Override
     public void onCreate(Bundle icicle) {
-        Log.d(TAG, "OnCreate called");
+        debugLog(App.debugLog, TAG, "OnCreate called");
         super.onCreate(icicle);
 
         // TODO: Implement left-icon
@@ -308,7 +310,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         if (connection != null && connection.isReadyForConnection()) {
             continueConnecting();
         }
-        Log.d(TAG, "OnCreate complete");
+        debugLog(App.debugLog, TAG, "OnCreate complete");
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -334,12 +336,12 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     }
 
     private void handleSerializedConnection(Intent i) {
-        Log.d(TAG, "Initializing serialized connection");
+        debugLog(App.debugLog, TAG, "Initializing serialized connection");
         connection = new ConnectionBean(this);
         Bundle extras = i.getExtras();
 
         if (extras != null) {
-            Log.d(TAG, "Loading values from serialized connection");
+            debugLog(App.debugLog, TAG, "Loading values from serialized connection");
             connection.populateFromContentValues((ContentValues) extras.getParcelable(Utils.getConnectionString(this)));
             connection.load(this);
         }
@@ -371,7 +373,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     }
 
     private boolean handleSupportedUri(Uri data) {
-        Log.d(TAG, "Initializing classic connection from Intent.");
+        debugLog(App.debugLog, TAG, "Initializing classic connection from Intent.");
         if (isMasterPasswordEnabled()) {
             Utils.showFatalErrorMessage(this, getResources().getString(R.string.master_password_error_intents_not_supported));
             return true;
@@ -433,10 +435,10 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         Intent i = getIntent();
         String vvFileName = retrieveVvFileFromIntent(i);
         if (vvFileName == null) {
-            Log.d(TAG, "Initializing session from connection settings.");
+            debugLog(App.debugLog, TAG, "Initializing session from connection settings.");
             connection = (ConnectionSettings) i.getSerializableExtra("com.undatech.opaque.ConnectionSettings");
         } else {
-            Log.d(TAG, "Initializing session from vv file: " + vvFileName);
+            debugLog(App.debugLog, TAG, "Initializing session from vv file: " + vvFileName);
             File f = new File(vvFileName);
             if (!f.exists()) {
                 // Quit with an error if the file does not exist.
@@ -451,7 +453,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     }
 
     void continueConnecting() {
-        Log.d(TAG, "continueConnecting");
+        debugLog(App.debugLog, TAG, "continueConnecting");
         // Initialize and define actions for on-screen keys.
         initializeOnScreenKeys();
 
@@ -512,16 +514,16 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     }
 
     void relayoutViews(View rootView) {
-        Log.d(TAG, "onGlobalLayout: start");
+        debugLog(App.debugLog, TAG, "onGlobalLayout: start");
         if (canvas == null) {
-            Log.d(TAG, "onGlobalLayout: canvas null, returning");
+            debugLog(App.debugLog, TAG, "onGlobalLayout: canvas null, returning");
             return;
         }
 
         Rect r = new Rect();
 
         rootView.getWindowVisibleDisplayFrame(r);
-        Log.d(TAG, "onGlobalLayout: getWindowVisibleDisplayFrame: " + r.toString());
+        debugLog(App.debugLog, TAG, "onGlobalLayout: getWindowVisibleDisplayFrame: " + r.toString());
 
         // To avoid setting the visible height to a wrong value after an screen unlock event
         // (when r.bottom holds the width of the screen rather than the height due to a rotation)
@@ -533,14 +535,14 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         getWindow().getDecorView().getWindowVisibleDisplayFrame(re);
         if (r.top == 0 || re.top > 0) {
             if (canvas.myDrawable != null) {
-                Log.d(TAG, "onGlobalLayout: Setting VisibleDesktopHeight to: " + (r.bottom - re.top));
+                debugLog(App.debugLog, TAG, "onGlobalLayout: Setting VisibleDesktopHeight to: " + (r.bottom - re.top));
                 canvas.setVisibleDesktopHeight(r.bottom - re.top);
                 canvas.relativePan(0, 0);
             } else {
-                Log.d(TAG, "onGlobalLayout: canvas.myDrawable is null");
+                debugLog(App.debugLog, TAG, "onGlobalLayout: canvas.myDrawable is null");
             }
         } else {
-            Log.d(TAG, "onGlobalLayout: Found r.top to be non-zero");
+            debugLog(App.debugLog, TAG, "onGlobalLayout: Found r.top to be non-zero");
         }
 
         // Enable/show the toolbar if the keyboard is gone, and disable/hide otherwise.
@@ -556,14 +558,14 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         int diffToolbarPosition = r.bottom - re.top - toolbarBottom - r.bottom / 2;
         int diffToolbarPositionRightAbsolute = r.right - toolbar.getWidth();
         int diffToolbarPositionTopAbsolute = r.bottom - re.top - toolbar.getHeight() - r.bottom / 2;
-        Log.d(TAG, "onGlobalLayout: before: r.bottom: " + r.bottom +
+        debugLog(App.debugLog, TAG, "onGlobalLayout: before: r.bottom: " + r.bottom +
                 " rootViewHeight: " + rootViewHeight + " re.top: " + re.top + " re.bottom: " + re.bottom +
                 " layoutKeysBottom: " + layoutKeysBottom + " rootViewBottom: " + rootViewBottom + " toolbarBottom: " + toolbarBottom +
                 " diffLayoutKeysPosition: " + diffLayoutKeysPosition + " diffToolbarPosition: " + diffToolbarPosition);
 
         boolean softKeyboardPositionChanged = false;
         if (r.bottom > rootViewHeight * 0.81) {
-            Log.d(TAG, "onGlobalLayout: Less than 19% of screen is covered");
+            debugLog(App.debugLog, TAG, "onGlobalLayout: Less than 19% of screen is covered");
             if (softKeyboardUp) {
                 softKeyboardPositionChanged = true;
             }
@@ -571,7 +573,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
             // Soft Kbd gone, shift the meta keys and arrows down.
             if (layoutKeys != null) {
-                Log.d(TAG, "onGlobalLayout: shifting on-screen buttons down by: " + diffLayoutKeysPosition);
+                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting on-screen buttons down by: " + diffLayoutKeysPosition);
                 layoutKeys.offsetTopAndBottom(diffLayoutKeysPosition);
                 if (!connection.getUseLastPositionToolbar() || !connection.getUseLastPositionToolbarMoved()) {
                     toolbar.offsetTopAndBottom(diffToolbarPosition);
@@ -583,21 +585,21 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                             diffToolbarPositionRightAbsolute,
                             diffToolbarPositionTopAbsolute);
                 }
-                Log.d(TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
+                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
                 layoutArrowKeys.offsetLeftAndRight(diffArrowKeysPosition);
                 if (softKeyboardPositionChanged) {
-                    Log.d(TAG, "onGlobalLayout: hiding on-screen buttons");
+                    debugLog(App.debugLog, TAG, "onGlobalLayout: hiding on-screen buttons");
                     setExtraKeysVisibility(View.GONE, false);
                     canvas.invalidate();
                 }
             }
         } else {
-            Log.d(TAG, "onGlobalLayout: More than 19% of screen is covered");
+            debugLog(App.debugLog, TAG, "onGlobalLayout: More than 19% of screen is covered");
             softKeyboardUp = true;
 
             //  Soft Kbd up, shift the meta keys and arrows up.
             if (layoutKeys != null) {
-                Log.d(TAG, "onGlobalLayout: shifting on-screen buttons up by: " + diffLayoutKeysPosition);
+                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting on-screen buttons up by: " + diffLayoutKeysPosition);
                 layoutKeys.offsetTopAndBottom(diffLayoutKeysPosition);
                 if (!connection.getUseLastPositionToolbar() || !connection.getUseLastPositionToolbarMoved()) {
                     toolbar.offsetTopAndBottom(diffToolbarPosition);
@@ -609,13 +611,13 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                             diffToolbarPositionRightAbsolute,
                             diffToolbarPositionTopAbsolute);
                 }
-                Log.d(TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
+                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
                 layoutArrowKeys.offsetLeftAndRight(diffArrowKeysPosition);
                 if (extraKeysHidden) {
-                    Log.d(TAG, "onGlobalLayout: on-screen buttons should be hidden");
+                    debugLog(App.debugLog, TAG, "onGlobalLayout: on-screen buttons should be hidden");
                     setExtraKeysVisibility(View.GONE, false);
                 } else {
-                    Log.d(TAG, "onGlobalLayout: on-screen buttons should be showing");
+                    debugLog(App.debugLog, TAG, "onGlobalLayout: on-screen buttons should be showing");
                     setExtraKeysVisibility(View.VISIBLE, true);
                 }
                 canvas.invalidate();
@@ -623,7 +625,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
         layoutKeysBottom = layoutKeys.getBottom();
         rootViewBottom = layoutKeys.getRootView().getBottom();
-        Log.d(TAG, "onGlobalLayout: after: r.bottom: " + r.bottom +
+        debugLog(App.debugLog, TAG, "onGlobalLayout: after: r.bottom: " + r.bottom +
                 " rootViewHeight: " + rootViewHeight + " re.top: " + re.top + " re.bottom: " + re.bottom +
                 " layoutKeysBottom: " + layoutKeysBottom + " rootViewBottom: " + rootViewBottom + " toolbarBottom: " + toolbarBottom +
                 " diffLayoutKeysPosition: " + diffLayoutKeysPosition + " diffToolbarPosition: " + diffToolbarPosition);
@@ -640,13 +642,13 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         final String tempVvFile = getFilesDir() + "/tempfile.vv";
         int msgId = 0;
 
-        Log.d(TAG, "Got intent: " + i.toString());
+        debugLog(App.debugLog, TAG, "Got intent: " + i.toString());
 
         if (data != null) {
-            Log.d(TAG, "Got data: " + data.toString());
+            debugLog(App.debugLog, TAG, "Got data: " + data.toString());
             final String dataString = data.toString();
             if (dataString.startsWith("http")) {
-                Log.d(TAG, "Intent is with http scheme.");
+                debugLog(App.debugLog, TAG, "Intent is with http scheme.");
                 msgId = R.string.error_failed_to_download_vv_http;
                 FileUtils.deleteFile(tempVvFile);
 
@@ -687,11 +689,11 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                     vvFileName = tempVvFile;
                 }
             } else if (dataString.startsWith("file")) {
-                Log.d(TAG, "Intent is with file scheme.");
+                debugLog(App.debugLog, TAG, "Intent is with file scheme.");
                 msgId = R.string.error_failed_to_obtain_vv_file;
                 vvFileName = data.getPath();
             } else if (dataString.startsWith("content")) {
-                Log.d(TAG, "Intent is with content scheme.");
+                debugLog(App.debugLog, TAG, "Intent is with content scheme.");
                 msgId = R.string.error_failed_to_obtain_vv_content;
                 FileUtils.deleteFile(tempVvFile);
 
@@ -712,7 +714,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                 if (vvFileName == null)
                     MessageDialogs.displayMessageAndFinish(this, msgId, R.string.error_dialog_title);
             }
-            Log.d(TAG, "Got filename: " + vvFileName);
+            debugLog(App.debugLog, TAG, "Got filename: " + vvFileName);
         }
 
         return vvFileName;
@@ -1084,7 +1086,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
      * color mode (already done) scaling, input mode
      */
     void setModes() {
-        Log.d(TAG, "setModes");
+        debugLog(App.debugLog, TAG, "setModes");
         inputHandler = getInputHandlerByName(connection.getInputMode());
         AbstractScaling.getByScaleType(connection.getScaleMode()).setScaleTypeForActivity(this);
         initializeOnScreenKeys();
@@ -1175,7 +1177,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
      * to fix things up after a rotation.
      */
     private void correctAfterRotation() throws Exception {
-        Log.d(TAG, "correctAfterRotation");
+        debugLog(App.debugLog, TAG, "correctAfterRotation");
         canvas.waitUntilInflated();
         // Its quite common to see NullPointerExceptions here when this function is called
         // at the point of disconnection. Hence, we catch and ignore the error.
@@ -1272,7 +1274,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     /** {@inheritDoc} */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "OnCreateOptionsMenu called");
+        debugLog(App.debugLog, TAG, "OnCreateOptionsMenu called");
         try {
             getMenuInflater().inflate(R.menu.vnccanvasactivitymenu, menu);
 
@@ -1307,7 +1309,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "OnCreateOptionsMenu complete");
+        debugLog(App.debugLog, TAG, "OnCreateOptionsMenu complete");
         return true;
     }
 

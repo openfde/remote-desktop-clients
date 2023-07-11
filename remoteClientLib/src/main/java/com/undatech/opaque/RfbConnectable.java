@@ -22,6 +22,7 @@ package com.undatech.opaque;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.undatech.opaque.input.RemoteKeyboardState;
 
@@ -72,7 +73,7 @@ public abstract class RfbConnectable {
     public abstract void setCertificateAccepted(boolean certificateAccepted);
 
     protected void remoteClipboardChanged(String data) {
-        android.util.Log.d(TAG, "remoteClipboardChanged called.");
+        Log.d(TAG, "remoteClipboardChanged() called with: data = [" + data + "]");
         // Send a message containing the text to our handler.
         Message m = new Message();
         m.setTarget(handler);
@@ -81,5 +82,9 @@ public abstract class RfbConnectable {
         strings.putString("text", data);
         m.obj = strings;
         handler.sendMessage(m);
+    }
+
+    public void writeClipboardNotify() {
+
     }
 }

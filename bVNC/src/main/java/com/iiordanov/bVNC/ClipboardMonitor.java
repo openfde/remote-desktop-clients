@@ -19,8 +19,9 @@
 
 package com.iiordanov.bVNC;
 
+import android.content.ClipboardManager;
 import android.content.Context;
-import android.text.ClipboardManager;
+import android.util.Log;
 
 import java.util.TimerTask;
 
@@ -30,16 +31,17 @@ import java.util.TimerTask;
  */
 
 public class ClipboardMonitor extends TimerTask {
+    private ClipboardManager clipboard;
     private String TAG = "ClipboardMonitor";
     private Context context;
-    ClipboardManager clipboard;
-    private String knownClipboardContents;
     RemoteCanvas vncCanvas;
-    
-    public ClipboardMonitor (Context c, RemoteCanvas vc) {
+
+    public static String knownClipboardContents;
+
+    public ClipboardMonitor (Context c, RemoteCanvas vc, android.content.ClipboardManager clipboard) {
         context   = c;
         vncCanvas = vc;
-        clipboard = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+        this.clipboard = clipboard;
         knownClipboardContents = new String("");
     }
     
@@ -63,14 +65,11 @@ public class ClipboardMonitor extends TimerTask {
     @Override
     public void run() {
         String currentClipboardContents = getClipboardContents ();
-        //Log.d(TAG, "Current clipboard contents: " + currentClipboardContents);
-        //Log.d(TAG, "Previously known clipboard contents: " + knownClipboardContents);
         if (!vncCanvas.serverJustCutText && currentClipboardContents != null &&
             !currentClipboardContents.equals(knownClipboardContents)) {
             if (vncCanvas.rfbconn != null && vncCanvas.rfbconn.isInNormalProtocol()) {
-                vncCanvas.rfbconn.writeClientCutText(currentClipboardContents);
-                knownClipboardContents = new String(currentClipboardContents);
-                //Log.d(TAG, "Wrote: " + knownClipboardContents + " to remote clipboard.");
+                    vncCanvas.rfb.writeClipboardNotify();
+                    knownClipboardContents = new String(currentClipboardContents);
             }
         } else if (vncCanvas.serverJustCutText && currentClipboardContents != null) {
             knownClipboardContents = new String(currentClipboardContents);

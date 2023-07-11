@@ -269,12 +269,12 @@ public abstract class MainConfiguration extends FragmentActivity {
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause called");
-        if (database != null)
-            database.close();
-        if (selected != null) {
-            updateSelectedFromView();
-            selected.saveAndWriteRecent(false, this);
-        }
+//        if (database != null)
+//            database.close();
+//        if (selected != null) {
+//            updateSelectedFromView();
+//            selected.saveAndWriteRecent(false, this);
+//        }
     }
 
     @Override
