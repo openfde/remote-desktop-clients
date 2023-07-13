@@ -82,6 +82,10 @@ public class RemoteSpiceKeyboard extends RemoteKeyboard {
 		return keyEvent(keyCode, event, additionalMetaState);
 	}
 
+    public boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState,CharSequence c){
+        return true;
+    }
+
 	public boolean keyEvent(int keyCode, KeyEvent event, int additionalMetaState) {
         GeneralUtils.debugLog(debugLogging, TAG, event.toString());
         // Drop repeated modifiers

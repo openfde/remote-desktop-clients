@@ -23,6 +23,8 @@
 //
 package com.iiordanov.bVNC;
 
+import static com.ft.fdevnc.Constants.BASEURL;
+import static com.ft.fdevnc.Constants.URL_STOPAPP;
 import static com.undatech.opaque.util.GeneralUtils.debugLog;
 
 import android.annotation.SuppressLint;
@@ -45,6 +47,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
@@ -76,6 +79,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ft.fdevnc.VncResult;
 import com.iiordanov.android.bc.BCFactory;
 import com.iiordanov.bVNC.dialogs.EnterTextDialog;
 import com.iiordanov.bVNC.dialogs.MetaKeyDialog;
@@ -99,6 +103,8 @@ import com.undatech.opaque.util.FileUtils;
 import com.undatech.opaque.util.OnTouchViewMover;
 import com.undatech.opaque.util.RemoteToolbar;
 import com.undatech.remoteClientUi.R;
+import com.xwdz.http.QuietOkHttp;
+import com.xwdz.http.callback.JsonCallBack;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,15 +114,19 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import okhttp3.Call;
 
 public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyListener,
         SelectTextElementFragment.OnFragmentDismissedListener {
 
-    private final static String TAG = "RemoteCanvasActivity";
+    private final static String TAG = "DetectText CanvasAct";
 
     InputHandler inputHandler;
     private Vibrator myVibrator;
@@ -171,6 +181,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     View rootView;
 
     private int canvasWidth, canvasHight;
+
+    private DetectEventEditText inputlayout;
 
     /**
      * This runnable enables immersive mode.
@@ -260,6 +272,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         setContentView(R.layout.canvas);
 
         canvas = (RemoteCanvas) findViewById(R.id.canvas);
+        inputlayout = (DetectEventEditText) findViewById(R.id.inputlayout);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             canvas.setDefaultFocusHighlightEnabled(false);
@@ -312,6 +326,34 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
         debugLog(App.debugLog, TAG, "OnCreate complete");
     }
+//
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        Log.d(TAG, "onKeyDown() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
+//        return super.onKeyDown(keyCode, event);
+//    }
+//
+//    public boolean dispatchKeyEvent(KeyEvent event) {
+//        Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "]");
+//        if(event.getAction() == KeyEvent.ACTION_MULTIPLE){
+//            Log.d(TAG, "dispatchKeyEvent() called with: char = [" + event.getCharacters() + "]");
+//        }
+////        if(event.getAction() == KeyEvent.ACTION_MULTIPLE){
+////            return vncCanvas.processLocalKeyEvent(0, event);
+////        } else {
+//            return super.dispatchKeyEvent(event);
+////        }
+//    }
+
+    public void onTextViewClicked(View view) {
+        inputlayout.requestFocus();
+        inputlayout.setFocusableInTouchMode(true);
+//        InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//        inputMgr.showSoftInput(inputlayout,
+//                InputMethodManager.SHOW_FORCED);
+    }
+
+
 
     @SuppressLint("SourceLockedOrientationActivity")
     void initialize(final Runnable setModes, final Runnable hideKeyboardAndExtraKeys) {
@@ -1079,6 +1121,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             canvas.postInvalidateDelayed(600);
         } catch (NullPointerException e) {
         }
+
+        inputlayout.requestFocus();
+        inputlayout.setFocusableInTouchMode(true);
     }
 
     /**
@@ -1099,9 +1144,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         canvas.setOnKeyListener(this);
         canvas.setFocusableInTouchMode(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            canvas.setFocusedByDefault(true);
+//            canvas.setFocusedByDefault(true);
         }
-        canvas.requestFocus();
+//        canvas.requestFocus();
         canvas.setDrawingCacheEnabled(false);
 
         SamsungDexUtils.INSTANCE.dexMetaKeyCapture(this);
@@ -1541,14 +1586,64 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopApp();
         Log.i(TAG, "onDestroy called.");
         if (canvas != null)
             canvas.closeConnection();
         System.gc();
     }
 
+    private void stopApp() {
+        int app = connection.getApp();
+        QuietOkHttp.post(BASEURL + URL_STOPAPP)
+                .setCallbackToMainUIThread(true)
+                .addParams("App", Integer.toString(app))
+                .addParams("SysOnly", "false")
+                .execute(new JsonCallBack<VncResult.GetPortResult>() {
+                    @Override
+                    public void onFailure(Call call, Exception e) {
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                    }
+
+                    @Override
+                    public void onSuccess(Call call, VncResult.GetPortResult response) {
+                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                    }
+                });
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "dispatchTouchEvent() called with: ev = [" + ev + "]");
+        return super.dispatchTouchEvent(ev);
+    }
+
+
+    private Set<Long> downTimes = new HashSet<>();
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "]");
+        if (!TextUtils.isEmpty(inputlayout.commitText) && event.getAction() == KeyEvent.ACTION_UP && !downTimes.contains(event.getDownTime())) {
+            return canvas.getKeyboard().keyEvent(0, event, inputlayout.commitText);
+        } else {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                downTimes.add(event.getDownTime());
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                downTimes.remove(event.getDownTime());
+            }
+            return canvas.getKeyboard().keyEvent(event.getKeyCode(), event);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG, "onKeyDown() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
+        return super.onKeyDown(keyCode, event);
+    }
+
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent evt) {
+        Log.d(TAG, "onKey() called with: v = [" + v + "], keyCode = [" + keyCode + "], evt = [" + evt + "]");
 
         boolean consumed = false;
 

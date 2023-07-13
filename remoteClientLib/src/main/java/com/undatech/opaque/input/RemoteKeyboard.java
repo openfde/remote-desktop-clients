@@ -103,8 +103,14 @@ public abstract class RemoteKeyboard {
     public boolean keyEvent(int keyCode, KeyEvent evt) {
         return processLocalKeyEvent (keyCode, evt, 0);
     }
+
+    public boolean keyEvent(int keyCode, KeyEvent evt, CharSequence c ) {
+        return processLocalKeyEvent (keyCode, evt, 0, c);
+    }
     
     public abstract boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState);
+
+    public abstract boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState,CharSequence c);
 
     public void repeatKeyEvent(int keyCode, KeyEvent event) { keyRepeater.start(keyCode, event); }
 

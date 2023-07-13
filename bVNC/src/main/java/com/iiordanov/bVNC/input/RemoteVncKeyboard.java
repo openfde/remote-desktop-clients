@@ -3,6 +3,7 @@ package com.iiordanov.bVNC.input;
 import static com.undatech.opaque.util.GeneralUtils.debugLog;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.iiordanov.bVNC.App;
@@ -10,6 +11,8 @@ import com.iiordanov.bVNC.RemoteCanvas;
 import com.iiordanov.bVNC.RfbProto;
 import com.iiordanov.tigervnc.rfb.UnicodeToKeysym;
 import com.undatech.opaque.RfbConnectable;
+
+import java.io.IOException;
 
 public class RemoteVncKeyboard extends RemoteKeyboard {
     private final static String TAG = "RemoteKeyboard";
@@ -22,6 +25,12 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
         canvas = v;
         // Indicate we want Right Alt to be ISO L3 SHIFT if preferred.
         RemoteVncKeyboard.rAltAsIsoL3Shift = rAltAsIsoL3Shift;
+    }
+
+    public boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState,CharSequence c) {
+        Log.d(TAG, "processLocalKeyEvent() called with: keyCode = [" + keyCode + "], evt = [" + evt + "], additionalMetaState = [" + additionalMetaState + "], c = [" + c + "]");
+        ((RfbProto) rfb).writeKeyStringEvent(c, true);
+        return true;
     }
 
     public boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState) {

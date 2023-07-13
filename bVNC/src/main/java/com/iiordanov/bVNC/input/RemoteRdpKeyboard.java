@@ -26,6 +26,10 @@ public class RemoteRdpKeyboard extends RemoteKeyboard {
         keyboardMapper.init(context);
         keyboardMapper.reset((RdpKeyboardMapper.KeyProcessingListener)r);
     }
+
+    public  boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState,CharSequence c){
+        return true;
+    }
     
     public boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState) {
         debugLog(App.debugLog, TAG, "processLocalKeyEvent: " + evt.toString() + " " + keyCode);

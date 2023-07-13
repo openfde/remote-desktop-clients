@@ -1822,6 +1822,27 @@ public class RfbProto extends RfbConnectable {
         }
     }
 
+    public synchronized void writeKeyStringEvent(CharSequence charSequence, boolean down) {
+        for (int index = 0; index < charSequence.length(); index++) {
+            int keySym = charSequence.charAt(index);
+            if (keySym > 0xff) {
+                keySym += 0x1000000;
+            }
+            Log.d(TAG, "writeKeyStringEvent() called with: keySym = [" + keySym + "], down = [" + down + "]");
+            if (viewOnly)
+                return;
+            eventBufLen = 0;
+            if (keySym > 0)
+                writeKeyEvent(keySym, down);
+            try {
+                os.write(eventBuf, 0, eventBufLen);
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to write key event to VNC server.");
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     //
     // Add a raw key event with the given X keysym to eventBuf.
