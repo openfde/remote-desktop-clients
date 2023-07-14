@@ -1823,14 +1823,14 @@ public class RfbProto extends RfbConnectable {
     }
 
     public synchronized void writeKeyStringEvent(CharSequence charSequence, boolean down) {
+        if (viewOnly)
+            return;
         for (int index = 0; index < charSequence.length(); index++) {
             int keySym = charSequence.charAt(index);
             if (keySym > 0xff) {
                 keySym += 0x1000000;
             }
             Log.d(TAG, "writeKeyStringEvent() called with: keySym = [" + keySym + "], down = [" + down + "]");
-            if (viewOnly)
-                return;
             eventBufLen = 0;
             if (keySym > 0)
                 writeKeyEvent(keySym, down);

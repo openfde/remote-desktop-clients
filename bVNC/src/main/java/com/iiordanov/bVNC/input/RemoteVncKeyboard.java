@@ -264,8 +264,8 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
         int y = pointer.getY();
 
         if (meta.isMouseClick()) {
-            rfb.writePointerEvent(x, y, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, meta.getMouseButtons(), false);
-            rfb.writePointerEvent(x, y, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, 0, false);
+            rfb.writePointerEvent(x, y-40, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, meta.getMouseButtons(), false);
+            rfb.writePointerEvent(x, y-40, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, 0, false);
         } else {
             rfb.writeKeyEvent(meta.getKeySym(), meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, true);
             rfb.writeKeyEvent(meta.getKeySym(), meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, false);

@@ -371,8 +371,8 @@ public class bVNC extends MainConfiguration {
 
     private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
         //todo mock addr
-//        ipText.setText("192.168.253.129");
-//        portText.setText("5902");
+//        ipText.setText("10.31.91.99");
+//        portText.setText("5905");
 //        save();
 
 
