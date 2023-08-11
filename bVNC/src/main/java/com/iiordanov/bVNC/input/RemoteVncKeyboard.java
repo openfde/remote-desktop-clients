@@ -15,7 +15,7 @@ import com.undatech.opaque.RfbConnectable;
 import java.io.IOException;
 
 public class RemoteVncKeyboard extends RemoteKeyboard {
-    private final static String TAG = "RemoteKeyboard";
+    private final static String TAG = "RemoteKeyboard hy";
     public static boolean rAltAsIsoL3Shift = false;
     protected RemoteCanvas canvas;
 
@@ -29,7 +29,8 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
 
     public boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState,CharSequence c) {
         Log.d(TAG, "processLocalKeyEvent() called with: keyCode = [" + keyCode + "], evt = [" + evt + "], additionalMetaState = [" + additionalMetaState + "], c = [" + c + "]");
-        ((RfbProto) rfb).writeKeyStringEvent(c, true);
+        ((RfbProto) rfb).writeKeyStringEvent(keyCode, c, true);
+        ((RfbProto) rfb).writeKeyStringEvent(keyCode, c, false);
         return true;
     }
 
@@ -143,7 +144,7 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
                     keysym = UnicodeToKeysym.translate(key);
                     numchars = evt.getCharacters().length();
                     unicode = true;
-                    debugLog(App.debugLog, TAG, "processLocalKeyEvent: KEYCODE_UNKNOWN, " +
+                    debugLog(true, TAG, "processLocalKeyEvent: KEYCODE_UNKNOWN, " +
                             "unicode key: " + key);
                 }
                 break;
@@ -169,7 +170,7 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
                         evt.getDeviceId(), evt.getScanCode());
                 key = copy.getUnicodeChar();
                 keysym = UnicodeToKeysym.translate(key);
-                debugLog(App.debugLog, TAG, "processLocalKeyEvent: extracted unicode key: " +
+                debugLog(true, TAG, "processLocalKeyEvent: extracted unicode key: " +
                         key + ", keysym: " + keysym);
                 break;
             }
@@ -243,7 +244,7 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
                     for (int i = 0; i < numchars; i++) {
                         key = evt.getCharacters().charAt(i);
                         keysym = UnicodeToKeysym.translate(key);
-                        debugLog(App.debugLog, TAG, "processLocalKeyEvent: Sending multiple keys. Key: " +
+                        debugLog(true, TAG, "processLocalKeyEvent: Sending multiple keys. Key: " +
                                 key + " keysym: " + keysym + ", metaState: " + metaState);
                         rfb.writeKeyEvent(keysym, metaState, true);
                         rfb.writeKeyEvent(keysym, metaState, false);
@@ -264,8 +265,8 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
         int y = pointer.getY();
 
         if (meta.isMouseClick()) {
-            rfb.writePointerEvent(x, y-40, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, meta.getMouseButtons(), false);
-            rfb.writePointerEvent(x, y-40, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, 0, false);
+            rfb.writePointerEvent(x, y, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, meta.getMouseButtons(), false);
+            rfb.writePointerEvent(x, y, meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, 0, false);
         } else {
             rfb.writeKeyEvent(meta.getKeySym(), meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, true);
             rfb.writeKeyEvent(meta.getKeySym(), meta.getMetaFlags()|onScreenMetaState|hardwareMetaState, false);

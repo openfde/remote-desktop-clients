@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 public class DetectEventEditText extends EditText implements View.OnKeyListener,
         EditableInputConnection.OnDelEventListener {
-    private static final String TAG = "DetectText";
+    private static final String TAG = "DetectText hy";
     private DelEventListener delEventListener;
 
     public CharSequence commitText;

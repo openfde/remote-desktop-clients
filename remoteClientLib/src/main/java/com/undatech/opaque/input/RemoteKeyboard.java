@@ -407,10 +407,10 @@ public abstract class RemoteKeyboard {
                     debugLog(this.debugLogging, TAG, "Detected repeat modifier keys, dropping");
                     shouldDrop = true;
                 }
-                if (isNoQwertyKbd(context)) {
-                    debugLog(this.debugLogging, TAG, "Detected modifier key from touchscreen input, dropping");
-                    shouldDrop = true;
-                }
+//                if (isNoQwertyKbd(context)) {
+//                    debugLog(this.debugLogging, TAG, "Detected modifier key from touchscreen input, dropping");
+//                    shouldDrop = true;
+//                }
                 break;
         }
 

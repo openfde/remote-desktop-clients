@@ -37,7 +37,7 @@ public class App extends MultiDexApplication {
         Constants.DEFAULT_PROTOCOL_PORT = Utils.getDefaultPort(this);
         database = new Database(this);
         context = new WeakReference<Context>(this);
-//        debugLog = BuildConfig.DEBUG; //Utils.querySharedPreferenceBoolean(getApplicationContext(), "moreDebugLoggingTag");
+        debugLog = BuildConfig.DEBUG; //Utils.querySharedPreferenceBoolean(getApplicationContext(), "moreDebugLoggingTag");
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLog("fde"));
         logInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient sOkHttpClient = new OkHttpClient.Builder()

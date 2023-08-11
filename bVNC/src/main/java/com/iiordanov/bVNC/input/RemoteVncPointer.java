@@ -125,7 +125,7 @@ public class RemoteVncPointer extends RemotePointer {
         if (!isMoving) {
             // If this is a new mouse down event, release previous button pressed to avoid confusing the remote OS.
             if (prevPointerMask != 0 && prevPointerMask != pointerMask) {
-                protocomm.writePointerEvent(pointerX, pointerY-40,
+                protocomm.writePointerEvent(pointerX, pointerY,
                                             combinedMetaState,
                                             prevPointerMask & ~POINTER_DOWN_MASK, false);
             }
@@ -134,7 +134,7 @@ public class RemoteVncPointer extends RemotePointer {
         
         canvas.invalidateMousePosition();
         pointerX = x;
-        pointerY = y-40;
+        pointerY = y;
         
         // Do not let mouse pointer leave the bounds of the desktop.
         if (pointerX < 0) {

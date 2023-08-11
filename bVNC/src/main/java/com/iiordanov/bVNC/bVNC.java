@@ -123,6 +123,8 @@ public class bVNC extends MainConfiguration {
 
     private int page = 1;
     private int pageSize = 20;
+    //todo mock addr
+    private boolean MOCK_ADDR = false;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -359,6 +361,14 @@ public class bVNC extends MainConfiguration {
     @Override
     protected void onResume() {
         super.onResume();
+        if(MOCK_ADDR){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tryLunchApp(null);
+                }
+            },3000);
+        }
     }
 
     private void save() {
@@ -370,12 +380,15 @@ public class bVNC extends MainConfiguration {
     }
 
     private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
-        //todo mock addr
-//        ipText.setText("10.31.91.99");
-//        portText.setText("5905");
-//        save();
+        if(MOCK_ADDR){
+            ipText.setText("10.31.91.87");
+            portText.setText("5900");
+            save();
+        }
 
-
+        if(app != null){
+            com.ft.fdevnc.Constants.app = app.Name;
+        }
         Utils.hideKeyboard(this, getCurrentFocus());
         android.util.Log.i(TAG, "Launch Connection");
 

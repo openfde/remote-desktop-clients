@@ -1550,7 +1550,7 @@ public class RemoteCanvas extends AppCompatImageView
      * @return True if the pan changed the view (did not move view out of bounds); false otherwise
      */
     public boolean relativePan(float dX, float dY) {
-        Log.d(TAG, "relativePan: " + dX + ", " + dY);
+//        Log.d(TAG, "relativePan: " + dX + ", " + dY);
 
         // We only pan if the current scaling is able to pan.
         if (canvasZoomer != null && !canvasZoomer.isAbleToPan())

@@ -19,8 +19,10 @@
 
 package com.iiordanov.bVNC;
 
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.TimerTask;
@@ -32,11 +34,12 @@ import java.util.TimerTask;
 
 public class ClipboardMonitor extends TimerTask {
     private ClipboardManager clipboard;
-    private String TAG = "ClipboardMonitor";
+    private String TAG = "ClipboardMonitor hy";
     private Context context;
     RemoteCanvas vncCanvas;
 
     public static String knownClipboardContents;
+    public static String inputUnicode;
 
     public ClipboardMonitor (Context c, RemoteCanvas vc, android.content.ClipboardManager clipboard) {
         context   = c;
@@ -48,15 +51,15 @@ public class ClipboardMonitor extends TimerTask {
     /*
      * Grab the current clipboard contents.
      */
-    private String getClipboardContents () {
-        try {
-            return clipboard.getText().toString();
-        } catch (NullPointerException e) {
-            return null;
-        } catch (RuntimeException e) {
-            return null;
-        }
-    }
+//    private String getClipboardContents () {
+//        try {
+//            return clipboard.getText().toString();
+//        } catch (NullPointerException e) {
+//            return null;
+//        } catch (RuntimeException e) {
+//            return null;
+//        }
+//    }
     
     /*
      * (non-Javadoc)
@@ -64,17 +67,19 @@ public class ClipboardMonitor extends TimerTask {
      */
     @Override
     public void run() {
-        String currentClipboardContents = getClipboardContents ();
-        if (!vncCanvas.serverJustCutText && currentClipboardContents != null &&
-            !currentClipboardContents.equals(knownClipboardContents)) {
-            if (vncCanvas.rfbconn != null && vncCanvas.rfbconn.isInNormalProtocol()) {
+        ClipData primaryClip = clipboard.getPrimaryClip();
+        if (primaryClip != null) {
+            boolean vnc = primaryClip.getDescription().getLabel() != null && primaryClip.getDescription().getLabel().equals("vnc");
+            ClipData.Item itemAt = primaryClip.getItemAt(0);
+            CharSequence text = itemAt.getText();
+            String cliptext = text.toString();
+            if (!TextUtils.isEmpty(cliptext) && !cliptext.equals(knownClipboardContents) && !vnc) {
+                if (vncCanvas.rfbconn != null && vncCanvas.rfbconn.isInNormalProtocol()) {
+                    knownClipboardContents = cliptext;
+                    Log.d(TAG, "ClipboardMonitor get local String:" + knownClipboardContents);
                     vncCanvas.rfb.writeClipboardNotify();
-                    knownClipboardContents = new String(currentClipboardContents);
+                }
             }
-        } else if (vncCanvas.serverJustCutText && currentClipboardContents != null) {
-            knownClipboardContents = new String(currentClipboardContents);
-            vncCanvas.serverJustCutText = false;
-            //Log.d(TAG, "Set knownClipboardContents to equal what server just sent over.");
         }
     }
 }

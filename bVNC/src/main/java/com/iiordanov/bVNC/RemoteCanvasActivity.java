@@ -24,7 +24,7 @@
 package com.iiordanov.bVNC;
 
 import static com.ft.fdevnc.Constants.BASEURL;
-import static com.ft.fdevnc.Constants.URL_STOPAPP;
+import static com.ft.fdevnc.Constants.URL_KILLAPP;
 import static com.undatech.opaque.util.GeneralUtils.debugLog;
 
 import android.annotation.SuppressLint;
@@ -68,6 +68,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -126,7 +127,7 @@ import okhttp3.Call;
 public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyListener,
         SelectTextElementFragment.OnFragmentDismissedListener {
 
-    private final static String TAG = "DetectText CanvasAct";
+    private final static String TAG = "CanvasAct hy";
 
     InputHandler inputHandler;
     private Vibrator myVibrator;
@@ -325,25 +326,49 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             continueConnecting();
         }
         debugLog(App.debugLog, TAG, "OnCreate complete");
+
+        initSendString();
     }
-//
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        Log.d(TAG, "onKeyDown() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
-//        return super.onKeyDown(keyCode, event);
-//    }
-//
-//    public boolean dispatchKeyEvent(KeyEvent event) {
-//        Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "]");
-//        if(event.getAction() == KeyEvent.ACTION_MULTIPLE){
-//            Log.d(TAG, "dispatchKeyEvent() called with: char = [" + event.getCharacters() + "]");
-//        }
-////        if(event.getAction() == KeyEvent.ACTION_MULTIPLE){
-////            return vncCanvas.processLocalKeyEvent(0, event);
-////        } else {
-//            return super.dispatchKeyEvent(event);
-////        }
-//    }
+
+    String s = "《中共中央国务院关于促进民营经济发展壮大的意见》（下称《意见》）19日发布，提出31条政策支持民营经济发展。《意见》提出，坚持“两个毫不动摇”，加快营造市场化、法治化、国际化一流营商环境，优化民营经济发展环境，依法保护民营企业产权和企业家权益，全面构建亲清政商关系，使各种所有制经济依法平等使用生产要素、公平参与市场竞争、同等受到法律保护，引导民营企业通过自身改革发展、合规经营、转型升级不断提升发展质量，促进民营经济做大做优做强。《意见》要求，构建高水平社会主义市场经济体制，持续优化稳定公平透明可预期的发展环境，充分激发民营经济生机活力。具体举措包括：持续破除市场准入壁垒，各地区各部门不得以备案、注册、年检、认定、认证、指定、要求设立分公司等形式设定或变相设定准入障碍；全面落实公平竞争政策制度，强化竞争政策基础地位，健全公平竞争制度框架和政策实施机制，坚持对各类所有制企业一视同仁、平等对待；强化制止滥用行政权力排除限制竞争的反垄断执法等。《意见》明确，加大对民营经济政策支持力度，精准制定实施各类支持政策，完善政策执行方式，加强政策协调性，及时回应关切和利益诉求，切实解决实际困难。其中提出，要完善融资支持政策制度。健全银行、保险、担保、券商等多方共同参与的融资风险市场化分担机制；健全中小微企业和个体工商户信用评级和评价体系，加强涉企信用信息归集，推广“信易贷”等服务模式；支持符合条件的民营中小微企业在债券市场融资，鼓励符合条件的民营企业发行科技创新公司债券，推动民营企业债券融资专项支持计划扩大覆盖面、提升增信力度。支持符合条件的民营企业上市融资和再融资。《意见》还要求，健全对各类所有制经济平等保护的法治环境，为民营经济发展营造良好稳定的预期。包括：依法保护民营企业产权和企业家权益；防止和纠正利用行政或刑事手段干预经济纠纷，以及执法司法中的地方保护主义；进一步规范涉产权强制性措施，避免超权限、超范围、超数额、超时限查封扣押冻结财产；对不宜查封扣押冻结的经营性涉案财物，在保证侦查活动正常进行的同时，可以允许有关当事人继续合理使用，并采取必要的保值保管措施，最大限度减少侦查办案对正常办公和合法生产经营的影响；完善涉企案件申诉、再审等机制，健全冤错案件有效防范和常态化纠正机制。《意见》提出，支持提升科技创新能力。鼓励民营企业根据国家战略需要和行业发展趋势，持续加大研发投入，开展关键核心技术攻关，按规定积极承担国家重大科技项目；培育一批关键行业民营科技领军企业、专精特新中小企业和创新能力强的中小企业特色产业集群；加大政府采购创新产品力度，发挥首台（套）保险补偿机制作用，支持民营企业创新产品迭代应用；推动不同所有制企业、大中小企业融通创新，开展共性技术联合攻关；完善高等学校、科研院所管理制度和成果转化机制，调动其支持民营中小微企业创新发展积极性；支持民营企业与科研机构合作建立技术研发中心、产业研究院、中试熟化基地、工程研究中心、制造业创新中心等创新平台；支持民营企业加强基础性前沿性研究和成果转化。此外，《意见》还明确依法规范和引导民营资本健康发展。具体举措包括：健全规范和引导民营资本健康发展的法律制度，为资本设立“红绿灯”，完善资本行为制度规则，集中推出一批“绿灯”投资案例；全面提升资本治理效能，提高资本监管能力和监管体系现代化水平；引导平台经济向开放、创新、赋能方向发展，补齐发展短板弱项，支持平台企业在创造就业、拓展消费、国际竞争中大显身手，推动平台经济规范健康持续发展；鼓励民营企业集中精力做强做优主业，提升核心竞争力。";
+
+    private void initSendString() {
+        Button sendString = (Button)findViewById(R.id.button);
+        sendString.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                String words = sendString.getText().toString();
+//                ClipboardMonitor.inputUnicode = words;
+//                canvas.rfb.Mock_writeClipboardNotify();
+//                canvas.rfb.writePaste();
+//                ClipboardMonitor.inputUnicode = words;
+//                char c = s.charAt(i);
+//                sendString.setText(String.valueOf(c));
+//                canvas.getKeyboard().keyEvent(0xff, null,sendString.getText().toString());
+//                i++;
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int i = 0;
+                        while (true){
+                            char c = s.charAt(i%(s.length()-1));
+                            sendString.setText(String.valueOf(c));
+                            canvas.getKeyboard().keyEvent(0xff, null,sendString.getText().toString());
+                            i++;
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+
+                    }
+                }).start();
+            }
+        });
+
+    }
 
     public void onTextViewClicked(View view) {
         inputlayout.requestFocus();
@@ -556,16 +581,16 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     }
 
     void relayoutViews(View rootView) {
-        debugLog(App.debugLog, TAG, "onGlobalLayout: start");
+//        debugLog(App.debugLog, TAG, "onGlobalLayout: start");
         if (canvas == null) {
-            debugLog(App.debugLog, TAG, "onGlobalLayout: canvas null, returning");
+//            debugLog(App.debugLog, TAG, "onGlobalLayout: canvas null, returning");
             return;
         }
 
         Rect r = new Rect();
 
         rootView.getWindowVisibleDisplayFrame(r);
-        debugLog(App.debugLog, TAG, "onGlobalLayout: getWindowVisibleDisplayFrame: " + r.toString());
+//        debugLog(App.debugLog, TAG, "onGlobalLayout: getWindowVisibleDisplayFrame: " + r.toString());
 
         // To avoid setting the visible height to a wrong value after an screen unlock event
         // (when r.bottom holds the width of the screen rather than the height due to a rotation)
@@ -577,14 +602,14 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         getWindow().getDecorView().getWindowVisibleDisplayFrame(re);
         if (r.top == 0 || re.top > 0) {
             if (canvas.myDrawable != null) {
-                debugLog(App.debugLog, TAG, "onGlobalLayout: Setting VisibleDesktopHeight to: " + (r.bottom - re.top));
+//                debugLog(App.debugLog, TAG, "onGlobalLayout: Setting VisibleDesktopHeight to: " + (r.bottom - re.top));
                 canvas.setVisibleDesktopHeight(r.bottom - re.top);
                 canvas.relativePan(0, 0);
             } else {
-                debugLog(App.debugLog, TAG, "onGlobalLayout: canvas.myDrawable is null");
+//                debugLog(App.debugLog, TAG, "onGlobalLayout: canvas.myDrawable is null");
             }
         } else {
-            debugLog(App.debugLog, TAG, "onGlobalLayout: Found r.top to be non-zero");
+//            debugLog(App.debugLog, TAG, "onGlobalLayout: Found r.top to be non-zero");
         }
 
         // Enable/show the toolbar if the keyboard is gone, and disable/hide otherwise.
@@ -600,14 +625,14 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         int diffToolbarPosition = r.bottom - re.top - toolbarBottom - r.bottom / 2;
         int diffToolbarPositionRightAbsolute = r.right - toolbar.getWidth();
         int diffToolbarPositionTopAbsolute = r.bottom - re.top - toolbar.getHeight() - r.bottom / 2;
-        debugLog(App.debugLog, TAG, "onGlobalLayout: before: r.bottom: " + r.bottom +
-                " rootViewHeight: " + rootViewHeight + " re.top: " + re.top + " re.bottom: " + re.bottom +
-                " layoutKeysBottom: " + layoutKeysBottom + " rootViewBottom: " + rootViewBottom + " toolbarBottom: " + toolbarBottom +
-                " diffLayoutKeysPosition: " + diffLayoutKeysPosition + " diffToolbarPosition: " + diffToolbarPosition);
+//        debugLog(App.debugLog, TAG, "onGlobalLayout: before: r.bottom: " + r.bottom +
+//                " rootViewHeight: " + rootViewHeight + " re.top: " + re.top + " re.bottom: " + re.bottom +
+//                " layoutKeysBottom: " + layoutKeysBottom + " rootViewBottom: " + rootViewBottom + " toolbarBottom: " + toolbarBottom +
+//                " diffLayoutKeysPosition: " + diffLayoutKeysPosition + " diffToolbarPosition: " + diffToolbarPosition);
 
         boolean softKeyboardPositionChanged = false;
         if (r.bottom > rootViewHeight * 0.81) {
-            debugLog(App.debugLog, TAG, "onGlobalLayout: Less than 19% of screen is covered");
+//            debugLog(App.debugLog, TAG, "onGlobalLayout: Less than 19% of screen is covered");
             if (softKeyboardUp) {
                 softKeyboardPositionChanged = true;
             }
@@ -615,7 +640,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
             // Soft Kbd gone, shift the meta keys and arrows down.
             if (layoutKeys != null) {
-                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting on-screen buttons down by: " + diffLayoutKeysPosition);
+//                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting on-screen buttons down by: " + diffLayoutKeysPosition);
                 layoutKeys.offsetTopAndBottom(diffLayoutKeysPosition);
                 if (!connection.getUseLastPositionToolbar() || !connection.getUseLastPositionToolbarMoved()) {
                     toolbar.offsetTopAndBottom(diffToolbarPosition);
@@ -627,21 +652,21 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                             diffToolbarPositionRightAbsolute,
                             diffToolbarPositionTopAbsolute);
                 }
-                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
+//                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
                 layoutArrowKeys.offsetLeftAndRight(diffArrowKeysPosition);
                 if (softKeyboardPositionChanged) {
-                    debugLog(App.debugLog, TAG, "onGlobalLayout: hiding on-screen buttons");
+//                    debugLog(App.debugLog, TAG, "onGlobalLayout: hiding on-screen buttons");
                     setExtraKeysVisibility(View.GONE, false);
                     canvas.invalidate();
                 }
             }
         } else {
-            debugLog(App.debugLog, TAG, "onGlobalLayout: More than 19% of screen is covered");
+//            debugLog(App.debugLog, TAG, "onGlobalLayout: More than 19% of screen is covered");
             softKeyboardUp = true;
 
             //  Soft Kbd up, shift the meta keys and arrows up.
             if (layoutKeys != null) {
-                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting on-screen buttons up by: " + diffLayoutKeysPosition);
+//                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting on-screen buttons up by: " + diffLayoutKeysPosition);
                 layoutKeys.offsetTopAndBottom(diffLayoutKeysPosition);
                 if (!connection.getUseLastPositionToolbar() || !connection.getUseLastPositionToolbarMoved()) {
                     toolbar.offsetTopAndBottom(diffToolbarPosition);
@@ -653,13 +678,13 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                             diffToolbarPositionRightAbsolute,
                             diffToolbarPositionTopAbsolute);
                 }
-                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
+//                debugLog(App.debugLog, TAG, "onGlobalLayout: shifting arrow keys by: " + diffArrowKeysPosition);
                 layoutArrowKeys.offsetLeftAndRight(diffArrowKeysPosition);
                 if (extraKeysHidden) {
-                    debugLog(App.debugLog, TAG, "onGlobalLayout: on-screen buttons should be hidden");
+//                    debugLog(App.debugLog, TAG, "onGlobalLayout: on-screen buttons should be hidden");
                     setExtraKeysVisibility(View.GONE, false);
                 } else {
-                    debugLog(App.debugLog, TAG, "onGlobalLayout: on-screen buttons should be showing");
+//                    debugLog(App.debugLog, TAG, "onGlobalLayout: on-screen buttons should be showing");
                     setExtraKeysVisibility(View.VISIBLE, true);
                 }
                 canvas.invalidate();
@@ -667,10 +692,10 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
         layoutKeysBottom = layoutKeys.getBottom();
         rootViewBottom = layoutKeys.getRootView().getBottom();
-        debugLog(App.debugLog, TAG, "onGlobalLayout: after: r.bottom: " + r.bottom +
-                " rootViewHeight: " + rootViewHeight + " re.top: " + re.top + " re.bottom: " + re.bottom +
-                " layoutKeysBottom: " + layoutKeysBottom + " rootViewBottom: " + rootViewBottom + " toolbarBottom: " + toolbarBottom +
-                " diffLayoutKeysPosition: " + diffLayoutKeysPosition + " diffToolbarPosition: " + diffToolbarPosition);
+//        debugLog(App.debugLog, TAG, "onGlobalLayout: after: r.bottom: " + r.bottom +
+//                " rootViewHeight: " + rootViewHeight + " re.top: " + re.top + " re.bottom: " + re.bottom +
+//                " layoutKeysBottom: " + layoutKeysBottom + " rootViewBottom: " + rootViewBottom + " toolbarBottom: " + toolbarBottom +
+//                " diffLayoutKeysPosition: " + diffLayoutKeysPosition + " diffToolbarPosition: " + diffToolbarPosition);
     }
 
     /**
@@ -1590,14 +1615,16 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         Log.i(TAG, "onDestroy called.");
         if (canvas != null)
             canvas.closeConnection();
+
+        com.ft.fdevnc.Constants.app = null;
         System.gc();
     }
 
     private void stopApp() {
         int app = connection.getApp();
-        QuietOkHttp.post(BASEURL + URL_STOPAPP)
+        QuietOkHttp.post(BASEURL + URL_KILLAPP)
                 .setCallbackToMainUIThread(true)
-                .addParams("App", Integer.toString(app))
+                .addParams("App", com.ft.fdevnc.Constants.app)
                 .addParams("SysOnly", "false")
                 .execute(new JsonCallBack<VncResult.GetPortResult>() {
                     @Override
@@ -1607,6 +1634,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
                     @Override
                     public void onSuccess(Call call, VncResult.GetPortResult response) {
+                        com.ft.fdevnc.Constants.app = null;
                         Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                     }
                 });
@@ -1623,8 +1651,12 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "]");
-        if (!TextUtils.isEmpty(inputlayout.commitText) && event.getAction() == KeyEvent.ACTION_UP && !downTimes.contains(event.getDownTime())) {
-            return canvas.getKeyboard().keyEvent(0, event, inputlayout.commitText);
+        //type from input method
+        if (!TextUtils.isEmpty(inputlayout.commitText) &&
+                event.getAction() == KeyEvent.ACTION_UP &&
+                !downTimes.contains(event.getDownTime()) &&
+                (event.getKeyCode() < KeyEvent.KEYCODE_A || event.getKeyCode() > KeyEvent.KEYCODE_Z)) {
+            return canvas.getKeyboard().keyEvent(0xff, event, inputlayout.commitText);
         } else {
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 downTimes.add(event.getDownTime());
