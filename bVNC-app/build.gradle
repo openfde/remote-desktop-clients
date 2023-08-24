@@ -16,6 +16,14 @@ android {
         }
     }
 
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (outputFile != null && outputFileName.endsWith('.apk')) {
+                outputFileName = "FdeVncClient.apk"
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

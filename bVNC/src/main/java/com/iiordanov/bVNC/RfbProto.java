@@ -1551,20 +1551,11 @@ public class RfbProto extends RfbConnectable {
         }
     }
 
-
-    public synchronized void writeKeyStringEvent(int keycode, CharSequence charSequence, boolean down) {
-        if (viewOnly  || charSequence == null || charSequence.length() == 0 )
+    public synchronized void writeKeyStringEvent(int keycode, char c, boolean down) {
+        if (viewOnly )
             return;
-
-//        CLIPBOARD_BARRIE = false;
-//        String words = charSequence.toString();
-//        ClipboardMonitor.inputUnicode = words;
-//        canvas.rfb.Mock_writeClipboardNotify();
-//        canvas.rfb.writePaste();
-//        CLIPBOARD_BARRIE = true;
-
-        for (int index = 0; index < charSequence.length(); index++) {
-            int keySym = charSequence.charAt(index);
+//        for (int index = 0; index < charSequence.length(); index++) {
+            int keySym = c;
             if (keySym > 0xff) {
                 keySym += 0x1000000;
             }
@@ -1579,7 +1570,7 @@ public class RfbProto extends RfbConnectable {
                 Log.e(TAG, "Failed to write key event to VNC server.");
                 e.printStackTrace();
             }
-        }
+//        }
     }
 
 

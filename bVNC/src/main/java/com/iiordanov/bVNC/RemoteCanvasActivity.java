@@ -45,6 +45,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.text.TextUtils;
@@ -55,6 +56,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.PointerIcon;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
@@ -183,7 +185,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
     private int canvasWidth, canvasHight;
 
-    private DetectEventEditText inputlayout;
+    public DetectEventEditText inputlayout;
 
     /**
      * This runnable enables immersive mode.
@@ -255,11 +257,14 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle icicle) {
         debugLog(App.debugLog, TAG, "OnCreate called");
         super.onCreate(icicle);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  PointerIcon.TYPE_NULL));
+        }
         // TODO: Implement left-icon
         //requestWindowFeature(Window.FEATURE_LEFT_ICON);
         //setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.icon);
@@ -280,8 +285,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             canvas.setDefaultFocusHighlightEnabled(false);
         }
         if (Build.VERSION.SDK_INT >= 9) {
-            android.os.StrictMode.ThreadPolicy policy = new android.os.StrictMode.ThreadPolicy.Builder().permitAll().build();
-            android.os.StrictMode.setThreadPolicy(policy);
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
         }
 
         myVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
@@ -547,6 +552,11 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                 if(canvasWidth == 0 || canvasHight == 0){
                     canvasWidth = canvas.getWidth();
                     canvasHight = canvas.getHeight();
+                    try {
+                        canvas.rfb.requestResolution(canvasWidth, canvasHight);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 } else if(canvasWidth != canvas.getWidth() || canvasHight != canvas.getHeight()){
                     canvasWidth = canvas.getWidth();
                     canvasHight = canvas.getHeight();

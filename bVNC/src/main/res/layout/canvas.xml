@@ -207,4 +207,13 @@
 		android:layout_marginBottom="100dp"
 		android:orientation="horizontal" />
 
+
+	<Button
+		android:id="@+id/button"
+		android:layout_gravity="center_vertical"
+		android:layout_width="100dp"
+		android:layout_height="50dp"
+		android:visibility="gone"
+		android:text="牌" />
+
 </FrameLayout>

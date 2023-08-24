@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import com.iiordanov.bVNC.App;
+import com.iiordanov.bVNC.DetectEventEditText;
 import com.iiordanov.bVNC.RemoteCanvas;
 import com.iiordanov.bVNC.RfbProto;
 import com.iiordanov.tigervnc.rfb.UnicodeToKeysym;
@@ -29,8 +30,12 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
 
     public boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState,CharSequence c) {
         Log.d(TAG, "processLocalKeyEvent() called with: keyCode = [" + keyCode + "], evt = [" + evt + "], additionalMetaState = [" + additionalMetaState + "], c = [" + c + "]");
-        ((RfbProto) rfb).writeKeyStringEvent(keyCode, c, true);
-        ((RfbProto) rfb).writeKeyStringEvent(keyCode, c, false);
+        if ( c == null || c.length() == 0 )
+            return true;
+        for (int index = 0; index < c.length(); index++) {
+            ((RfbProto) rfb).writeKeyStringEvent(keyCode, c.charAt(index), true);
+            ((RfbProto) rfb).writeKeyStringEvent(keyCode, c.charAt(index), false);
+        }
         return true;
     }
 
@@ -232,7 +237,14 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
                 if (numchars == 1) {
                     debugLog(App.debugLog, TAG, "processLocalKeyEvent: Sending key. Down: " + down +
                             ", key: " + key + ", keysym:" + keysym + ", metaState: " + metaState);
-                    rfb.writeKeyEvent(keysym, metaState, down);
+
+
+                    if(!down && (DetectEventEditText.commitText !=null && DetectEventEditText.commitText.length() == 1) && keysym < 0xff){
+                        rfb.writeKeyEvent(keysym, metaState, true);
+                        rfb.writeKeyEvent(keysym, metaState, false);
+                    } else {
+                        rfb.writeKeyEvent(keysym, metaState, down);
+                    }
                     // If this is a unicode key, the up event will never come, so we artificially insert it.
                     if (unicode) {
                         debugLog(App.debugLog, TAG, "processLocalKeyEvent: Unicode key. Down: false" +

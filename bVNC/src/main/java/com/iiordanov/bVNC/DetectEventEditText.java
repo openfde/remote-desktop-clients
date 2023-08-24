@@ -2,6 +2,7 @@ package com.iiordanov.bVNC;
 
 import static android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.method.KeyListener;
@@ -18,7 +19,8 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
     private static final String TAG = "DetectText hy";
     private DelEventListener delEventListener;
 
-    public CharSequence commitText;
+    public static CharSequence commitText;
+
 
     /**
      * 防止delEvent触发两次。
@@ -29,18 +31,21 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
     public DetectEventEditText(Context context) {
         super(context);
         setKeyListener(getDefaultKeyListener());
+        commitText = null;
     }
 
     public DetectEventEditText(Context context,
                                AttributeSet attrs) {
         super(context, attrs);
         setKeyListener(getDefaultKeyListener());
+        commitText = null;
     }
 
     public DetectEventEditText(Context context,
                                AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setKeyListener(getDefaultKeyListener());
+        commitText = null;
     }
 
 
@@ -78,6 +83,7 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
         Log.d(TAG, "onKeyPreIme() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
         if(event.getAction() == KeyEvent.ACTION_DOWN){
             commitText = null;
+//            ((Activity)getContext()).dispatchKeyEvent(event);
         }
         return super.onKeyPreIme(keyCode, event);
     }
