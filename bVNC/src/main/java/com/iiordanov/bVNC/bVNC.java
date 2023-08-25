@@ -28,17 +28,21 @@ import static com.ft.fdevnc.Constants.URL_STOPAPP;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,7 +50,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -56,29 +60,32 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import android.util.Log;
 
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.ft.fdevnc.AllAppActivity;
 import com.ft.fdevnc.AppAdapter;
 import com.ft.fdevnc.AppListResult;
 import com.ft.fdevnc.VncResult;
 import com.iiordanov.bVNC.dialogs.AutoXCustomizeDialog;
-import com.iiordanov.bVNC.dialogs.ImportExportDialog;
 import com.iiordanov.bVNC.dialogs.RepeaterDialog;
 import com.undatech.opaque.ConnectionSettings;
 import com.undatech.opaque.util.ConnectionLoader;
 import com.undatech.opaque.util.GeneralUtils;
 import com.undatech.remoteClientUi.*;
-import com.antlersoft.android.dbimpl.*;
+import com.xiaokun.dialogtiplib.dialog_tip.TipLoadDialog;
+import com.xiaokun.dialogtiplib.util.AppUtils;
 import com.xwdz.http.QuietOkHttp;
 import com.xwdz.http.callback.JsonCallBack;
-import com.yanzhenjie.recyclerview.OnItemClickListener;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import me.kareluo.ui.OptionMenu;
+import me.kareluo.ui.OptionMenuView;
+import me.kareluo.ui.PopupMenuView;
+import me.kareluo.ui.PopupView;
 import okhttp3.Call;
 
 /**
@@ -111,20 +118,25 @@ public class bVNC extends MainConfiguration {
     private CheckBox checkboxPreferHextile;
     private CheckBox checkboxViewOnly;
     private boolean repeaterTextSet;
+    public TipLoadDialog tipLoadDialog;
 
     private Spinner spinnerVncGeometry;
     private EditText resWidth;
     private EditText resHeight;
-
+    private ProgressBar loadingView;
     private SwipeRefreshLayout mRefreshLayout;
     private SwipeRecyclerView mRecyclerView;
     private AppAdapter mAdapter;
     private List<AppListResult.DataBeanX.DataBean> mDataList = new ArrayList<>();
 
     private int page = 1;
-    private int pageSize = 20;
+    private int pageSize = 100;
     //todo mock addr
     private boolean MOCK_ADDR = false;
+    private String shortcutApp;
+    private String shortcuPath;
+    private boolean fromShortcut;
+    private boolean reentry;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -132,7 +144,7 @@ public class bVNC extends MainConfiguration {
         layoutID = R.layout.main;
         super.onCreate(icicle);
 
-
+        AppUtils.init(this);
         initAppList();
 
         sshServer = (EditText) findViewById(R.id.sshServer);
@@ -144,7 +156,7 @@ public class bVNC extends MainConfiguration {
         textNickname = (EditText) findViewById(R.id.textNickname);
         textUsername = (EditText) findViewById(R.id.textUsername);
         autoXStatus = (TextView) findViewById(R.id.autoXStatus);
-
+        loadingView = (ProgressBar) findViewById(R.id.loadingView);
         // Define what happens when the Repeater button is pressed.
         repeaterButton = (Button) findViewById(R.id.buttonRepeater);
         repeaterEntry = (LinearLayout) findViewById(R.id.repeaterEntry);
@@ -154,6 +166,8 @@ public class bVNC extends MainConfiguration {
                 showDialog(R.layout.repeater_dialog);
             }
         });
+        tipLoadDialog = new TipLoadDialog(this);
+
 
         // Here we say what happens when the Pubkey Checkbox is checked/unchecked.
         checkboxUseSshPubkey = (CheckBox) findViewById(R.id.checkboxUseSshPubkey);
@@ -259,7 +273,15 @@ public class bVNC extends MainConfiguration {
         repeaterText = (TextView) findViewById(R.id.textRepeaterId);
 
         setConnectionTypeSpinnerAdapter(R.array.connection_type);
+        if(getIntent() != null && getIntent().getExtras() != null){
+            shortcutApp = (String)getIntent().getExtras().get("App");
+            shortcuPath = (String)getIntent().getExtras().get("Path");
+            Log.d("huyang", "onCreate() called with: shortcutApp = [" + shortcuPath + "]  shortcutApp = [" + shortcuPath + "]");
+            fromShortcut = !TextUtils.isEmpty(shortcuPath) && !TextUtils.isEmpty(shortcutApp);
+        }
+        reentry = App.isRunning(getClass().getName());
     }
+
 
     private void initAppList() {
         mRefreshLayout = findViewById(R.id.refresh_layout);
@@ -311,9 +333,13 @@ public class bVNC extends MainConfiguration {
                     public void onSuccess(Call call, AppListResult response) {
                         Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         List<AppListResult.DataBeanX.DataBean> data = response.getData().getData();
+                        if(fromShortcut){
+                            gotoShortcutApp(data);
+                            return;
+                        }
                         mDataList.addAll(data);
                         mAdapter.notifyDataSetChanged();
-                        if(data.size() > 0){
+                        if (data.size() > 0) {
                             page++;
                         }
                         mRecyclerView.loadMoreFinish(mDataList.size() == 0, response.getData().getPage().getTotal() > mDataList.size());
@@ -322,17 +348,85 @@ public class bVNC extends MainConfiguration {
                 });
     }
 
-    public interface  ItemClickListener {
-        void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app);
+    private void gotoShortcutApp(List<AppListResult.DataBeanX.DataBean> data) {
+        for (AppListResult.DataBeanX.DataBean bean : data){
+            Log.d("huyang", "gotoShortcutApp() called with: bean = [" + bean.getName() + "]");
+            if (TextUtils.equals(shortcutApp, bean.getName())){
+                load2Start(bean);
+            }
+        }
     }
 
-    ItemClickListener  mItemClickListener = new ItemClickListener() {
+    public interface ItemClickListener {
+        void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight);
+    }
+
+    ItemClickListener mItemClickListener = new ItemClickListener() {
         @Override
-        public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app) {
-            selected.setApp(app.id);
-            tryStartVncApp(app);
+        public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight) {
+//            loadingView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "onItemClick() called with: itemView = [" + itemView + "], position = [" + position + "], app = [" + app + "], isRight = [" + isRight + "]");
+            if (isRight) {
+                showOptionView(itemView, app);
+            } else {
+                load2Start(app);
+            }
         }
     };
+
+    private void load2Start(AppListResult.DataBeanX.DataBean app) {
+        tipLoadDialog.setBackground(R.drawable.custom_dialog_bg_corner)
+                .setNoShadowTheme()
+                .setMsgAndType("正在打开程序:" + app.getName(), TipLoadDialog.ICON_TYPE_LOADING)
+                .setTipTime(5000)
+                .show();
+        selected.setApp(app.id);
+        tryStartVncApp(app);
+    }
+
+    private void showOptionView(View itemView, AppListResult.DataBeanX.DataBean app) {
+        PopupMenuView menuView = new PopupMenuView(this, R.menu.vncsessionmenu, new MenuBuilder(this));
+        menuView.setOrientation(LinearLayout.VERTICAL);
+        menuView.setOnMenuClickListener(new OptionMenuView.OnOptionMenuClickListener() {
+            @Override
+            public boolean onOptionMenuClick(int position, OptionMenu menu) {
+                if(position == 0){
+                    load2Start(app);
+                }
+                if(position == 2){
+                    createShortcut(app);
+                }
+                return true;
+            }
+        });
+        menuView.setSites(PopupView.SITE_RIGHT, PopupView.SITE_LEFT, PopupView.SITE_TOP, PopupView.SITE_BOTTOM);
+        menuView.show(itemView);
+    }
+
+    private void createShortcut(AppListResult.DataBeanX.DataBean app) {
+        Log.d(TAG, "createShortcut() called with: app = [" + app + "]");
+        byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
+        Icon icon = Icon.createWithBitmap(bitmap);
+        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+        if (shortcutManager != null && shortcutManager.isRequestPinShortcutSupported()) {
+//            Intent launchIntentForPackage = getPackageManager().getLaunchIntentForPackage(getPackageName());
+            Intent launchIntentForPackage = new Intent(this, bVNC.class);
+            launchIntentForPackage.setAction(Intent.ACTION_MAIN);
+            launchIntentForPackage.putExtra("App", app.getName());
+            launchIntentForPackage.putExtra("Path", app.getName());
+            ShortcutInfo pinShortcutInfo = new ShortcutInfo.Builder(this, app.getName())
+                    .setShortLabel(app.getName())
+                    .setLongLabel(app.getName())
+                    .setIcon(icon)
+                    .setIntent(launchIntentForPackage)
+                    .build();
+            Intent pinnedShortcutCallbackIntent = shortcutManager.createShortcutResultIntent(pinShortcutInfo);
+            PendingIntent successCallback = PendingIntent.getBroadcast(this, 0,
+                    pinnedShortcutCallbackIntent, PendingIntent.FLAG_IMMUTABLE);
+            shortcutManager.requestPinShortcut(pinShortcutInfo, successCallback.getIntentSender());
+        }
+    }
 
     private void tryStartVncApp(AppListResult.DataBeanX.DataBean app) {
         // todo mock
@@ -345,6 +439,7 @@ public class bVNC extends MainConfiguration {
                     @Override
                     public void onFailure(Call call, Exception e) {
                         Log.d("huyang", "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        tipLoadDialog.dismiss();
                     }
 
                     @Override
@@ -361,13 +456,14 @@ public class bVNC extends MainConfiguration {
     @Override
     protected void onResume() {
         super.onResume();
-        if(MOCK_ADDR){
+        Log.d("huyang", "onResume() called");
+        if (MOCK_ADDR) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     tryLunchApp(null);
                 }
-            },3000);
+            }, 3000);
         }
     }
 
@@ -380,35 +476,42 @@ public class bVNC extends MainConfiguration {
     }
 
     private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
-        if(MOCK_ADDR){
+        if (MOCK_ADDR) {
             ipText.setText("128.128.0.1");
             portText.setText("5903");
             save();
         }
-
-        if(app != null){
-            com.ft.fdevnc.Constants.app = app.Name;
-        }
+//        if (app != null) {
+//            com.ft.fdevnc.Constants.app = app.Name;
+//        }
         Utils.hideKeyboard(this, getCurrentFocus());
         android.util.Log.i(TAG, "Launch Connection");
 
         ActivityManager.MemoryInfo info = Utils.getMemoryInfo(this);
         if (info.lowMemory)
             System.gc();
-
-        Intent intent = new Intent(this, GeneralUtils.getClassByName("com.iiordanov.bVNC.RemoteCanvasActivity"));
+        if (App.generateCanvasActivityName(app.Name) == null) {
+            Toast.makeText(this, "最多打开10个程序", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Intent intent = new Intent(this, GeneralUtils.getClassByName(App.generateCanvasActivityName(app.Name)));
         ConnectionLoader connectionLoader = getConnectionLoader(this);
         if (Utils.isOpaque(this)) {
             ConnectionSettings cs = (ConnectionSettings) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
             cs.loadFromSharedPreferences(getApplicationContext());
             intent.putExtra("com.undatech.opaque.ConnectionSettings", cs);
-        }
-        else{
+        } else {
 //            ConnectionBean conn = (ConnectionBean) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
 //            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), conn.Gen_getValues());
             intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
         }
         this.startActivity(intent);
+        loadingView.setVisibility(View.GONE);
+        tipLoadDialog.dismiss();
+        if(fromShortcut && reentry){
+            finish();
+            App.getApp().movetoBack(getClass().getName());
+        }
     }
 
     private ConnectionLoader getConnectionLoader(Context context) {

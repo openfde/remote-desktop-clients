@@ -12,4 +12,5 @@ include ':remoteClientLib'
 include ':Opaque-app'
 include ':common'
 include ':x'
-
+include ':dialogtiplib'
+include ':popmenu'

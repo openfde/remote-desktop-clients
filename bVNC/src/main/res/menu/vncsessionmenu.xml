@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+        
+<!--    <item android:id="@+id/moveToolbar"-->
+<!--          app:showAsAction="always"-->
+<!--          app:actionViewClass="android.widget.ImageButton" />-->
+
+<!--    <item android:id="@+id/extraKeysToggle"-->
+<!--          android:icon="@drawable/showkeys"-->
+<!--          app:showAsAction="always"-->
+<!--          android:onClick="extraKeysToggle"-->
+<!--          android:padding="0dp"/>-->
+
+<!--    <item android:id="@+id/actionShowKeyboard"-->
+<!--        android:icon="@drawable/ic_keyboard_gray_48dp"-->
+<!--        app:showAsAction="always"-->
+<!--        android:onClick="toggleKeyboard"-->
+<!--        android:padding="0dp"/>-->
+
+    <item android:id="@+id/open" android:title="打开" />
+    <item android:id="@+id/info" android:title="应用信息" />
+    <item android:id="@+id/shortcut" android:title="创建快捷方式" />
+
+
+</menu>

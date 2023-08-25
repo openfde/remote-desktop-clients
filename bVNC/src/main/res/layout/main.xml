@@ -529,6 +529,11 @@
             android:text="@string/copy_logcat"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
-
+    <ProgressBar
+        android:id="@+id/loadingView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
 </FrameLayout>

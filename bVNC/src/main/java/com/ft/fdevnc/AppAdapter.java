@@ -87,7 +87,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
 //                tryStartVncApp(app);
-                itemClickListener.onItemClick(v, position, app);
+            }
+        });
+        holder.entryView.setListener(new RightClickView.RightClickListener() {
+            @Override
+            public void onRightClick(boolean b) {
+                itemClickListener.onItemClick(holder.itemView, position, app, b);
             }
         });
     }
@@ -187,10 +192,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView textView;
         ImageView imageView;
+        RightClickView entryView;
         public ViewHolder(View view){
             super(view);
             imageView = view.findViewById(R.id.icon);
             textView = view.findViewById(R.id.name);
+            entryView = view.findViewById(R.id.entry);
         }
     }
 }

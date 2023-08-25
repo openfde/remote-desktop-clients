@@ -1634,7 +1634,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         int app = connection.getApp();
         QuietOkHttp.post(BASEURL + URL_KILLAPP)
                 .setCallbackToMainUIThread(true)
-                .addParams("App", com.ft.fdevnc.Constants.app)
+                .addParams("App", App.getRunName(getClass().getName()))
                 .addParams("SysOnly", "false")
                 .execute(new JsonCallBack<VncResult.GetPortResult>() {
                     @Override
@@ -1921,6 +1921,35 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             inputHandler.onKeyDown(KeyEvent.KEYCODE_BACK, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
         }
     }
+
+    public static class RemoteCanvasActivity1 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity2 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity3 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity4 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity5 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity6 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity7 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity8 extends RemoteCanvasActivity{
+
+    }
+    public static class RemoteCanvasActivity9 extends RemoteCanvasActivity{
+
+    }
+
 
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.iiordanov.bVNC"
+    package="com.iiordanov.bVNC1"
     android:installLocation="auto"
     android:versionCode="115129"
     android:versionName="v5.1.2">
@@ -10,7 +10,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.android.launcher2.permission.READ_SETTINGS"/>
+    <uses-permission android:name="com.android.launcher3.permission.READ_SETTINGS"/>
 
 
     <uses-feature
@@ -88,7 +92,10 @@
             android:exported="true"
             android:resizeableActivity="true"
             android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -110,6 +117,114 @@
                 <data android:scheme="intent" />
                 <data android:mimeType="application/vnd.vnc" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity1"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc1"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity2"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc2"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity3"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc3"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity4"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc4"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity5"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc5"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity6"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc6"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity7"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc7"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity8"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc8"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
+        <activity
+            android:name="com.iiordanov.bVNC.RemoteCanvasActivity$RemoteCanvasActivity9"
+            android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="unspecified"
+            android:launchMode="singleTask"
+            android:taskAffinity=".abc9"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:allowTaskReparenting="true"
+            android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
         <activity
             android:name="com.iiordanov.bVNC.ConnectionListActivity"
