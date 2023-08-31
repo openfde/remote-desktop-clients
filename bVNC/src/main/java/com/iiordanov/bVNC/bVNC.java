@@ -43,6 +43,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -141,6 +142,8 @@ public class bVNC extends MainConfiguration {
     @Override
     public void onCreate(Bundle icicle) {
         Log.d(TAG, "onCreate called");
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         layoutID = R.layout.main;
         super.onCreate(icicle);
 

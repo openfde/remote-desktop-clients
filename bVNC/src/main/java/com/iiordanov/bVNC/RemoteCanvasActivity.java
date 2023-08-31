@@ -218,8 +218,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
      * Enables sticky immersive mode if supported.
      */
     private void enableImmersive() {
-        handler.removeCallbacks(immersiveEnabler);
-        handler.postDelayed(immersiveEnabler, 200);
+        //handler.removeCallbacks(immersiveEnabler);
+        //handler.postDelayed(immersiveEnabler, 200);
     }
 
     /**
@@ -245,8 +245,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
      * Disables sticky immersive mode.
      */
     private void disableImmersive() {
-        handler.removeCallbacks(immersiveDisabler);
-        handler.postDelayed(immersiveDisabler, 200);
+        //handler.removeCallbacks(immersiveDisabler);
+        //handler.postDelayed(immersiveDisabler, 200);
     }
 
     @Override
@@ -272,6 +272,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
         Utils.showMenu(this);
 
