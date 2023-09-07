@@ -133,7 +133,7 @@ public class bVNC extends MainConfiguration {
     private int page = 1;
     private int pageSize = 100;
     //todo mock addr
-    private boolean MOCK_ADDR = false;
+    public static boolean MOCK_ADDR = false;
     private String shortcutApp;
     private String shortcuPath;
     private boolean fromShortcut;
@@ -480,9 +480,19 @@ public class bVNC extends MainConfiguration {
 
     private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
         if (MOCK_ADDR) {
-            ipText.setText("128.128.0.1");
+            ipText.setText("10.31.91.87");
             portText.setText("5903");
             save();
+            Intent intent = new Intent(this, GeneralUtils.getClassByName("com.iiordanov.bVNC.RemoteCanvasActivity"));
+            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
+            this.startActivity(intent);
+            loadingView.setVisibility(View.GONE);
+            tipLoadDialog.dismiss();
+            if(fromShortcut && reentry){
+                finish();
+                App.getApp().movetoBack(getClass().getName());
+            }
+            return;
         }
 //        if (app != null) {
 //            com.ft.fdevnc.Constants.app = app.Name;
