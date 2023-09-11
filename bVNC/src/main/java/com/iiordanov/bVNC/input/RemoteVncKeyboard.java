@@ -30,6 +30,9 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
 
     public boolean processLocalKeyEvent(int keyCode, KeyEvent evt, int additionalMetaState,CharSequence c) {
         Log.d(TAG, "processLocalKeyEvent() called with: keyCode = [" + keyCode + "], evt = [" + evt + "], additionalMetaState = [" + additionalMetaState + "], c = [" + c + "]");
+        if(rfb == null){
+            return true;
+        }
         if ( c == null || c.length() == 0 )
             return true;
         for (int index = 0; index < c.length(); index++) {
