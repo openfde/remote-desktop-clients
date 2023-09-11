@@ -1552,7 +1552,7 @@ public class RfbProto extends RfbConnectable {
     }
 
     public synchronized void writeKeyStringEvent(int keycode, char c, boolean down) {
-        if (viewOnly )
+        if (viewOnly || os == null )
             return;
 //        for (int index = 0; index < charSequence.length(); index++) {
             int keySym = c;
