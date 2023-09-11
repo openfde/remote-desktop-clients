@@ -47,4 +47,5 @@ dependencies {
     api 'com.android.support:multidex:1.0.3'
     implementation project(':bVNC')
     implementation project(':pubkeyGenerator')
+
 }
