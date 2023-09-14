@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ import okhttp3.OkHttpClient;
 
 public class App extends MultiDexApplication {
 
+    private static final String TAG = "App";
     private Database database;
     private static WeakReference<Context> context;
     public static boolean debugLog = false;
@@ -46,11 +48,19 @@ public class App extends MultiDexApplication {
     }
 
     public static String generateCanvasActivityName(String name) {
+        instance.runningAct.stream().forEach(item->{
+//            Log.d(TAG, "generateCanvasActivityName() called with: runningAppAct = [" + item + "]");
+        });
+        instance.runningAct.stream().forEach(item->{
+//            Log.d(TAG, "generateCanvasActivityName() called with: runningAct = [" + item + "]");
+        });
+//        Log.d(TAG, "generateCanvasActivityName() called with: name = [" + name + "]");
         if(!TextUtils.isEmpty(name)){
             for (Map.Entry entry: instance.runningApp.entrySet()){
                 String activity = (String) entry.getKey();
                 String app = (String) entry.getValue();
                 if(TextUtils.equals(name, app)){
+//                    Log.d(TAG, "generateCanvasActivityName() returned: " + activity );
                     return activity;
                 }
             }
@@ -65,6 +75,7 @@ public class App extends MultiDexApplication {
                 }
                 if (!instance.runningAppAct.contains(activity)) {
                     instance.runningApp.put(activity, name);
+//                    Log.d(TAG, "generateCanvasActivityName() returned: " + activity );
                     return activity;
                 }
             }
@@ -122,10 +133,10 @@ public class App extends MultiDexApplication {
 
             @Override
             public void onActivityStopped(@NonNull Activity activity) {
-                if(activity.getClass().getName().contains("RemoteCanvasActivity")){
-                    runningAppAct.remove(activity.getClass().getName());
-                }
-                runningAct.remove(activity);
+//                if(activity.getClass().getName().contains("RemoteCanvasActivity")){
+//                    runningAppAct.remove(activity.getClass().getName());
+//                }
+//                runningAct.remove(activity);
             }
 
             @Override

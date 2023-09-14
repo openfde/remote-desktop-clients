@@ -246,6 +246,7 @@ public class RfbProto extends RfbConnectable {
     private int screenFlags;
 
     private boolean isExtendedDesktopSizeSupported = false;
+    private boolean sendEmptyEvent = false;
 
     // This variable indicates whether or not the user has accepted an untrusted
     // security certificate. Used to control progress while the dialog asking the user
@@ -2146,7 +2147,10 @@ public class RfbProto extends RfbConnectable {
     public void requestResolution(int x, int y) throws Exception {
         Log.d(TAG, "requestResolution, wxh: " + x + "x" + y);
         this.setPreferredFramebufferSize(x, y);
-
+        if(canvas.rfb != null && !sendEmptyEvent){
+            sendEmptyEvent = true;
+            canvas.getKeyboard().keyEvent(0, null, " ");
+        }
         // Is this encoding supported by the server?
         if (!this.isExtendedDesktopSizeSupported) {
             return;

@@ -56,7 +56,7 @@
             <!--            </intent-filter>-->
         </activity>
         <activity
-            android:name=".AllAppActivity"
+            android:name="com.ft.fdevnc.AllAppActivity"
             android:exported="true"
             android:label="@string/bvnc_app_name">
             <!--            <intent-filter>-->
