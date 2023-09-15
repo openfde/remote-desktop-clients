@@ -257,14 +257,17 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
     }
 
+
+
+
     @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle icicle) {
         debugLog(App.debugLog, TAG, "OnCreate called");
         super.onCreate(icicle);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  PointerIcon.TYPE_NULL));
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  PointerIcon.TYPE_NULL));
+//        }
         // TODO: Implement left-icon
         //requestWindowFeature(Window.FEATURE_LEFT_ICON);
         //setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.icon);
@@ -1767,6 +1770,13 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     // Send e.g. mouse events like hover and scroll to be handled.
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
+
+        if (event.getY() > 40) {
+            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  0));
+        } else {
+            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  1000));
+        }
+
         // Ignore TOOL_TYPE_FINGER events that come from the touchscreen with HOVER type action
         // which cause pointer jumping trouble in simulated touchpad for some devices.
         boolean toolTypeFinger = false;
