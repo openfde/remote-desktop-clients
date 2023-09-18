@@ -28,6 +28,7 @@ import static com.ft.fdevnc.Constants.URL_KILLAPP;
 import static com.undatech.opaque.util.GeneralUtils.debugLog;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -38,6 +39,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -265,6 +267,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public void onCreate(Bundle icicle) {
         debugLog(App.debugLog, TAG, "OnCreate called");
         super.onCreate(icicle);
+        Bitmap bitmap = (Bitmap) getIntent().getExtras().get("vnc_activity_icon");
+        ActivityManager.TaskDescription description = new ActivityManager.TaskDescription("vnc_activity_icon", bitmap, 0);
+        this.setTaskDescription(description);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  PointerIcon.TYPE_NULL));
 //        }
