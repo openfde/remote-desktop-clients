@@ -268,8 +268,12 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         debugLog(App.debugLog, TAG, "OnCreate called");
         super.onCreate(icicle);
         Bitmap bitmap = (Bitmap) getIntent().getExtras().get("vnc_activity_icon");
-        ActivityManager.TaskDescription description = new ActivityManager.TaskDescription("vnc_activity_icon", bitmap, 0);
+        ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(getString(R.string.bvnc_app_name), bitmap, 0);
         this.setTaskDescription(description);
+        String vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
+        if(!TextUtils.isEmpty(vnc_activity_name)){
+            setTitle(getString(R.string.bvnc_app_name) + ":" + "vnc_activity_name");
+        }
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  PointerIcon.TYPE_NULL));
 //        }

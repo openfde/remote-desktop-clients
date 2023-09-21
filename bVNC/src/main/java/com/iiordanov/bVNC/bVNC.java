@@ -512,6 +512,9 @@ public class bVNC extends MainConfiguration {
         byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
         intent.putExtra("vnc_activity_icon", bitmap);
+        if(!TextUtils.isEmpty(app.getName())){
+            intent.putExtra("vnc_activity_name", app.getName());
+        }
         ConnectionLoader connectionLoader = getConnectionLoader(this);
         if (Utils.isOpaque(this)) {
             ConnectionSettings cs = (ConnectionSettings) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
