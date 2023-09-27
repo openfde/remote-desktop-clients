@@ -130,7 +130,7 @@ public class bVNC extends MainConfiguration {
     private AppAdapter mAdapter;
     private List<AppListResult.DataBeanX.DataBean> mDataList = new ArrayList<>();
 
-    private int page = 1;
+    private int mPage = 1;
     private int pageSize = 100;
     //todo mock addr
     public static boolean MOCK_ADDR = false;
@@ -301,27 +301,28 @@ public class bVNC extends MainConfiguration {
         mAdapter = new AppAdapter(this, mDataList, mItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
         // 请求服务器加载数据。
-        getVncAllApp();
+        getVncAllApp(false, 0);
     }
 
     private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            getVncAllApp();
+            getVncAllApp(true, 0);
         }
     };
 
     private SwipeRecyclerView.LoadMoreListener mLoadMoreListener = new SwipeRecyclerView.LoadMoreListener() {
         @Override
         public void onLoadMore() {
-            getVncAllApp();
+            getVncAllApp(false, mPage + 1);
         }
     };
 
-    private void getVncAllApp() {
+    private void getVncAllApp(boolean forceRefresh, int page) {
         QuietOkHttp.get(BASEURL + URL_GETALLAPP)
                 .addParams("page", new Integer(page).toString())
                 .addParams("page_size", new Integer(pageSize).toString())
+                .addParams("refresh", String.valueOf(forceRefresh))
                 .setCallbackToMainUIThread(true)
                 .execute(new JsonCallBack<AppListResult>() {
 
@@ -336,14 +337,17 @@ public class bVNC extends MainConfiguration {
                     public void onSuccess(Call call, AppListResult response) {
                         Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         List<AppListResult.DataBeanX.DataBean> data = response.getData().getData();
-                        if(fromShortcut){
+                        if (fromShortcut) {
                             gotoShortcutApp(data);
                             return;
+                        }
+                        if (forceRefresh) {
+                            mDataList.clear();
                         }
                         mDataList.addAll(data);
                         mAdapter.notifyDataSetChanged();
                         if (data.size() > 0) {
-                            page++;
+                            bVNC.this.mPage = page;
                         }
                         mRecyclerView.loadMoreFinish(mDataList.size() == 0, response.getData().getPage().getTotal() > mDataList.size());
                         mRefreshLayout.setRefreshing(false);
