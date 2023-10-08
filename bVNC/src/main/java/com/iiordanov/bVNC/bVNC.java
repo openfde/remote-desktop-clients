@@ -413,8 +413,8 @@ public class bVNC extends MainConfiguration {
     private void createShortcut(AppListResult.DataBeanX.DataBean app) {
         Log.d(TAG, "createShortcut() called with: app = [" + app + "]");
         byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
-        Icon icon = Icon.createWithBitmap(bitmap);
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
+        Icon icon = Icon.createWithBitmap(Utils.getScaledBitmap(decode));
         ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
         if (shortcutManager != null && shortcutManager.isRequestPinShortcutSupported()) {
 //            Intent launchIntentForPackage = getPackageManager().getLaunchIntentForPackage(getPackageName());
@@ -514,8 +514,8 @@ public class bVNC extends MainConfiguration {
         Intent intent = new Intent(this, GeneralUtils.getClassByName(App.generateCanvasActivityName(app.Name)));
 
         byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
-        intent.putExtra("vnc_activity_icon", bitmap);
+        intent.putExtra("vnc_activity_icon", Utils.getScaledBitmap(decode));
+
         if(!TextUtils.isEmpty(app.getName())){
             intent.putExtra("vnc_activity_name", app.getName());
         }
