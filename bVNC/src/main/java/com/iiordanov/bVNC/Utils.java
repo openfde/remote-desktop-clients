@@ -75,6 +75,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -83,6 +84,20 @@ import java.util.UUID;
 public class Utils {
     private final static String TAG = "Utils";
     private static AlertDialog alertDialog;
+    private static final String CLASS_NAME = "android.os.SystemProperties";
+    public static String getProperty(String key, String defaultValue) {
+        String value = defaultValue;
+
+        try {
+            Class<?> c = Class.forName(CLASS_NAME);
+            Method get = c.getMethod("get", String.class, String.class);
+            value = (String)(get.invoke(c, key, defaultValue));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return value;
+        }
+    }
 
     public static void showYesNoPrompt(Context _context, String title, String message, OnClickListener onYesListener, OnClickListener onNoListener) {
         try {

@@ -137,7 +137,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     private Vibrator myVibrator;
 
     private RemoteCanvas canvas;
-
+    private int mDecorViewWidth;
+    private int mDecorViewHeight;
     private MenuItem[] inputModeMenuItems;
     private MenuItem[] scalingModeMenuItems;
     private InputHandler inputModeHandlers[];
@@ -564,6 +565,15 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             @Override
             public void onGlobalLayout() {
                 relayoutViews(rootView);
+            }
+        });
+
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mDecorViewWidth = getWindow().getDecorView().getWidth();
+                mDecorViewHeight = getWindow().getDecorView().getHeight();
+                Log.d(TAG, "huyang onGlobalLayout() called width:" + mDecorViewWidth  + "  height:" + mDecorViewHeight);
             }
         });
 
@@ -1784,13 +1794,20 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     // Send e.g. mouse events like hover and scroll to be handled.
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-
-        if (event.getY() > 40) {
-            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  0));
+        Log.d(TAG, "huyang onGenericMotionEvent() called with: event = [" + event + "]");
+        float y = event.getY();
+        float x = event.getX();
+        if (y > 40) {
+            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 0));
         } else {
-            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  1000));
+            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
         }
-
+        if ((x <= 0 || x >= mDecorViewWidth || y <= 40 || y >= mDecorViewHeight) && canvas.rfb != null) {
+//            canvas.rfb.writePointerEvent((int) -30, (int) -30, 0, MOUSE_BUTTON_NONE, false);
+            canvas.hideCursor = true;
+        } else {
+            canvas.hideCursor = false;
+        }
         // Ignore TOOL_TYPE_FINGER events that come from the touchscreen with HOVER type action
         // which cause pointer jumping trouble in simulated touchpad for some devices.
         boolean toolTypeFinger = false;

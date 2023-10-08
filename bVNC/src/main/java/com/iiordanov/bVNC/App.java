@@ -28,7 +28,7 @@ import okhttp3.OkHttpClient;
 
 public class App extends MultiDexApplication {
 
-    private static final String TAG = "App";
+    private static final String TAG = "VncApp";
     private Database database;
     private static WeakReference<Context> context;
     public static boolean debugLog = false;
@@ -98,6 +98,12 @@ public class App extends MultiDexApplication {
         debugLog = BuildConfig.DEBUG; //Utils.querySharedPreferenceBoolean(getApplicationContext(), "moreDebugLoggingTag");
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLog("fde"));
         logInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        String hostip = Utils.getProperty("fusion.vnc.hostip",null);
+        Log.d(TAG, "onCreate() called hostip:" + hostip);
+        if(!TextUtils.isEmpty(hostip)){
+            com.ft.fdevnc.Constants.BASIP = hostip;
+            com.ft.fdevnc.Constants.BASEURL = "http://" + com.ft.fdevnc.Constants.BASIP + ":18080";
+        }
         OkHttpClient sOkHttpClient = new OkHttpClient.Builder()
                 .readTimeout(10, TimeUnit.SECONDS)
                 .addInterceptor(logInterceptor)

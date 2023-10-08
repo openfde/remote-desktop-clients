@@ -36,6 +36,8 @@ import com.undatech.opaque.RfbConnectable;
  *
  */
 abstract public class AbstractBitmapData {
+    private static final String TAG = "AbstractBitmapData";
+    public boolean hideCursor;
     int framebufferwidth;
     int framebufferheight;
     int bitmapwidth;
@@ -71,8 +73,13 @@ abstract public class AbstractBitmapData {
     }
 
     void moveCursorRect(int x, int y) {
-        if (drawable != null)
-            drawable.moveCursorRect(x, y);
+        if (drawable != null ){
+            if(hideCursor){
+                drawable.moveCursorRect(-100, -100);
+            }else {
+                drawable.moveCursorRect(x, y);
+            }
+        }
     }
 
     void setSoftCursor (int[] newSoftCursorPixels) {

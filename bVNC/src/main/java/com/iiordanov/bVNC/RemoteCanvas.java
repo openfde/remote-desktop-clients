@@ -109,6 +109,7 @@ public class RemoteCanvas extends AppCompatImageView
 
     // Connection parameters
     public Connection connection;
+    public boolean hideCursor;
 
     Database database;
     public SSHConnection sshConnection = null;
@@ -1758,7 +1759,8 @@ public class RemoteCanvas extends AppCompatImageView
      * Invalidates (to redraw) the location of the remote pointer.
      */
     public void invalidateMousePosition() {
-        if (myDrawable != null) {
+        if (myDrawable != null ) {
+            myDrawable.hideCursor = hideCursor;
             myDrawable.moveCursorRect(pointer.getX(), pointer.getY());
             RectF r = myDrawable.getCursorRect();
             reDraw(r.left, r.top, r.width(), r.height());
