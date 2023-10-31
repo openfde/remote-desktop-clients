@@ -36,6 +36,10 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +48,7 @@ import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -512,10 +517,12 @@ public class bVNC extends MainConfiguration {
             return;
         }
         Intent intent = new Intent(this, GeneralUtils.getClassByName(App.generateCanvasActivityName(app.Name)));
-
-        byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
-        intent.putExtra("vnc_activity_icon", Utils.getScaledBitmap(decode));
-
+        if (".svg".equals(app.getIconType())) {
+            intent.putExtra("vnc_activity_icon_path", Utils.getSVGPath(app.Icon, app.getIconType(), app.getName()));
+        } else {
+            byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
+            intent.putExtra("vnc_activity_icon", Utils.getScaledBitmap(decode));
+        }
         if(!TextUtils.isEmpty(app.getName())){
             intent.putExtra("vnc_activity_name", app.getName());
         }

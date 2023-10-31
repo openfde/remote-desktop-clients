@@ -38,12 +38,18 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.ClipboardManager;
 import android.text.Html;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -53,6 +59,8 @@ import android.widget.ScrollView;
 
 import com.antlersoft.android.contentxml.SqliteElement;
 import com.antlersoft.android.contentxml.SqliteElement.ReplaceStrategy;
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.Task;
@@ -66,6 +74,8 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,6 +110,80 @@ public class Utils {
             return value;
         }
     }
+
+    public static String getSVGPath(String imageStr, String iconType, String name) {
+        File file = new File(App.getApp().getFilesDir(), name + "_output.svg");
+        return file.getAbsolutePath();
+    }
+
+
+    public static Bitmap getSVGBitmap(String path) {
+        File file = new File(path);
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file.getAbsolutePath());
+            SVG svg = SVG.getFromInputStream(inputStream);
+            Drawable drawable = new PictureDrawable(svg.renderToPicture());
+            return drawableToBitmap(drawable);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SVGParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Drawable getImage(String imageStr, String iconType, String name) {
+        Log.d("TAG", "getImage() called with: imageStr = [" + imageStr.length() + "], iconType = [" + iconType + "], name = [" + name + "]");
+        if(".svg".equals(iconType)){
+            byte[] decodedData = Base64.decode(imageStr, Base64.DEFAULT);
+            FileOutputStream svgFile = null;
+            File file = new File(App.getApp().getFilesDir(), name + "_output.svg");
+            try {
+                svgFile = new FileOutputStream(file.getAbsolutePath());
+                svgFile.write(decodedData);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            FileInputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(file.getAbsolutePath());
+                SVG svg = SVG.getFromInputStream(inputStream);
+                Drawable drawable = new PictureDrawable(svg.renderToPicture());
+                return drawable;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SVGParseException e) {
+                e.printStackTrace();
+            }
+            return null;
+        } else {
+            byte[] decode = Base64.decode(imageStr, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
+            return new BitmapDrawable(bitmap);
+        }
+    }
+
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        // 取 drawable 的长宽
+        int w = drawable.getIntrinsicWidth();
+        int h = drawable.getIntrinsicHeight();
+
+        // 取 drawable 的颜色格式
+        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                : Bitmap.Config.RGB_565;
+        // 建立对应 bitmap
+        Bitmap bitmap = Bitmap.createBitmap(w, h, config);
+        // 建立对应 bitmap 的画布
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, w, h);
+        // 把 drawable 内容画到画布中
+        drawable.draw(canvas);
+        Log.d(TAG, "drawableToBitmap() called with: w = " + w + " h = " + h );
+        return bitmap;
+    }
+
 
     public static Bitmap getScaledBitmap(byte[] bytes) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
