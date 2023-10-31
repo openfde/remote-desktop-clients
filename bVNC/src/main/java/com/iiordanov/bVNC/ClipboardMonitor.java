@@ -72,7 +72,10 @@ public class ClipboardMonitor extends TimerTask {
             boolean vnc = primaryClip.getDescription().getLabel() != null && primaryClip.getDescription().getLabel().equals("vnc");
             ClipData.Item itemAt = primaryClip.getItemAt(0);
             CharSequence text = itemAt.getText();
-            String cliptext = text.toString();
+            String cliptext = null;
+            if(text != null){
+                cliptext = text.toString();
+            }
             if (!TextUtils.isEmpty(cliptext) && !cliptext.equals(knownClipboardContents) && !vnc) {
                 if (vncCanvas.rfbconn != null && vncCanvas.rfbconn.isInNormalProtocol()) {
                     knownClipboardContents = cliptext;
