@@ -194,3 +194,4 @@ GITHUB_TOKEN
 build-*
 upload_*
 trigger-*
+/.idea/dbnavigator.xml

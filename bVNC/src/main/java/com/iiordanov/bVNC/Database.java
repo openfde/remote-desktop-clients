@@ -60,7 +60,7 @@ public class Database extends SQLiteOpenHelper {
     
     public Database(Context context) {
         super(context, dbName, null, CURRVERS);
-        SQLiteDatabase.loadLibs(context);
+//        SQLiteDatabase.loadLibs(context);
     }
 
     /* (non-Javadoc)

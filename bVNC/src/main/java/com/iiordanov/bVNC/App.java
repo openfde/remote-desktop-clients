@@ -1,6 +1,7 @@
 package com.iiordanov.bVNC;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,10 +10,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
-import androidx.multidex.MultiDexApplication;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.iiordanov.pubkeygenerator.BuildConfig;
 import com.xwdz.http.QuietOkHttp;
 import com.xwdz.http.log.HttpLog;
 import com.xwdz.http.log.HttpLoggingInterceptor;
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
-public class App extends MultiDexApplication {
+public class App extends Application {
 
     private static final String TAG = "VncApp";
     private Database database;
@@ -40,7 +39,6 @@ public class App extends MultiDexApplication {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        MultiDex.install(getBaseContext());
     }
 
     public static App getApp(){
@@ -95,9 +93,9 @@ public class App extends MultiDexApplication {
         Constants.DEFAULT_PROTOCOL_PORT = Utils.getDefaultPort(this);
         database = new Database(this);
         context = new WeakReference<Context>(this);
-        debugLog = BuildConfig.DEBUG; //Utils.querySharedPreferenceBoolean(getApplicationContext(), "moreDebugLoggingTag");
+//        debugLog = BuildConfig.DEBUG; //Utils.querySharedPreferenceBoolean(getApplicationContext(), "moreDebugLoggingTag");
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLog("fde"));
-        logInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         String hostip = Utils.getProperty("fusion.vnc.hostip",null);
         Log.d(TAG, "onCreate() called hostip:" + hostip);
         if(!TextUtils.isEmpty(hostip)){

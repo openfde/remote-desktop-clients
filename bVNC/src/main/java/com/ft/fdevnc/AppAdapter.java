@@ -110,7 +110,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
                 .execute(new JsonCallBack<VncResult.GetPortResult>() {
                     @Override
                     public void onFailure(Call call, Exception e) {
-                        Log.d("huyang", "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -121,7 +121,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
 
                     @Override
                     public void onSuccess(Call call, VncResult.GetPortResult response) {
-                        Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         Activity activity = (Activity) context;
                         handler.post(new Runnable() {
                             @Override

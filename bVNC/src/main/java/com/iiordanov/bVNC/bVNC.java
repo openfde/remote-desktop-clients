@@ -151,7 +151,6 @@ public class bVNC extends MainConfiguration {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         layoutID = R.layout.main;
         super.onCreate(icicle);
-
         AppUtils.init(this);
         initAppList();
 
@@ -284,7 +283,7 @@ public class bVNC extends MainConfiguration {
         if(getIntent() != null && getIntent().getExtras() != null){
             shortcutApp = (String)getIntent().getExtras().get("App");
             shortcuPath = (String)getIntent().getExtras().get("Path");
-            Log.d("huyang", "onCreate() called with: shortcutApp = [" + shortcuPath + "]  shortcutApp = [" + shortcuPath + "]");
+            Log.d(TAG, "onCreate() called with: shortcutApp = [" + shortcuPath + "]  shortcutApp = [" + shortcuPath + "]");
             fromShortcut = !TextUtils.isEmpty(shortcuPath) && !TextUtils.isEmpty(shortcutApp);
         }
         reentry = App.isRunning(getClass().getName());
@@ -333,14 +332,14 @@ public class bVNC extends MainConfiguration {
 
                     @Override
                     public void onFailure(Call call, Exception e) {
-                        Log.d("huyang", "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
                         mRecyclerView.loadMoreFinish(false, false);
                         mRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onSuccess(Call call, AppListResult response) {
-                        Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         List<AppListResult.DataBeanX.DataBean> data = response.getData().getData();
                         if (fromShortcut) {
                             gotoShortcutApp(data);
@@ -362,7 +361,7 @@ public class bVNC extends MainConfiguration {
 
     private void gotoShortcutApp(List<AppListResult.DataBeanX.DataBean> data) {
         for (AppListResult.DataBeanX.DataBean bean : data){
-            Log.d("huyang", "gotoShortcutApp() called with: bean = [" + bean.getName() + "]");
+            Log.d(TAG, "gotoShortcutApp() called with: bean = [" + bean.getName() + "]");
             if (TextUtils.equals(shortcutApp, bean.getName())){
                 load2Start(bean);
             }
@@ -450,13 +449,13 @@ public class bVNC extends MainConfiguration {
                 .execute(new JsonCallBack<VncResult.GetPortResult>() {
                     @Override
                     public void onFailure(Call call, Exception e) {
-                        Log.d("huyang", "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
                         tipLoadDialog.dismiss();
                     }
 
                     @Override
                     public void onSuccess(Call call, VncResult.GetPortResult response) {
-                        Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         ipText.setText(BASIP);
                         portText.setText(Integer.toString(response.Data.Port));
                         save();
@@ -468,7 +467,7 @@ public class bVNC extends MainConfiguration {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("huyang", "onResume() called");
+        Log.d(TAG, "onResume() called");
         if (MOCK_ADDR) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -483,7 +482,7 @@ public class bVNC extends MainConfiguration {
         Log.d(TAG, "saveConnectionAndCloseLayout called");
         if (selected != null) {
             updateSelectedFromView();
-            selected.saveAndWriteRecent(false, this);
+//            selected.saveAndWriteRecent(false, this);
         }
     }
 
@@ -526,16 +525,16 @@ public class bVNC extends MainConfiguration {
         if(!TextUtils.isEmpty(app.getName())){
             intent.putExtra("vnc_activity_name", app.getName());
         }
-        ConnectionLoader connectionLoader = getConnectionLoader(this);
-        if (Utils.isOpaque(this)) {
-            ConnectionSettings cs = (ConnectionSettings) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
-            cs.loadFromSharedPreferences(getApplicationContext());
-            intent.putExtra("com.undatech.opaque.ConnectionSettings", cs);
-        } else {
+//        ConnectionLoader connectionLoader = getConnectionLoader(this);
+//        if (Utils.isOpaque(this)) {
+//            ConnectionSettings cs = (ConnectionSettings) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
+//            cs.loadFromSharedPreferences(getApplicationContext());
+//            intent.putExtra("com.undatech.opaque.ConnectionSettings", cs);
+//        } else {
 //            ConnectionBean conn = (ConnectionBean) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
 //            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), conn.Gen_getValues());
             intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
-        }
+//        }
         this.startActivity(intent);
         loadingView.setVisibility(View.GONE);
         tipLoadDialog.dismiss();
@@ -592,7 +591,7 @@ public class bVNC extends MainConfiguration {
         if (id == R.layout.repeater_dialog) {
             return new RepeaterDialog(this);
         } else if (id == R.layout.auto_x_customize) {
-            Dialog d = new AutoXCustomizeDialog(this, database);
+            Dialog d = new AutoXCustomizeDialog(this, null);
             d.setCancelable(false);
             return d;
         }

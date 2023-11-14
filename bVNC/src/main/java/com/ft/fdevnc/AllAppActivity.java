@@ -39,14 +39,9 @@ import java.util.List;
 
 import okhttp3.Call;
 
-/**
- * <p>
- * 默认的加载更多的View。
- * </p>
- * Created by YanZhenjie on 2017/7/21.
- */
 public class AllAppActivity extends Activity {
 
+    private static final String TAG = "AllAppActivity";
     private SwipeRefreshLayout mRefreshLayout;
     private SwipeRecyclerView mRecyclerView;
     private AppAdapter mAdapter;
@@ -110,14 +105,14 @@ public class AllAppActivity extends Activity {
 
                     @Override
                     public void onFailure(Call call, Exception e) {
-                        Log.d("huyang", "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
                         mRecyclerView.loadMoreFinish(false, false);
                         mRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onSuccess(Call call, AppListResult response) {
-                        Log.d("huyang", "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         List<AppListResult.DataBeanX.DataBean> data = response.getData().getData();
                         mDataList.addAll(data);
                         mAdapter.notifyDataSetChanged();
