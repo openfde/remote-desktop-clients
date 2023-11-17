@@ -50,6 +50,7 @@ import android.os.Message;
 import android.text.ClipboardManager;
 import android.text.Html;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -133,9 +134,12 @@ public class Utils {
         return null;
     }
 
-    public static Drawable getImage(String imageStr, String iconType, String name) {
+
+
+
+    public static Drawable getImage(String imageStr, String iconType, String name, Context context) {
         Log.d("TAG", "getImage() called with: imageStr = [" + imageStr.length() + "], iconType = [" + iconType + "], name = [" + name + "]");
-        if(".svg".equals(iconType)){
+        if (Constants.SURFFIX_SVG.equals(iconType) || Constants.SURFFIX_SVGZ.equals(iconType)) {
             byte[] decodedData = Base64.decode(imageStr, Base64.DEFAULT);
             FileOutputStream svgFile = null;
             File file = new File(App.getApp().getFilesDir(), name + "_output.svg");
@@ -157,11 +161,20 @@ public class Utils {
                 e.printStackTrace();
             }
             return null;
-        } else {
+        } else if (Constants.SURFFIX_PNG.equals(iconType)) {
             byte[] decode = Base64.decode(imageStr, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
             return new BitmapDrawable(bitmap);
+        } else {
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
+            return new BitmapDrawable(bitmap);
         }
+    }
+
+    public static float getDensity(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return dm.density;
     }
 
 

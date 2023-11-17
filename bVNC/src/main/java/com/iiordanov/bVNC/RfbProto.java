@@ -2045,7 +2045,7 @@ public class RfbProto extends RfbConnectable {
                         throw new Exception("Can't handle SetColourMapEntries message");
 
                     case RfbProto.Bell:
-                        canvas.displayShortToastMessage("VNC Beep");
+//                        canvas.displayShortToastMessage("VNC Beep");
                         break;
 
                     case RfbProto.ServerCutText:

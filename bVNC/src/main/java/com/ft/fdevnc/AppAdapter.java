@@ -84,7 +84,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
         textView.setTypeface(null, Typeface.NORMAL);
         textView.setTextColor(ContextCompat.getColor(context, R.color.black));
         ImageView imageView =holder.imageView;
-        imageView.setImageDrawable(Utils.getImage(app.Icon, app.getIconType(), app.getName()));
+        imageView.setImageDrawable(Utils.getImage(app.Icon, app.getIconType(), app.getName(), context));
         holder.itemView.setTag(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -21,8 +21,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 public class EditableInputConnection extends BaseInputConnection {
-    private static final boolean DEBUG = false;
-    private static final String  TAG   = "DetectText Connection";
+    private static final boolean DEBUG = true;
+    private static final String  TAG   = "DetectConnection hy";
 
     private final DetectEventEditText mTextView;
 
@@ -53,6 +53,7 @@ public class EditableInputConnection extends BaseInputConnection {
 
     @Override
     public boolean beginBatchEdit() {
+        Log.d(TAG, "beginBatchEdit() called");
         synchronized (this) {
             if (mBatchEditNesting >= 0) {
                 mTextView.beginBatchEdit();
@@ -65,6 +66,7 @@ public class EditableInputConnection extends BaseInputConnection {
 
     @Override
     public boolean endBatchEdit() {
+        Log.d(TAG, "endBatchEdit() called");
         synchronized (this) {
             if (mBatchEditNesting > 0) {
                 // When the connection is reset by the InputMethodManager and reportFinish
@@ -91,6 +93,7 @@ public class EditableInputConnection extends BaseInputConnection {
 
     @Override
     public boolean clearMetaKeyStates(int states) {
+        Log.d(TAG, "clearMetaKeyStates() called with: states = [" + states + "]");
         Editable content = getEditable();
         if (content == null) {
             return false;
@@ -154,6 +157,7 @@ public class EditableInputConnection extends BaseInputConnection {
 
     @Override
     public ExtractedText getExtractedText(ExtractedTextRequest request, int flags) {
+        Log.d(TAG, "getExtractedText() called with: request = [" + request + "], flags = [" + flags + "]");
         if (mTextView != null) {
             ExtractedText et = new ExtractedText();
             if (mTextView.extractText(request, et)) {
@@ -169,19 +173,26 @@ public class EditableInputConnection extends BaseInputConnection {
 
     @Override
     public boolean sendKeyEvent(KeyEvent event) {
-        Log.d(TAG, "sendKeyEvent() called with: event = [" + event + "]");
+        if(DEBUG){
+            Log.d(TAG, "sendKeyEvent() called with: event = [" + event + "]");
+        }
         return super.sendKeyEvent(event);
     }
 
     @Override
     public boolean performPrivateCommand(String action, Bundle data) {
-        Log.d(TAG, "performPrivateCommand() called with: action = [" + action + "], data = [" + data + "]");
+        if(DEBUG){
+            Log.d(TAG, "performPrivateCommand() called with: action = [" + action + "], data = [" + data + "]");
+        }
         mTextView.onPrivateIMECommand(action, data);
         return true;
     }
 
     @Override
     public boolean commitText(CharSequence text, int newCursorPosition) {
+        if(DEBUG){
+            Log.d(TAG, "commitText() called with: text = [" + text + "], mTextView = [" + mTextView + "]");
+        }
         if (mTextView == null) {
             return super.commitText(text, newCursorPosition);
         }
