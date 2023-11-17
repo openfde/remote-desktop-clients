@@ -1714,12 +1714,14 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "] inputlayout.commitText = [ " + inputlayout.commitText  + " ]");
         //type from input method
         CharSequence commitText = inputlayout.commitText;
+        //unicode
         if (!TextUtils.isEmpty(commitText) &&
                 event.getAction() == KeyEvent.ACTION_UP &&
                 !downTimes.contains(event.getDownTime()) &&
                 (event.getKeyCode() < KeyEvent.KEYCODE_A || event.getKeyCode() > KeyEvent.KEYCODE_Z)) {
             inputlayout.commitText = null;
             return canvas.getKeyboard().keyEvent(0xff, event, commitText);
+        //keycode
         } else {
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 downTimes.add(event.getDownTime());
