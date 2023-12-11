@@ -1,5 +1,7 @@
 package com.iiordanov.bVNC;
 
+import static org.bouncycastle.asn1.cmc.CMCStatus.success;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -205,9 +207,10 @@ public class EditableInputConnection extends BaseInputConnection {
         Reflector.invokeMethodExceptionSafe(mTextView, "resetErrorChangedFlag");
 //        boolean success = super.commitText(text, newCursorPosition);
         Reflector.invokeMethodExceptionSafe(mTextView, "hideErrorIfUnchanged");
-//        Log.d(TAG, "commitText() called with: text = [" + text + "], success = [" + success + "]");
+
         if(!TextUtils.isEmpty(text)){
             mTextView.commitText = text;
+            mTextView.commitTexts.addLast(text);
         }
         return true;
     }

@@ -269,6 +269,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         debugLog(App.debugLog, TAG, "OnCreate called");
         super.onCreate(icicle);
         DetectEventEditText.commitText = null;
+        DetectEventEditText.commitTexts.clear();
         String vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
         if(!TextUtils.isEmpty(vnc_activity_name)){
             setTitle(getString(R.string.bvnc_app_name) + ":" + vnc_activity_name);
@@ -583,13 +584,16 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                CharSequence commitText = DetectEventEditText.commitText;
+//                CharSequence commitText = DetectEventEditText.commitText;
                 mDecorViewWidth = getWindow().getDecorView().getWidth();
                 mDecorViewHeight = getWindow().getDecorView().getHeight();
+                if(DetectEventEditText.commitTexts.size() == 0) return;
+                CharSequence commitText = DetectEventEditText.commitTexts.get(0);
                 Log.d(TAG, "huyang onGlobalLayout() called  commitText:" + commitText);
                 if (!TextUtils.isEmpty(commitText) && isFirst) {
                     isFirst = false;
-                    inputlayout.commitText = null;
+//                    inputlayout.commitText = null;
+                    inputlayout.removeFirstChar();
                     canvas.getKeyboard().keyEvent(0xff, null, commitText);
                 }
             }
@@ -1673,6 +1677,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         super.onDestroy();
         stopApp();
         DetectEventEditText.commitText = null;
+        DetectEventEditText.commitTexts.clear();
         Log.i(TAG, "onDestroy called.");
         if (canvas != null)
             canvas.closeConnection();
@@ -1711,15 +1716,21 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     private Set<Long> downTimes = new HashSet<>();
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "] inputlayout.commitText = [ " + inputlayout.commitText  + " ]");
+        Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "] DetectEventEditText.commitText = [ " + DetectEventEditText.commitText  + " ]");
         //type from input method
-        CharSequence commitText = inputlayout.commitText;
+        CharSequence commitText = null;
+        if(DetectEventEditText.commitTexts.size() != 0){
+            commitText = DetectEventEditText.commitTexts.getFirst();
+        }
+//        CharSequence commitText = DetectEventEditText.commitText;
         //unicode
         if (!TextUtils.isEmpty(commitText) &&
                 event.getAction() == KeyEvent.ACTION_UP &&
                 !downTimes.contains(event.getDownTime()) &&
                 (event.getKeyCode() < KeyEvent.KEYCODE_A || event.getKeyCode() > KeyEvent.KEYCODE_Z)) {
-            inputlayout.commitText = null;
+            DetectEventEditText.commitText = null;
+            inputlayout.removeFirstChar();
+            Log.d(TAG, "dispatchKeyEvent() called with: commitText = [" + commitText + "]");
             return canvas.getKeyboard().keyEvent(0xff, event, commitText);
         //keycode
         } else {
@@ -1727,6 +1738,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                 downTimes.add(event.getDownTime());
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
                 downTimes.remove(event.getDownTime());
+            }
+            if(!TextUtils.isEmpty(commitText) && commitText.charAt(0) <=  KeyEvent.KEYCODE_DEMO_APP_4){
+                inputlayout.removeFirstChar();
             }
             return canvas.getKeyboard().keyEvent(event.getKeyCode(), event);
         }

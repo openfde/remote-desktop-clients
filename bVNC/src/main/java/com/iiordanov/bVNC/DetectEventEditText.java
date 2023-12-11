@@ -4,6 +4,7 @@ import static android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Debug;
 import android.text.Editable;
 import android.text.method.KeyListener;
 import android.util.AttributeSet;
@@ -14,24 +15,24 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 public class DetectEventEditText extends EditText implements View.OnKeyListener,
         EditableInputConnection.OnDelEventListener {
     private static final String TAG = "DetectText hy";
     private DelEventListener delEventListener;
-
     public static CharSequence commitText;
+    public static volatile LinkedList<CharSequence> commitTexts = new LinkedList<>();
+    private static final boolean DEBUG = true;
 
-
-    /**
-     * 防止delEvent触发两次。
-     * 0：未初始化；1：使用onKey方法触发；2：使用onDelEvdent方法触发
-     */
     private int flag;
 
     public DetectEventEditText(Context context) {
         super(context);
         setKeyListener(getDefaultKeyListener());
         commitText = null;
+        commitTexts.clear();
     }
 
     public DetectEventEditText(Context context,
@@ -39,6 +40,7 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
         super(context, attrs);
         setKeyListener(getDefaultKeyListener());
         commitText = null;
+        commitTexts.clear();
     }
 
     public DetectEventEditText(Context context,
@@ -46,6 +48,7 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
         super(context, attrs, defStyleAttr);
         setKeyListener(getDefaultKeyListener());
         commitText = null;
+        commitTexts.clear();
     }
 
 
@@ -78,11 +81,20 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
                 .getAction() == KeyEvent.ACTION_DOWN && delEventListener.delEvent();
     }
 
+    public boolean removeFirstChar(){
+        if(commitTexts.size() == 0) return false;
+        CharSequence charSequence = commitTexts.removeFirst();
+        if(DEBUG){
+            Log.d(TAG, String.format("removeFirstChar: (%s)", charSequence));
+        }
+        return true;
+    }
+
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         Log.d(TAG, "onKeyPreIme() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
         if(event.getAction() == KeyEvent.ACTION_DOWN){
-            commitText = null;
+//            commitText = null;
 //            ((Activity)getContext()).dispatchKeyEvent(event);
         }
         return super.onKeyPreIme(keyCode, event);
@@ -98,22 +110,21 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
         return new KeyListener() {
             @Override
             public int getInputType() {
-                // 返回你的EditText所需的输入类型
                 return TYPE_TEXT_FLAG_CAP_WORDS;
             }
 
             @Override
             public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
                 Log.d(TAG, "onKeyDown text = [" + text + "], keyCode = [" + keyCode + "], event = [" + event + "]");
-                // 处理按键按下事件
                 return false;
             }
 
+            //FIXME never called
             @Override
             public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
-                commitText = null;
-                String characters = event.getCharacters();
-                Log.d(TAG, "onKeyUp commitText = [" + commitText + "], keyCode = [" + keyCode + "], characters = [" + characters + "]");
+//                commitText = null;
+//                String characters = event.getCharacters();
+//                Log.d(TAG, "onKeyUp commitText = [" + commitText + "], keyCode = [" + keyCode + "], characters = [" + characters + "]");
                 // 处理按键释放事件
                 return false;
             }
