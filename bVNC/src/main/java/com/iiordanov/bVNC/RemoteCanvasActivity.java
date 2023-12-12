@@ -270,23 +270,24 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         super.onCreate(icicle);
         DetectEventEditText.commitText = null;
         DetectEventEditText.commitTexts.clear();
-        String vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
-        if(!TextUtils.isEmpty(vnc_activity_name)){
-            setTitle(getString(R.string.bvnc_app_name) + ":" + vnc_activity_name);
-            vnc_activity_name = getString(R.string.bvnc_app_name) + ":" + vnc_activity_name;
-        } else {
-            setTitle(getString(R.string.bvnc_app_name));
-            vnc_activity_name = getString(R.string.bvnc_app_name);
-        }
+        if(!bVNC.MOCK_ADDR){
+            String vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
+            if(!TextUtils.isEmpty(vnc_activity_name)){
+                setTitle(getString(R.string.bvnc_app_name) + ":" + vnc_activity_name);
+                vnc_activity_name = getString(R.string.bvnc_app_name) + ":" + vnc_activity_name;
+            } else {
+                setTitle(getString(R.string.bvnc_app_name));
+                vnc_activity_name = getString(R.string.bvnc_app_name);
+            }
 
-        Bitmap bitmap = (Bitmap) getIntent().getExtras().get("vnc_activity_icon");
-        if( bitmap == null){
-            String path = getIntent().getExtras().getString("vnc_activity_icon_path");
-            bitmap = Utils.getSVGBitmap(path);
+            Bitmap bitmap = (Bitmap) getIntent().getExtras().get("vnc_activity_icon");
+            if( bitmap == null){
+                String path = getIntent().getExtras().getString("vnc_activity_icon_path");
+                bitmap = Utils.getSVGBitmap(path);
+            }
+            ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(vnc_activity_name , bitmap, 0);
+            this.setTaskDescription(description);
         }
-        ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(vnc_activity_name , bitmap, 0);
-        this.setTaskDescription(description);
-
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  PointerIcon.TYPE_NULL));
 //        }
@@ -372,16 +373,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         sendString.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String words = sendString.getText().toString();
-//                ClipboardMonitor.inputUnicode = words;
-//                canvas.rfb.Mock_writeClipboardNotify();
-//                canvas.rfb.writePaste();
-//                ClipboardMonitor.inputUnicode = words;
-//                char c = s.charAt(i)
-//                sendString.setText(String.valueOf(c));
-//                canvas.getKeyboard().keyEvent(0xff, null,sendString.getText().toString());
-//                i++;
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -589,8 +580,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                 mDecorViewHeight = getWindow().getDecorView().getHeight();
                 if(DetectEventEditText.commitTexts.size() == 0) return;
                 CharSequence commitText = DetectEventEditText.commitTexts.get(0);
-                Log.d(TAG, "huyang onGlobalLayout() called  commitText:" + commitText);
-                if (!TextUtils.isEmpty(commitText) && isFirst) {
+                if (!TextUtils.isEmpty(commitText) && isFirst && canvas.isConnected()) {
+                    Log.d(TAG, "huyang onGlobalLayout() called  commitText:" + commitText);
                     isFirst = false;
 //                    inputlayout.commitText = null;
                     inputlayout.removeFirstChar();
@@ -608,7 +599,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                     try {
                         canvas.rfb.requestResolution(canvasWidth, canvasHight);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        e.printStackTrace();
                     }
                 } else if(canvasWidth != canvas.getWidth() || canvasHight != canvas.getHeight()){
                     canvasWidth = canvas.getWidth();
@@ -616,7 +607,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                     try {
                         canvas.rfb.requestResolution(canvasWidth, canvasHight);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        e.printStackTrace();
                     }
                     relayoutViews(rootView);
                 }

@@ -195,3 +195,4 @@ build-*
 upload_*
 trigger-*
 /.idea/dbnavigator.xml
+/.idea/

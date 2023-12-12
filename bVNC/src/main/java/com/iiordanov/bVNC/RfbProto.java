@@ -210,6 +210,7 @@ public class RfbProto extends RfbConnectable {
 
     // If true, informs that the RFB socket was closed.
     private boolean closed;
+    private boolean connected;
 
     // The main processing loop continues while this is set to true;
     private boolean maintainConnection = true;
@@ -1956,6 +1957,20 @@ public class RfbProto extends RfbConnectable {
                     canvas.syncScroll();
                     // Read message type from the server.
                     msgType = readServerMessageType();
+                    if(!connected){
+                        connected = true;
+                        canvas.setConnected(true);
+                        canvas.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(canvas.rfb != null && !sendEmptyEvent){
+                                    sendEmptyEvent = true;
+                                    canvas.getKeyboard().keyEvent(0, null, " ");
+                                }
+                            }
+                        },50);
+
+                    }
                     canvas.doneWaiting();
 //                } else {
 //                    msgType = readServerMessageType();
@@ -2147,10 +2162,6 @@ public class RfbProto extends RfbConnectable {
     public void requestResolution(int x, int y) throws Exception {
         Log.d(TAG, "requestResolution, wxh: " + x + "x" + y);
         this.setPreferredFramebufferSize(x, y);
-        if(canvas.rfb != null && !sendEmptyEvent){
-            sendEmptyEvent = true;
-            canvas.getKeyboard().keyEvent(0, null, " ");
-        }
         // Is this encoding supported by the server?
         if (!this.isExtendedDesktopSizeSupported) {
             return;

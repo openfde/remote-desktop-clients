@@ -202,6 +202,7 @@ public class RemoteCanvas extends AppCompatImageView
     boolean userPanned = false;
 
     String vvFileName;
+    private boolean isConnected;
 
     /**
      * Constructor used by the inflation apparatus
@@ -638,8 +639,10 @@ public class RemoteCanvas extends AppCompatImageView
         handler.post(drawableSetter);
 
         // Hide progress dialog
-        if (pd.isShowing())
+        if (pd.isShowing()){
             pd.dismiss();
+            Log.e(TAG, "Authentication success, ready to input");
+        }
 
         try {
             rfb.processProtocol();
@@ -2045,4 +2048,13 @@ public class RemoteCanvas extends AppCompatImageView
                 break;
         }
     }
+
+    public void setConnected(boolean connected) {
+        isConnected = connected;
+    }
+
+    public boolean isConnected(){
+        return isConnected;
+    }
+
 }
