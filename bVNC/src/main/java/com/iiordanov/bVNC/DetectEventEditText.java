@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Debug;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.method.KeyListener;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class DetectEventEditText extends EditText implements View.OnKeyListener,
@@ -25,8 +27,9 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
     public static CharSequence commitText;
     public static volatile LinkedList<CharSequence> commitTexts = new LinkedList<>();
     private static final boolean DEBUG = true;
-
     private int flag;
+    private static final int ascii_a = 'a';
+    private static final int keycode_a = KeyEvent.KEYCODE_A;
 
     public DetectEventEditText(Context context) {
         super(context);
@@ -92,12 +95,35 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
-        Log.d(TAG, "onKeyPreIme() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
-        if(event.getAction() == KeyEvent.ACTION_DOWN){
-//            commitText = null;
-//            ((Activity)getContext()).dispatchKeyEvent(event);
+        if(DEBUG){
+            Log.d(TAG, "onKeyPreIme() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
+        }
+        //return keycode when commit text ready to send
+        if(event.getAction() == KeyEvent.ACTION_UP
+                && !TextUtils.isEmpty(commitText)
+                && (event.getKeyCode() > KeyEvent.KEYCODE_A && event.getKeyCode() < KeyEvent.KEYCODE_Z)
+                && !commitContain(keyCode)){
+            if(DEBUG){
+                Log.d(TAG, "onKeyPreIme() debounce keycode:" + keyCode + " drop it");
+            }
+            return true;
         }
         return super.onKeyPreIme(keyCode, event);
+    }
+
+    private boolean commitContain(int keyCode) {
+        if(TextUtils.isEmpty(commitText) && commitTexts.size() == 0){
+            return false;
+        }
+        if(commitText.charAt(0) - (ascii_a - keycode_a) == keyCode){
+            return true;
+        }
+        for (CharSequence c :commitTexts){
+            if(c.charAt(0)- (ascii_a - keycode_a) == keyCode){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

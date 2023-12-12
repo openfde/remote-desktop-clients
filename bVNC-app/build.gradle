@@ -39,6 +39,24 @@ android {
                 outputFileName = "FdeVncClient.apk"
             }
         }
+        def buildType = variant.buildType.name
+        if (buildType == "debug") {
+            variant.outputs.all { output ->
+                output.processManifest.doLast {
+                    // Stores the path to the maifest.
+                    String manifestPath = variant.outputs[0].getProcessResourcesProvider().get().manifestFile
+                    def appLabel = android.defaultConfig.buildConfigFields.app_label
+                    // Stores the contents of the manifest.
+                    def manifestContent = file(manifestPath).getText()
+                    println(appLabel)
+                    // Changes the version code in the stored text.
+                    manifestContent = manifestContent.replace('android:label="@string/bvnc_app_name"',
+                            'android:label="DEBUG Fusion Linux Application"')
+                    // Overwrites the manifest with the new text.
+                    file(manifestPath).write(manifestContent)
+                }
+            }
+        }
     }
 
     compileOptions {
