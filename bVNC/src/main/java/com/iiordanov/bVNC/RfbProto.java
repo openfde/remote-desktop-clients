@@ -1600,7 +1600,7 @@ public class RfbProto extends RfbConnectable {
     public void writeSpacialKeyEvent(int keycode, int keysym, boolean down) {
         if (viewOnly)
             return;
-        GeneralUtils.debugLog(this.debugLogging, TAG, "writeKeyEvent, sending keysym:" +
+        GeneralUtils.debugLog(this.debugLogging, TAG, "writeSpacialKeyEvent, sending keysym:" +
                 keysym + ", down: " + down);
         eventBuf[eventBufLen++] = (byte) KeyboardEvent;
         eventBuf[eventBufLen++] = (byte) (down ? 1 : 0);

@@ -30,7 +30,7 @@ public class App extends Application {
     private static final String TAG = "VncApp";
     private Database database;
     private static WeakReference<Context> context;
-    public static boolean debugLog = false;
+    public static boolean debugLog = true;
     public Set<String> runningAppAct = new HashSet<>();
     public Set<Activity> runningAct = new HashSet<>();
     public HashMap<String, String> runningApp = new HashMap<>();

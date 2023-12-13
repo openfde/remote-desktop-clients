@@ -34,7 +34,7 @@ public abstract class RfbConnectable {
 
     protected Map<Integer, Integer> modifierMap = new HashMap<>();
     public RemoteKeyboardState remoteKeyboardState = null;
-    protected boolean debugLogging = false;
+    protected boolean debugLogging = true;
     protected int metaState = 0;
     protected Handler handler = null;
 

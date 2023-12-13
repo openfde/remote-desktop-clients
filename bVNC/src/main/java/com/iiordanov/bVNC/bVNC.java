@@ -366,10 +366,20 @@ public class bVNC extends MainConfiguration {
         void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight);
     }
 
+
+    private long mLastClickTime = 0;
+    public static final long TIME_INTERVAL = 300L;
+
     ItemClickListener mItemClickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight) {
 //            loadingView.setVisibility(View.VISIBLE);
+            long nowTime = System.currentTimeMillis();
+            if (nowTime - mLastClickTime > TIME_INTERVAL) {
+                // do something
+                mLastClickTime = nowTime;
+                Log.d(TAG, "onItemClick() click too quickly");
+            }
             Log.d(TAG, "onItemClick() called with: itemView = [" + itemView + "], position = [" + position + "], app = [" + app + "], isRight = [" + isRight + "]");
             if (isRight) {
                 showOptionView(itemView, app);
@@ -378,6 +388,7 @@ public class bVNC extends MainConfiguration {
             }
         }
     };
+
 
     private void load2Start(AppListResult.DataBeanX.DataBean app) {
         tipLoadDialog.setBackground(R.drawable.custom_dialog_bg_corner)
