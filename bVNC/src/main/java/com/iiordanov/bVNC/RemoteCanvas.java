@@ -110,6 +110,8 @@ public class RemoteCanvas extends AppCompatImageView
     // Connection parameters
     public Connection connection;
     public boolean hideCursor;
+    public boolean cliptextInited;
+    public String cliptext;
 
     Database database;
     public SSHConnection sshConnection = null;
@@ -203,6 +205,7 @@ public class RemoteCanvas extends AppCompatImageView
 
     String vvFileName;
     private boolean isConnected;
+    private String mAppName;
 
     /**
      * Constructor used by the inflation apparatus
@@ -315,7 +318,7 @@ public class RemoteCanvas extends AppCompatImageView
     /**
      * Initializes the clipboard monitor.
      */
-    private void initializeClipboardMonitor() {
+    public void initializeClipboardMonitor() {
         mClipboardManager = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         mOnPrimaryClipChangedListener = new android.content.ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
@@ -325,7 +328,7 @@ public class RemoteCanvas extends AppCompatImageView
                     // 获取复制、剪切的文本内容
                     CharSequence content =
                             mClipboardManager.getPrimaryClip().getItemAt(0).getText();
-                    Log.d("TAG", "复制、剪切的内容为：" + content);
+                    Log.d(TAG, "clip:content:" + content);
                 }
             }
         };
@@ -420,7 +423,7 @@ public class RemoteCanvas extends AppCompatImageView
             }
         };
         t.start();
-        initializeClipboardMonitor();
+//        initializeClipboardMonitor();
         return pointer;
     }
 
@@ -1358,6 +1361,7 @@ public class RemoteCanvas extends AppCompatImageView
         if (s != null && s.length() > 0) {
             ClipData mClipData = ClipData.newPlainText("vnc", s);
             mClipboardManager.setPrimaryClip(mClipData);
+            Log.d(TAG, "setClipboardText() called with: s = [" + s + "]");
         }
     }
 
@@ -2057,4 +2061,11 @@ public class RemoteCanvas extends AppCompatImageView
         return isConnected;
     }
 
+    public void setName(String name) {
+        mAppName = name;
+    }
+
+    public String getName() {
+        return mAppName;
+    }
 }

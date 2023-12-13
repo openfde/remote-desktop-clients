@@ -66,6 +66,7 @@ public class RfbProto extends RfbConnectable {
             super(errorMessage);
         }
     }
+    public static String knownClipboardContents;
 
     final static String TAG = "RfbProto hy";
 
@@ -1039,7 +1040,7 @@ public class RfbProto extends RfbConnectable {
 
     public synchronized void writeClipboardNotify() {
         try {
-            Log.d(TAG, "writeClipboardNotify() called");
+            Log.d(TAG, "clip:ClientCutText:writeClipboardNotify() called");
             int flags = RFB.EXTCLIP_FORMAT_UTF8;
             byte[] b = new byte[12];
             b[0] = (byte) ClientCutText;
@@ -1200,7 +1201,7 @@ public class RfbProto extends RfbConnectable {
                     if (!TextUtils.isEmpty(ClipboardMonitor.inputUnicode)) {
                         sendClipboardData(ClipboardMonitor.inputUnicode);
                     } else if (CLIPBOARD_BARRIE) {
-                        sendClipboardData(ClipboardMonitor.knownClipboardContents);
+                        sendClipboardData(RfbProto.knownClipboardContents);
                     }
 //                    writeClipboardProvide(RFB.EXTCLIP_FORMAT_UTF8, ClipboardMonitor.knownClipboardContents);
                     break;
@@ -1221,7 +1222,7 @@ public class RfbProto extends RfbConnectable {
 
     //        writer()->writeClipboardProvide(rfb::clipboardUTF8, sizes, data);
     private void writeClipboardRequest() {
-        Log.d(TAG, "writeClipboardRequest() called");
+        Log.d(TAG, "clip:ClientCutText:writeClipboardRequest() called");
 //        if ((cp.clipboardFlags() & RFB.EXTCLIP_ACTION_REQUEST) == 0)
 //            throw new ErrorException("Server does not support Extended Clipboard request message");
         try {
@@ -1430,6 +1431,7 @@ public class RfbProto extends RfbConnectable {
 
     // Write a ClientCutText message
     synchronized void writeClientCutText(String text, int length) throws IOException {
+        Log.d(TAG, "clip:ClientCutText:writeClientCutText text = [" + text + "]");
         if (viewOnly)
             return;
         byte[] b = new byte[8 + length];
@@ -1966,6 +1968,7 @@ public class RfbProto extends RfbConnectable {
                                 if(canvas.rfb != null && !sendEmptyEvent){
                                     sendEmptyEvent = true;
                                     canvas.getKeyboard().keyEvent(0, null, " ");
+                                    canvas.initializeClipboardMonitor();
                                 }
                             }
                         },50);
@@ -2064,8 +2067,8 @@ public class RfbProto extends RfbConnectable {
                         break;
 
                     case RfbProto.ServerCutText:
-                        Log.d(TAG, "processProtocol() called ");
                         String s = readServerCutText();
+                        Log.d(TAG, "processProtocol:clip:ServerCutText:  msgType:" + msgType + " text:"+s);
                         if (!TextUtils.isEmpty(s)) {
                             remoteClipboardChanged(s);
                         }

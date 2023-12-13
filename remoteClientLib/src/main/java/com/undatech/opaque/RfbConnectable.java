@@ -73,7 +73,7 @@ public abstract class RfbConnectable {
     public abstract void setCertificateAccepted(boolean certificateAccepted);
 
     protected void remoteClipboardChanged(String data) {
-        Log.d(TAG, "remoteClipboardChanged() called with: data = [" + data + "]");
+        Log.d(TAG, "remoteClipboardChanged:clip:data = [" + data + "]");
         // Send a message containing the text to our handler.
         Message m = new Message();
         m.setTarget(handler);

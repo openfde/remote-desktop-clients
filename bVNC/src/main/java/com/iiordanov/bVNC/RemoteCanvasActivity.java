@@ -216,6 +216,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             }
         }
     };
+    private String vnc_activity_name;
 
     /**
      * Enables sticky immersive mode if supported.
@@ -271,7 +272,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         DetectEventEditText.commitText = null;
         DetectEventEditText.commitTexts.clear();
         if(!bVNC.MOCK_ADDR){
-            String vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
+            vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
             if(!TextUtils.isEmpty(vnc_activity_name)){
                 setTitle(getString(R.string.bvnc_app_name) + ":" + vnc_activity_name);
                 vnc_activity_name = getString(R.string.bvnc_app_name) + ":" + vnc_activity_name;
@@ -305,6 +306,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         setContentView(R.layout.canvas);
 
         canvas = (RemoteCanvas) findViewById(R.id.canvas);
+        canvas.setName(vnc_activity_name);
         inputlayout = (DetectEventEditText) findViewById(R.id.inputlayout);
 
 
@@ -1821,7 +1823,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     // Send e.g. mouse events like hover and scroll to be handled.
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-        Log.d(TAG, "huyang onGenericMotionEvent() called with: event = [" + event + "]");
+//        Log.d(TAG, "huyang onGenericMotionEvent() called with: event = [" + event + "]");
         float y = event.getY();
         float x = event.getX();
         if (y > 40) {

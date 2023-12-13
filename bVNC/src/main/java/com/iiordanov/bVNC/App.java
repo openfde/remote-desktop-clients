@@ -95,7 +95,7 @@ public class App extends Application {
         context = new WeakReference<Context>(this);
 //        debugLog = BuildConfig.DEBUG; //Utils.querySharedPreferenceBoolean(getApplicationContext(), "moreDebugLoggingTag");
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLog("fde"));
-        logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         String hostip = Utils.getProperty("fusion.vnc.hostip",null);
         Log.d(TAG, "onCreate() called hostip:" + hostip);
         if(!TextUtils.isEmpty(hostip)){

@@ -38,14 +38,13 @@ public class ClipboardMonitor extends TimerTask {
     private Context context;
     RemoteCanvas vncCanvas;
 
-    public static String knownClipboardContents;
     public static String inputUnicode;
 
     public ClipboardMonitor (Context c, RemoteCanvas vc, android.content.ClipboardManager clipboard) {
         context   = c;
         vncCanvas = vc;
         this.clipboard = clipboard;
-        knownClipboardContents = new String("");
+//        knownClipboardContents = new String("");
     }
     
     /*
@@ -76,10 +75,13 @@ public class ClipboardMonitor extends TimerTask {
             if(text != null){
                 cliptext = text.toString();
             }
-            if (!TextUtils.isEmpty(cliptext) && !cliptext.equals(knownClipboardContents) && !vnc) {
+//            Log.d(TAG, vncCanvas.getName() + ":ClipboardMonitor get local String:" + cliptext);
+            if(!vncCanvas.cliptextInited || !cliptext.equals(RfbProto.knownClipboardContents) || !TextUtils.equals(cliptext, vncCanvas.cliptext)){
                 if (vncCanvas.rfbconn != null && vncCanvas.rfbconn.isInNormalProtocol()) {
-                    knownClipboardContents = cliptext;
-                    Log.d(TAG, "ClipboardMonitor get local String:" + knownClipboardContents);
+                    vncCanvas.cliptextInited = true;
+                    vncCanvas.cliptext = cliptext;
+                    RfbProto.knownClipboardContents = cliptext;
+//                    Log.d(TAG, vncCanvas.getName() + ":ClipboardMonitor write to server String:" + RfbProto.knownClipboardContents);
                     vncCanvas.rfb.writeClipboardNotify();
                 }
             }

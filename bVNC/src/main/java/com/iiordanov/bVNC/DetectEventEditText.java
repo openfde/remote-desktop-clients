@@ -2,9 +2,7 @@ package com.iiordanov.bVNC;
 
 import static android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Debug;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.method.KeyListener;
@@ -16,8 +14,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 public class DetectEventEditText extends EditText implements View.OnKeyListener,
@@ -29,7 +25,7 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
     private static final boolean DEBUG = true;
     private int flag;
     private static final int ascii_a = 'a';
-    private static final int keycode_a = KeyEvent.KEYCODE_A;
+    private static final int ascii_A = 'A';
 
     public DetectEventEditText(Context context) {
         super(context);
@@ -102,7 +98,7 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
         if(event.getAction() == KeyEvent.ACTION_UP
                 && !TextUtils.isEmpty(commitText)
                 && (event.getKeyCode() > KeyEvent.KEYCODE_A && event.getKeyCode() < KeyEvent.KEYCODE_Z)
-                && !commitContain(keyCode)){
+                && !commitContain(keyCode, event)){
             if(DEBUG){
                 Log.d(TAG, "onKeyPreIme() debounce keycode:" + keyCode + " drop it");
             }
@@ -111,15 +107,19 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
         return super.onKeyPreIme(keyCode, event);
     }
 
-    private boolean commitContain(int keyCode) {
-        if(TextUtils.isEmpty(commitText) && commitTexts.size() == 0){
+    private boolean commitContain(int keyCode, KeyEvent event) {
+        if (TextUtils.isEmpty(commitText) && commitTexts.size() == 0) {
             return false;
         }
-        if(commitText.charAt(0) - (ascii_a - keycode_a) == keyCode){
+        int delta = ascii_a -  KeyEvent.KEYCODE_A;
+        if(event.isCapsLockOn()){
+            delta = ascii_A -  KeyEvent.KEYCODE_A;
+        }
+        if (commitText.charAt(0) - delta == keyCode) {
             return true;
         }
-        for (CharSequence c :commitTexts){
-            if(c.charAt(0)- (ascii_a - keycode_a) == keyCode){
+        for (CharSequence c : commitTexts) {
+            if (c.charAt(0) - delta == keyCode) {
                 return true;
             }
         }
