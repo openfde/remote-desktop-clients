@@ -112,9 +112,11 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
             return false;
         }
         int delta = ascii_a -  KeyEvent.KEYCODE_A;
-        if(event.isCapsLockOn()){
+
+        if(event.isCapsLockOn() ^ event.isShiftPressed()){
             delta = ascii_A -  KeyEvent.KEYCODE_A;
         }
+
         if (commitText.charAt(0) - delta == keyCode) {
             return true;
         }

@@ -246,6 +246,7 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
                         rfb.writeKeyEvent(keysym, metaState, true);
                         rfb.writeKeyEvent(keysym, metaState, false);
                         DetectEventEditText.commitText = null;
+                        DetectEventEditText.commitTexts.clear();
                     } else {
                         rfb.writeKeyEvent(keysym, metaState, down);
                     }
