@@ -412,7 +412,7 @@ public class bVNC extends MainConfiguration {
         Log.d(TAG, "createShortcut() called with: app = [" + app + "]");
         byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
 //        Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
-        Icon icon = Icon.createWithBitmap(Utils.getScaledBitmap(decode));
+        Icon icon = Icon.createWithBitmap(Utils.getScaledBitmap(decode, this));
         ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
         if (shortcutManager != null && shortcutManager.isRequestPinShortcutSupported()) {
 //            Intent launchIntentForPackage = getPackageManager().getLaunchIntentForPackage(getPackageName());
@@ -514,7 +514,7 @@ public class bVNC extends MainConfiguration {
             intent.putExtra("vnc_activity_icon_path", Utils.getSVGPath(app.Icon, app.getIconType(), app.getName()));
         } else {
             byte[] decode = Base64.decode(app.getIcon(), Base64.DEFAULT);
-            intent.putExtra("vnc_activity_icon", Utils.getScaledBitmap(decode));
+            intent.putExtra("vnc_activity_icon", Utils.getScaledBitmap(decode, this));
         }
         if(!TextUtils.isEmpty(app.getName())){
             intent.putExtra("vnc_activity_name", app.getName());

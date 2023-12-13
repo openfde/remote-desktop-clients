@@ -1,17 +1,17 @@
 /**
  * Copyright (C) 2012 Iordan Iordanov
  * Copyright (C) 2010 Michael A. MacDonald
- * 
+ *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this software; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
@@ -164,7 +164,13 @@ public class Utils {
         } else if (Constants.SURFFIX_PNG.equals(iconType)) {
             byte[] decode = Base64.decode(imageStr, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
-            return new BitmapDrawable(bitmap);
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap);
+            if( bitmap == null){
+                Bitmap defaultBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
+                return new BitmapDrawable(defaultBitmap);
+            } else {
+                return bitmapDrawable;
+            }
         } else {
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
             return new BitmapDrawable(bitmap);
@@ -198,8 +204,11 @@ public class Utils {
     }
 
 
-    public static Bitmap getScaledBitmap(byte[] bytes) {
+    public static Bitmap getScaledBitmap(byte[] bytes , Context context) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        if( bitmap == null){
+            bitmap = BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.icon);
+        }
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         float scaleWidth = (float)320 / width;
@@ -230,8 +239,8 @@ public class Utils {
             e.printStackTrace();
         }
     }
-    
-    private static final Intent docIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/android-vnc-viewer/wiki/Documentation")); 
+
+    private static final Intent docIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/android-vnc-viewer/wiki/Documentation"));
 
     public static ActivityManager getActivityManager(Context context)
     {
@@ -240,13 +249,13 @@ public class Utils {
             throw new UnsupportedOperationException("Could not retrieve ActivityManager");
         return result;
     }
-    
+
     public static MemoryInfo getMemoryInfo(Context _context) {
         MemoryInfo info = new MemoryInfo();
         getActivityManager(_context).getMemoryInfo(info);
         return info;
     }
-    
+
     public static void showDocumentation(Context c) {
         c.startActivity(docIntent);
     }
@@ -278,7 +287,7 @@ public class Utils {
             }
         });
     }
-    
+
     public static void showMessage(Context _context, String title, String message, int icon, OnClickListener ackHandler) {
         try {
             if (alertDialog != null && alertDialog.isShowing() && !isContextActivityThatIsFinishing(_context)) {
@@ -298,7 +307,7 @@ public class Utils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Determine if a string is null or empty
      * @param s The string to comapare
@@ -306,11 +315,11 @@ public class Utils {
      */
     public static boolean isNullOrEmptry(String s)
     {
-    	if (s == null || s.equals(""))
-    		return true;
-    	return false;
+        if (s == null || s.equals(""))
+            return true;
+        return false;
     }
-    
+
     /**
      * Converts a given sequence of bytes to a human-readable colon-separated Hex format. 
      * @param bytes
@@ -331,7 +340,7 @@ public class Utils {
         hexChars[j*3 + 1] = hexArray[v%16];
         return new String(hexChars);
     }
-    
+
     /**
      * Forces the appearance of a menu in the given context.
      * @param ctx
@@ -342,11 +351,11 @@ public class Utils {
             Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
 
             if (menuKeyField != null) {
-              menuKeyField.setAccessible(true);
-              menuKeyField.setBoolean(config, false);
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
             }
-          }
-          catch (Exception e) {}
+        }
+        catch (Exception e) {}
     }
 
     public static String pName(Context context) {
@@ -368,9 +377,9 @@ public class Utils {
     }
 
     public static String[] standardPackageNames = {
-                    "com.iiordanov.bVNC", "com.iiordanov.freebVNC",
-                    "com.iiordanov.aRDP", "com.iiordanov.freeaRDP",
-                    "com.iiordanov.aSPICE", "com.iiordanov.freeaSPICE"
+            "com.iiordanov.bVNC", "com.iiordanov.freebVNC",
+            "com.iiordanov.aRDP", "com.iiordanov.freeaRDP",
+            "com.iiordanov.aSPICE", "com.iiordanov.freeaSPICE"
     };
 
     public static boolean isCustom(Context context) {
@@ -463,13 +472,13 @@ public class Utils {
     public static boolean isBlackBerry () {
         boolean bb = false;
         if (android.os.Build.MODEL.contains("BlackBerry") ||
-            android.os.Build.BRAND.contains("BlackBerry") || 
-            android.os.Build.MANUFACTURER.contains("BlackBerry")) {
+                android.os.Build.BRAND.contains("BlackBerry") ||
+                android.os.Build.MANUFACTURER.contains("BlackBerry")) {
             bb = true;
         }
         return bb;
     }
-    
+
     public static void exportSettingsToXml (OutputStream f, SQLiteDatabase db) {
         Writer writer = new OutputStreamWriter(f);
         try {
@@ -488,7 +497,7 @@ public class Utils {
             e.printStackTrace();
         }
     }
-    
+
     public static boolean isValidIpv6Address(final String address) {
         try {
             return InetAddress.getByName(address) instanceof Inet6Address;
@@ -496,7 +505,7 @@ public class Utils {
             return false;
         }
     }
-    
+
     public static String messageAndStackTraceAsString (Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -504,10 +513,10 @@ public class Utils {
         String localizedMessage = e.getLocalizedMessage();
         if (localizedMessage == null)
             localizedMessage = "";
-            
+
         return "\n" + localizedMessage + "\n" + sw.toString();
     }
-    
+
     public static boolean querySharedPreferenceBoolean(Context context, String key) {
         boolean result = false;
         if (context != null) {
