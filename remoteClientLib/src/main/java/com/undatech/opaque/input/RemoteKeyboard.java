@@ -31,7 +31,7 @@ import android.view.KeyEvent;
 import com.undatech.opaque.RfbConnectable;
 
 public abstract class RemoteKeyboard {
-    private static final String TAG = "RemoteKeyboard";
+    private static final String TAG = "RemoteKeyboard_ime";
 
     public final static int SCAN_ESC = 1;
     public final static int SCAN_LEFTCTRL = 29;

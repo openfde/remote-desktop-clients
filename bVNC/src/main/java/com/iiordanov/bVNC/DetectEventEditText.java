@@ -16,77 +16,38 @@ import android.widget.EditText;
 
 import java.util.LinkedList;
 
-public class DetectEventEditText extends EditText implements View.OnKeyListener,
-        EditableInputConnection.OnDelEventListener {
-    private static final String TAG = "DetectText hy";
-    private DelEventListener delEventListener;
-    public static CharSequence commitText;
-    public static volatile LinkedList<CharSequence> commitTexts = new LinkedList<>();
+public class DetectEventEditText extends EditText {
+    private static final String TAG = "DetectText_ime";
+    public CharSequence commitText;
     private static final boolean DEBUG = true;
-    private int flag;
-    private static final int ascii_a = 'a';
-    private static final int ascii_A = 'A';
+    private RemoteCanvas canvas;
 
     public DetectEventEditText(Context context) {
         super(context);
         setKeyListener(getDefaultKeyListener());
-        commitText = null;
-        commitTexts.clear();
     }
 
     public DetectEventEditText(Context context,
                                AttributeSet attrs) {
         super(context, attrs);
         setKeyListener(getDefaultKeyListener());
-        commitText = null;
-        commitTexts.clear();
     }
 
     public DetectEventEditText(Context context,
                                AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setKeyListener(getDefaultKeyListener());
-        commitText = null;
-        commitTexts.clear();
     }
 
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
         super.onCreateInputConnection(outAttrs);
-        EditableInputConnection editableInputConnection = new EditableInputConnection(this);
+        DetectInputConnection detectInputConnection = new DetectInputConnection(this);
         outAttrs.initialSelStart = getSelectionStart();
         outAttrs.initialSelEnd = getSelectionEnd();
-        outAttrs.initialCapsMode = editableInputConnection.getCursorCapsMode(getInputType());
-
-        editableInputConnection.setDelEventListener(this);
-        flag = 0;
-
-        return editableInputConnection;
-    }
-
-    public void setDelListener(DelEventListener l) {
-        delEventListener = l;
-    }
-
-    @Override
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
-        Log.d(TAG, "onKey()  keyCode = [" + keyCode + "], event = [" + event + "]");
-        if (flag == 2) {
-            return false;
-        }
-        flag = 1;
-        return delEventListener != null && keyCode == KeyEvent.KEYCODE_DEL && event
-                .getAction() == KeyEvent.ACTION_DOWN && delEventListener.delEvent();
-    }
-
-    public boolean removeFirstChar(){
-        if(commitTexts.size() == 0) return false;
-        CharSequence charSequence = commitTexts.removeFirst();
-        if(DEBUG){
-            Log.d(TAG, String.format("removeFirstChar: (%s)", charSequence));
-        }
-        return true;
+        outAttrs.initialCapsMode = detectInputConnection.getCursorCapsMode(getInputType());
+        return detectInputConnection;
     }
 
     @Override
@@ -94,38 +55,7 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
         if(DEBUG){
             Log.d(TAG, "onKeyPreIme() called with: keyCode = [" + keyCode + "], event = [" + event + "]");
         }
-        //return keycode when commit text ready to send
-        if(event.getAction() == KeyEvent.ACTION_UP
-                && !TextUtils.isEmpty(commitText)
-                && (event.getKeyCode() > KeyEvent.KEYCODE_A && event.getKeyCode() < KeyEvent.KEYCODE_Z)
-                && !commitContain(keyCode, event)){
-            if(DEBUG){
-                Log.d(TAG, "onKeyPreIme() debounce keycode:" + keyCode + " drop it");
-            }
-            return true;
-        }
         return super.onKeyPreIme(keyCode, event);
-    }
-
-    private boolean commitContain(int keyCode, KeyEvent event) {
-        if (TextUtils.isEmpty(commitText) && commitTexts.size() == 0) {
-            return false;
-        }
-        int delta = ascii_a -  KeyEvent.KEYCODE_A;
-
-        if(event.isCapsLockOn() ^ event.isShiftPressed()){
-            delta = ascii_A -  KeyEvent.KEYCODE_A;
-        }
-
-        if (commitText.charAt(0) - delta == keyCode) {
-            return true;
-        }
-        for (CharSequence c : commitTexts) {
-            if (c.charAt(0) - delta == keyCode) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -150,38 +80,26 @@ public class DetectEventEditText extends EditText implements View.OnKeyListener,
             //FIXME never called
             @Override
             public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
-//                commitText = null;
-//                String characters = event.getCharacters();
-//                Log.d(TAG, "onKeyUp commitText = [" + commitText + "], keyCode = [" + keyCode + "], characters = [" + characters + "]");
-                // 处理按键释放事件
                 return false;
             }
 
             @Override
             public boolean onKeyOther(View view, Editable text, KeyEvent event) {
                 Log.d(TAG, "onKeyOther text = [" + text + "], event = [" + event + "]");
-                // 处理其他按键事件
                 return false;
             }
 
             @Override
             public void clearMetaKeyState(View view, Editable content, int states) {
-                // 清除meta键状态
             }
         };
     }
 
-    @Override
-    public boolean onDelEvent() {
-        Log.d(TAG, "onDelEvent() called");
-        if (flag == 1) {
-            return false;
-        }
-        flag = 2;
-        return delEventListener != null && delEventListener.delEvent();
+    public void connect2canvas(RemoteCanvas canvas) {
+        this.canvas = canvas;
     }
 
-    public interface DelEventListener {
-        boolean delEvent();
+    public RemoteCanvas getCanvas(){
+        return this.canvas;
     }
 }

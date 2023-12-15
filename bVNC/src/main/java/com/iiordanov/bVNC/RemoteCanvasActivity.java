@@ -130,12 +130,9 @@ import okhttp3.Call;
 
 public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyListener,
         SelectTextElementFragment.OnFragmentDismissedListener {
-
-    private final static String TAG = "CanvasAct hy";
-
+    private final static String TAG = "CanvasAct_ime";
     InputHandler inputHandler;
     private Vibrator myVibrator;
-
     private RemoteCanvas canvas;
     private int mDecorViewWidth;
     private int mDecorViewHeight;
@@ -188,7 +185,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     private boolean isFirst = true;
     private int canvasWidth, canvasHight;
 
-    public DetectEventEditText inputlayout;
+    public DetectEventEditText detectEventEditText;
 
     /**
      * This runnable enables immersive mode.
@@ -269,8 +266,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public void onCreate(Bundle icicle) {
         debugLog(App.debugLog, TAG, "OnCreate called");
         super.onCreate(icicle);
-        DetectEventEditText.commitText = null;
-        DetectEventEditText.commitTexts.clear();
         if(!bVNC.MOCK_ADDR){
             vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
             if(!TextUtils.isEmpty(vnc_activity_name)){
@@ -307,8 +302,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
         canvas = (RemoteCanvas) findViewById(R.id.canvas);
         canvas.setName(vnc_activity_name);
-        inputlayout = (DetectEventEditText) findViewById(R.id.inputlayout);
-
+        detectEventEditText = (DetectEventEditText) findViewById(R.id.inputlayout);
+        detectEventEditText.connect2canvas(canvas);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             canvas.setDefaultFocusHighlightEnabled(false);
@@ -399,8 +394,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     }
 
     public void onTextViewClicked(View view) {
-        inputlayout.requestFocus();
-        inputlayout.setFocusableInTouchMode(true);
+        detectEventEditText.requestFocus();
+        detectEventEditText.setFocusableInTouchMode(true);
 //        InputMethodManager inputMgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 //        inputMgr.showSoftInput(inputlayout,
 //                InputMethodManager.SHOW_FORCED);
@@ -571,24 +566,20 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         });
 
         /**
-         * some first time {@link EditableInputConnection#commitText(CharSequence, int)} will called after dispatchkeyevent
+         * some first time {@link DetectInputConnection#commitText(CharSequence, int)} will called after dispatchkeyevent
          * so send text here
          */
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-//                CharSequence commitText = DetectEventEditText.commitText;
                 mDecorViewWidth = getWindow().getDecorView().getWidth();
                 mDecorViewHeight = getWindow().getDecorView().getHeight();
-                if(DetectEventEditText.commitTexts.size() == 0) return;
-                CharSequence commitText = DetectEventEditText.commitTexts.get(0);
-                if (!TextUtils.isEmpty(commitText) && isFirst && canvas.isConnected()) {
-                    Log.d(TAG, "huyang onGlobalLayout() called  commitText:" + commitText);
-                    isFirst = false;
+//                if (inputlayout != null && !TextUtils.isEmpty(inputlayout.commitText) && isFirst && canvas.isConnected()) {
+//                    Log.d(TAG, "huyang onGlobalLayout() called  commitText:" + inputlayout.commitText);
+//                    isFirst = false;
 //                    inputlayout.commitText = null;
-                    inputlayout.removeFirstChar();
-                    canvas.getKeyboard().keyEvent(0xff, null, commitText);
-                }
+//                    canvas.getKeyboard().keyEvent(0xff, null, inputlayout.commitText);
+//                }
             }
         });
 
@@ -1203,9 +1194,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         } catch (NullPointerException e) {
         }
 
-        inputlayout.setFocusable(true);
-        inputlayout.setFocusableInTouchMode(true);
-        inputlayout.requestFocus();
+        detectEventEditText.setFocusable(true);
+        detectEventEditText.setFocusableInTouchMode(true);
+        detectEventEditText.requestFocus();
     }
 
     /**
@@ -1669,8 +1660,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     protected void onDestroy() {
         super.onDestroy();
         stopApp();
-        DetectEventEditText.commitText = null;
-        DetectEventEditText.commitTexts.clear();
         Log.i(TAG, "onDestroy called.");
         if (canvas != null)
             canvas.closeConnection();
@@ -1688,13 +1677,12 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                 .execute(new JsonCallBack<VncResult.GetPortResult>() {
                     @Override
                     public void onFailure(Call call, Exception e) {
-                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        Log.e(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
                     }
 
                     @Override
                     public void onSuccess(Call call, VncResult.GetPortResult response) {
                         com.ft.fdevnc.Constants.app = null;
-                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                     }
                 });
     }
@@ -1707,36 +1695,11 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
 
     private Set<Long> downTimes = new HashSet<>();
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "] DetectEventEditText.commitText = [ " + DetectEventEditText.commitText  + " ]");
-        //type from input method
-        CharSequence commitText = null;
-        if(DetectEventEditText.commitTexts.size() != 0){
-            commitText = DetectEventEditText.commitTexts.getFirst();
-        }
-//        CharSequence commitText = DetectEventEditText.commitText;
-        //unicode
-        if (!TextUtils.isEmpty(commitText) &&
-                event.getAction() == KeyEvent.ACTION_UP &&
-                !downTimes.contains(event.getDownTime()) &&
-                (event.getKeyCode() < KeyEvent.KEYCODE_A || event.getKeyCode() > KeyEvent.KEYCODE_Z)) {
-            DetectEventEditText.commitText = null;
-            inputlayout.removeFirstChar();
-            Log.d(TAG, "dispatchKeyEvent() called with: commitText = [" + commitText + "]");
-            return canvas.getKeyboard().keyEvent(0xff, event, commitText);
-        //keycode
-        } else {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                downTimes.add(event.getDownTime());
-            } else if (event.getAction() == KeyEvent.ACTION_UP) {
-                downTimes.remove(event.getDownTime());
-            }
-            if(!TextUtils.isEmpty(commitText) && commitText.charAt(0) <=  KeyEvent.KEYCODE_DEMO_APP_4){
-                inputlayout.removeFirstChar();
-            }
-            return canvas.getKeyboard().keyEvent(event.getKeyCode(), event);
-        }
+        Log.d(TAG, "dispatchKeyEvent() called with: event = [" + event + "] DetectEventEditText.commitText = [ " + detectEventEditText.commitText  + " ]");
+        return canvas.getKeyboard().keyEvent(event.getKeyCode(), event);
     }
 
     @Override
@@ -1748,9 +1711,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent evt) {
         Log.d(TAG, "onKey() called with: v = [" + v + "], keyCode = [" + keyCode + "], evt = [" + evt + "]");
-
         boolean consumed = false;
-
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             if (evt.getAction() == KeyEvent.ACTION_DOWN)
                 return super.onKeyDown(keyCode, evt);
@@ -1832,7 +1793,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
         }
         if ((x <= 0 || x >= mDecorViewWidth || y <= 40 || y >= mDecorViewHeight) && canvas.rfb != null) {
-//            canvas.rfb.writePointerEvent((int) -30, (int) -30, 0, MOUSE_BUTTON_NONE, false);
             canvas.hideCursor = true;
         } else {
             canvas.hideCursor = false;

@@ -16,7 +16,7 @@ import com.undatech.opaque.RfbConnectable;
 import java.io.IOException;
 
 public class RemoteVncKeyboard extends RemoteKeyboard {
-    private final static String TAG = "RemoteKeyboard hy";
+    private final static String TAG = "RemoteKeyboard_ime";
     public static boolean rAltAsIsoL3Shift = false;
     protected RemoteCanvas canvas;
 
@@ -240,23 +240,13 @@ public class RemoteVncKeyboard extends RemoteKeyboard {
                 if (numchars == 1) {
                     debugLog(App.debugLog, TAG, "processLocalKeyEvent: Sending key. Down: " + down +
                             ", key: " + key + ", keysym:" + keysym + ", metaState: " + metaState);
-
-
-                    if(!down && (DetectEventEditText.commitText !=null && DetectEventEditText.commitText.length() == 1) && keysym < 0xff){
-                        rfb.writeKeyEvent(keysym, metaState, true);
-                        rfb.writeKeyEvent(keysym, metaState, false);
-                        DetectEventEditText.commitText = null;
-                        DetectEventEditText.commitTexts.clear();
-                    } else {
-                        rfb.writeKeyEvent(keysym, metaState, down);
-                    }
+                    rfb.writeKeyEvent(keysym, metaState, down);
                     // If this is a unicode key, the up event will never come, so we artificially insert it.
                     if (unicode) {
                         debugLog(App.debugLog, TAG, "processLocalKeyEvent: Unicode key. Down: false" +
                                 ", key: " + key + ", keysym:" + keysym + ", metaState: " + metaState);
                         rfb.writeKeyEvent(keysym, metaState, false);
                     }
-
                 } else if (numchars > 1) {
                     for (int i = 0; i < numchars; i++) {
                         key = evt.getCharacters().charAt(i);
