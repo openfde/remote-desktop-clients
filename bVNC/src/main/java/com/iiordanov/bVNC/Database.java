@@ -20,14 +20,15 @@
 
 package com.iiordanov.bVNC;
 
-import java.io.File;
 import android.content.Context;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.iiordanov.bVNC.input.AbstractMetaKeyBean;
-import com.undatech.opaque.ConnectionGridActivity;
+
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
+
+import java.io.File;
 
 /**
  * @author Michael A. MacDonald

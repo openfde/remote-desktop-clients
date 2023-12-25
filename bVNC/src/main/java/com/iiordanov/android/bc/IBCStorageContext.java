@@ -4,11 +4,9 @@
  */
 package com.iiordanov.android.bc;
 
-import android.content.Context;
+import com.iiordanov.bVNC.MainConfiguration;
 
 import java.io.File;
-
-import com.iiordanov.bVNC.MainConfiguration;
 
 /**
  * Provides a way to access the directory on external storage as returned by

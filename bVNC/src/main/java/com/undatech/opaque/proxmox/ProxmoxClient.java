@@ -1,25 +1,25 @@
 package com.undatech.opaque.proxmox;
 
-import android.R.bool;
-import android.R.integer;
 import android.os.Handler;
 
 import com.undatech.opaque.Connection;
-import com.undatech.opaque.ConnectionSettings;
-import com.undatech.opaque.proxmox.pojo.*;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javax.security.auth.login.LoginException;
+import com.undatech.opaque.proxmox.pojo.PveRealm;
+import com.undatech.opaque.proxmox.pojo.PveResource;
+import com.undatech.opaque.proxmox.pojo.SpiceDisplay;
+import com.undatech.opaque.proxmox.pojo.VmStatus;
+import com.undatech.opaque.proxmox.pojo.VncDisplay;
 
 import org.apache.http.HttpException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.security.auth.login.LoginException;
 
 public class ProxmoxClient extends RestClient {
     private static final String TAG = "RestClient";
@@ -45,7 +45,7 @@ public class ProxmoxClient extends RestClient {
     public HashMap<String, PveRealm> getAvailableRealms()
             throws JSONException, IOException, HttpException {
         resetState(baseUrl + "/access/domains");
-        execute(RestClient.RequestMethod.GET);
+        execute(RequestMethod.GET);
         
         HashMap<String, PveRealm> result = null;
         if (getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -69,7 +69,7 @@ public class ProxmoxClient extends RestClient {
             addParam("otp", otp);
         }
         
-        execute(RestClient.RequestMethod.POST);
+        execute(RequestMethod.POST);
 
         if (getResponseCode() == HttpURLConnection.HTTP_OK) {
             JSONObject data = new JSONObject(getResponse()).getJSONObject("data");
@@ -93,14 +93,14 @@ public class ProxmoxClient extends RestClient {
      * @throws IOException
      * @throws HttpException
      */
-    private JSONObject request(String resource, RestClient.RequestMethod method, Map<String, String> requestData)
+    private JSONObject request(String resource, RequestMethod method, Map<String, String> requestData)
             throws IOException, JSONException, LoginException, HttpException {
 
         resetState(baseUrl + resource);
 
         addHeader("Cookie", "PVEAuthCookie=" + ticket);
 
-        if (!method.equals(RestClient.RequestMethod.GET)) {
+        if (!method.equals(RequestMethod.GET)) {
             addHeader("CSRFPreventionToken", csrfToken);
         }
 
@@ -137,7 +137,7 @@ public class ProxmoxClient extends RestClient {
      * @throws HttpException
      */
     public VncDisplay vncNode(String node) throws LoginException, JSONException, IOException, HttpException {
-        JSONObject jObj = request("/nodes/" + node + "/vncshell", RestClient.RequestMethod.POST, null);
+        JSONObject jObj = request("/nodes/" + node + "/vncshell", RequestMethod.POST, null);
         return new VncDisplay(jObj.getJSONObject("data"));
     }
 
@@ -151,7 +151,7 @@ public class ProxmoxClient extends RestClient {
      * @throws HttpException
      */
     public SpiceDisplay spiceNode(String node) throws LoginException, JSONException, IOException, HttpException {
-        JSONObject jObj = request("/nodes/" + node + "/spiceshell", RestClient.RequestMethod.POST, null);
+        JSONObject jObj = request("/nodes/" + node + "/spiceshell", RequestMethod.POST, null);
         return new SpiceDisplay(jObj.getJSONObject("data"));
     }
 
@@ -167,7 +167,7 @@ public class ProxmoxClient extends RestClient {
      * @throws HttpException
      */
     public VncDisplay vncVm(String node, String type, int vmid) throws LoginException, JSONException, IOException, HttpException {
-        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/vncproxy", RestClient.RequestMethod.POST, null);
+        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/vncproxy", RequestMethod.POST, null);
         return new VncDisplay(jObj.getJSONObject("data"));
     }
 
@@ -183,7 +183,7 @@ public class ProxmoxClient extends RestClient {
      * @throws HttpException
      */
     public SpiceDisplay spiceVm(String node, String type, int vmid) throws LoginException, JSONException, IOException, HttpException {
-        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/spiceproxy", RestClient.RequestMethod.POST, null);
+        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/spiceproxy", RequestMethod.POST, null);
         return new SpiceDisplay(jObj.getJSONObject("data"));
     }
 
@@ -199,7 +199,7 @@ public class ProxmoxClient extends RestClient {
      * @throws HttpException
      */
     public String startVm(String node, String type, int vmid) throws LoginException, JSONException, IOException, HttpException {
-        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/status/start", RestClient.RequestMethod.POST, null);
+        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/status/start", RequestMethod.POST, null);
         return jObj.getString("data");
     }
     
@@ -215,7 +215,7 @@ public class ProxmoxClient extends RestClient {
      * @throws HttpException
      */
     public VmStatus getCurrentStatus(String node, String type, int vmid) throws LoginException, JSONException, IOException, HttpException {
-        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/status/current", RestClient.RequestMethod.GET, null);
+        JSONObject jObj = request("/nodes/" + node + "/" + type + "/" + vmid + "/status/current", RequestMethod.GET, null);
         return new VmStatus(jObj.getJSONObject("data"));
     }
     
@@ -228,7 +228,7 @@ public class ProxmoxClient extends RestClient {
      * @throws HttpException
      */
     public Map<String, PveResource> getResources() throws LoginException, JSONException, IOException, HttpException {
-        JSONObject jObj = request("/cluster/resources", RestClient.RequestMethod.GET, null);
+        JSONObject jObj = request("/cluster/resources", RequestMethod.GET, null);
         JSONArray jArr = jObj.getJSONArray("data");
         HashMap<String, PveResource> result = new HashMap<String, PveResource>(); 
         for (int i = 0; i < jArr.length(); i++) {

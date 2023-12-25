@@ -28,8 +28,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.undatech.remoteClientUi.*;
-import com.iiordanov.bVNC.*;
+
+import com.iiordanov.bVNC.bVNC;
+import com.undatech.remoteClientUi.R;
 
 /**
  * @author Michael A. MacDonald

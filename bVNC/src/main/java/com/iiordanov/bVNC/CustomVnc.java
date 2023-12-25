@@ -3,19 +3,10 @@ package com.iiordanov.bVNC;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.View;
-import com.iiordanov.bVNC.*;
-import com.iiordanov.freebVNC.*;
-import com.iiordanov.aRDP.*;
-import com.iiordanov.freeaRDP.*;
-import com.iiordanov.aSPICE.*;
-import com.iiordanov.CustomClientPackage.*;
+
 import com.iiordanov.util.CustomClientConfigFileReader;
 
-import org.yaml.snakeyaml.Yaml;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.Map;
 

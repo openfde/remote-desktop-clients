@@ -265,48 +265,48 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
 
     // Members corresponding to defined fields
     private long gen__Id;
-    private java.lang.String gen_nickname;
+    private String gen_nickname;
     private int gen_connectionType;
-    private java.lang.String gen_sshServer;
+    private String gen_sshServer;
     private int gen_sshPort;
-    private java.lang.String gen_sshUser;
-    private java.lang.String gen_sshPassword;
+    private String gen_sshUser;
+    private String gen_sshPassword;
     private boolean gen_keepSshPassword;
-    private java.lang.String gen_sshPubKey;
-    private java.lang.String gen_sshPrivKey;
-    private java.lang.String gen_sshPassPhrase;
+    private String gen_sshPubKey;
+    private String gen_sshPrivKey;
+    private String gen_sshPassPhrase;
     private boolean gen_useSshPubKey;
     private int gen_sshRemoteCommandOS;
     private int gen_sshRemoteCommandType;
     private int gen_autoXType;
-    private java.lang.String gen_autoXCommand;
+    private String gen_autoXCommand;
     private boolean gen_autoXEnabled;
     private int gen_autoXResType;
     private int gen_autoXWidth;
     private int gen_autoXHeight;
-    private java.lang.String gen_autoXSessionProg;
+    private String gen_autoXSessionProg;
     private int gen_autoXSessionType;
     private boolean gen_autoXUnixpw;
     private boolean gen_autoXUnixAuth;
-    private java.lang.String gen_autoXRandFileNm;
-    private java.lang.String gen_sshRemoteCommand;
+    private String gen_autoXRandFileNm;
+    private String gen_sshRemoteCommand;
     private int gen_sshRemoteCommandTimeout;
     private boolean gen_useSshRemoteCommand;
-    private java.lang.String gen_sshHostKey;
-    private java.lang.String gen_address;
+    private String gen_sshHostKey;
+    private String gen_address;
     private int gen_port;
-    private java.lang.String gen_caCert;
-    private java.lang.String gen_caCertPath;
+    private String gen_caCert;
+    private String gen_caCertPath;
     private int gen_tlsPort;
-    private java.lang.String gen_certSubject;
-    private java.lang.String gen_password;
-    private java.lang.String gen_colorModel;
+    private String gen_certSubject;
+    private String gen_password;
+    private String gen_colorModel;
     private int gen_prefEncoding;
     private int gen_extraKeysToggleType;
     private long gen_forceFull;
-    private java.lang.String gen_repeaterId;
-    private java.lang.String gen_inputMode;
-    private java.lang.String gen_SCALEMODE;
+    private String gen_repeaterId;
+    private String gen_inputMode;
+    private String gen_SCALEMODE;
     private boolean gen_useDpadAsArrows;
     private boolean gen_rotateDpad;
     private boolean gen_usePortrait;
@@ -317,11 +317,11 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
     private long gen_metaListId;
     private long gen_LAST_META_KEY_ID;
     private boolean gen_followPan;
-    private java.lang.String gen_userName;
-    private java.lang.String gen_rdpDomain;
-    private java.lang.String gen_secureConnectionType;
+    private String gen_userName;
+    private String gen_rdpDomain;
+    private String gen_secureConnectionType;
     private boolean gen_showZoomButtons;
-    private java.lang.String gen_DOUBLE_TAP_ACTION;
+    private String gen_DOUBLE_TAP_ACTION;
     private int gen_rdpResType;
     private int gen_rdpWidth;
     private int gen_rdpHeight;
@@ -339,11 +339,11 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
     private boolean gen_enableRecording;
     private int gen_remoteSoundType;
     private boolean gen_viewOnly;
-    private java.lang.String gen_layoutMap;
+    private String gen_layoutMap;
 
-    private java.lang.String gen_filename;
-    private java.lang.String gen_x509KeySignature;
-    private java.lang.String gen_screenshotFilename;
+    private String gen_filename;
+    private String gen_x509KeySignature;
+    private String gen_screenshotFilename;
 
     private boolean gen_enableGfx;
     private boolean gen_enableGfxH264;
@@ -354,26 +354,26 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
     // Field accessors
     public long get_Id() { return gen__Id; }
     public void set_Id(long arg__Id) { gen__Id = arg__Id; }
-    public java.lang.String getNickname() { return gen_nickname; }
-    public void setNickname(java.lang.String arg_nickname) { gen_nickname = arg_nickname; }
+    public String getNickname() { return gen_nickname; }
+    public void setNickname(String arg_nickname) { gen_nickname = arg_nickname; }
     public int getConnectionType() { return gen_connectionType; }
     public void setConnectionType(int arg_connectionType) { gen_connectionType = arg_connectionType; }
-    public java.lang.String getSshServer() { return gen_sshServer; }
-    public void setSshServer(java.lang.String arg_sshServer) { gen_sshServer = arg_sshServer; }
+    public String getSshServer() { return gen_sshServer; }
+    public void setSshServer(String arg_sshServer) { gen_sshServer = arg_sshServer; }
     public int getSshPort() { return gen_sshPort; }
     public void setSshPort(int arg_sshPort) { gen_sshPort = arg_sshPort; }
-    public java.lang.String getSshUser() { return gen_sshUser; }
-    public void setSshUser(java.lang.String arg_sshUser) { gen_sshUser = arg_sshUser; }
-    public java.lang.String getSshPassword() { return gen_sshPassword; }
-    public void setSshPassword(java.lang.String arg_sshPassword) { gen_sshPassword = arg_sshPassword; }
+    public String getSshUser() { return gen_sshUser; }
+    public void setSshUser(String arg_sshUser) { gen_sshUser = arg_sshUser; }
+    public String getSshPassword() { return gen_sshPassword; }
+    public void setSshPassword(String arg_sshPassword) { gen_sshPassword = arg_sshPassword; }
     public boolean getKeepSshPassword() { return gen_keepSshPassword; }
     public void setKeepSshPassword(boolean arg_keepSshPassword) { gen_keepSshPassword = arg_keepSshPassword; }
-    public java.lang.String getSshPubKey() { return gen_sshPubKey; }
-    public void setSshPubKey(java.lang.String arg_sshPubKey) { gen_sshPubKey = arg_sshPubKey; }
-    public java.lang.String getSshPrivKey() { return gen_sshPrivKey; }
-    public void setSshPrivKey(java.lang.String arg_sshPrivKey) { gen_sshPrivKey = arg_sshPrivKey; }
-    public java.lang.String getSshPassPhrase() { return gen_sshPassPhrase; }
-    public void setSshPassPhrase(java.lang.String arg_sshPassPhrase) { gen_sshPassPhrase = arg_sshPassPhrase; }
+    public String getSshPubKey() { return gen_sshPubKey; }
+    public void setSshPubKey(String arg_sshPubKey) { gen_sshPubKey = arg_sshPubKey; }
+    public String getSshPrivKey() { return gen_sshPrivKey; }
+    public void setSshPrivKey(String arg_sshPrivKey) { gen_sshPrivKey = arg_sshPrivKey; }
+    public String getSshPassPhrase() { return gen_sshPassPhrase; }
+    public void setSshPassPhrase(String arg_sshPassPhrase) { gen_sshPassPhrase = arg_sshPassPhrase; }
     public boolean getUseSshPubKey() { return gen_useSshPubKey; }
     public void setUseSshPubKey(boolean arg_useSshPubKey) { gen_useSshPubKey = arg_useSshPubKey; }
     public int getSshRemoteCommandOS() { return gen_sshRemoteCommandOS; }
@@ -382,8 +382,8 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
     public void setSshRemoteCommandType(int arg_sshRemoteCommandType) { gen_sshRemoteCommandType = arg_sshRemoteCommandType; }
     public int getAutoXType() { return gen_autoXType; }
     public void setAutoXType(int arg_autoXType) { gen_autoXType = arg_autoXType; }
-    public java.lang.String getAutoXCommand() { return gen_autoXCommand; }
-    public void setAutoXCommand(java.lang.String arg_autoXCommand) { gen_autoXCommand = arg_autoXCommand; }
+    public String getAutoXCommand() { return gen_autoXCommand; }
+    public void setAutoXCommand(String arg_autoXCommand) { gen_autoXCommand = arg_autoXCommand; }
     public boolean getAutoXEnabled() { return gen_autoXEnabled; }
     public void setAutoXEnabled(boolean arg_autoXEnabled) { gen_autoXEnabled = arg_autoXEnabled; }
     public int getAutoXResType() { return gen_autoXResType; }
@@ -392,52 +392,52 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
     public void setAutoXWidth(int arg_autoXWidth) { gen_autoXWidth = arg_autoXWidth; }
     public int getAutoXHeight() { return gen_autoXHeight; }
     public void setAutoXHeight(int arg_autoXHeight) { gen_autoXHeight = arg_autoXHeight; }
-    public java.lang.String getAutoXSessionProg() { return gen_autoXSessionProg; }
-    public void setAutoXSessionProg(java.lang.String arg_autoXSessionProg) { gen_autoXSessionProg = arg_autoXSessionProg; }
+    public String getAutoXSessionProg() { return gen_autoXSessionProg; }
+    public void setAutoXSessionProg(String arg_autoXSessionProg) { gen_autoXSessionProg = arg_autoXSessionProg; }
     public int getAutoXSessionType() { return gen_autoXSessionType; }
     public void setAutoXSessionType(int arg_autoXSessionType) { gen_autoXSessionType = arg_autoXSessionType; }
     public boolean getAutoXUnixpw() { return gen_autoXUnixpw; }
     public void setAutoXUnixpw(boolean arg_autoXUnixpw) { gen_autoXUnixpw = arg_autoXUnixpw; }
     public boolean getAutoXUnixAuth() { return gen_autoXUnixAuth; }
     public void setAutoXUnixAuth(boolean arg_autoXUnixAuth) { gen_autoXUnixAuth = arg_autoXUnixAuth; }
-    public java.lang.String getAutoXRandFileNm() { return gen_autoXRandFileNm; }
-    public void setAutoXRandFileNm(java.lang.String arg_autoXRandFileNm) { gen_autoXRandFileNm = arg_autoXRandFileNm; }
-    public java.lang.String getSshRemoteCommand() { return gen_sshRemoteCommand; }
-    public void setSshRemoteCommand(java.lang.String arg_sshRemoteCommand) { gen_sshRemoteCommand = arg_sshRemoteCommand; }
+    public String getAutoXRandFileNm() { return gen_autoXRandFileNm; }
+    public void setAutoXRandFileNm(String arg_autoXRandFileNm) { gen_autoXRandFileNm = arg_autoXRandFileNm; }
+    public String getSshRemoteCommand() { return gen_sshRemoteCommand; }
+    public void setSshRemoteCommand(String arg_sshRemoteCommand) { gen_sshRemoteCommand = arg_sshRemoteCommand; }
     public int getSshRemoteCommandTimeout() { return gen_sshRemoteCommandTimeout; }
     public void setSshRemoteCommandTimeout(int arg_sshRemoteCommandTimeout) { gen_sshRemoteCommandTimeout = arg_sshRemoteCommandTimeout; }
     public boolean getUseSshRemoteCommand() { return gen_useSshRemoteCommand; }
     public void setUseSshRemoteCommand(boolean arg_useSshRemoteCommand) { gen_useSshRemoteCommand = arg_useSshRemoteCommand; }
-    public java.lang.String getSshHostKey() { return gen_sshHostKey; }
-    public void setSshHostKey(java.lang.String arg_sshHostKey) { gen_sshHostKey = arg_sshHostKey; }
-    public java.lang.String getAddress() { return gen_address; }
-    public void setAddress(java.lang.String arg_address) { gen_address = arg_address; }
+    public String getSshHostKey() { return gen_sshHostKey; }
+    public void setSshHostKey(String arg_sshHostKey) { gen_sshHostKey = arg_sshHostKey; }
+    public String getAddress() { return gen_address; }
+    public void setAddress(String arg_address) { gen_address = arg_address; }
     public int getPort() { return gen_port; }
     public void setPort(int arg_port) { gen_port = arg_port; }
-    public java.lang.String getCaCert() { return gen_caCert; }
-    public void setCaCert(java.lang.String arg_caCert) { gen_caCert = arg_caCert; }
-    public java.lang.String getCaCertPath() { return gen_caCertPath; }
-    public void setCaCertPath(java.lang.String arg_caCertPath) { gen_caCertPath = arg_caCertPath; }
+    public String getCaCert() { return gen_caCert; }
+    public void setCaCert(String arg_caCert) { gen_caCert = arg_caCert; }
+    public String getCaCertPath() { return gen_caCertPath; }
+    public void setCaCertPath(String arg_caCertPath) { gen_caCertPath = arg_caCertPath; }
     public int getTlsPort() { return gen_tlsPort; }
     public void setTlsPort(int arg_tlsPort) { gen_tlsPort = arg_tlsPort; }
-    public java.lang.String getCertSubject() { return gen_certSubject; }
-    public void setCertSubject(java.lang.String arg_certSubject) { gen_certSubject = arg_certSubject; }
-    public java.lang.String getPassword() { return gen_password; }
-    public void setPassword(java.lang.String arg_password) { gen_password = arg_password; }
-    public java.lang.String getColorModel() { return gen_colorModel; }
-    public void setColorModel(java.lang.String arg_colorModel) { gen_colorModel = arg_colorModel; }
+    public String getCertSubject() { return gen_certSubject; }
+    public void setCertSubject(String arg_certSubject) { gen_certSubject = arg_certSubject; }
+    public String getPassword() { return gen_password; }
+    public void setPassword(String arg_password) { gen_password = arg_password; }
+    public String getColorModel() { return gen_colorModel; }
+    public void setColorModel(String arg_colorModel) { gen_colorModel = arg_colorModel; }
     public int getPrefEncoding() { return gen_prefEncoding; }
     public void setPrefEncoding(int arg_prefEncoding) { gen_prefEncoding = arg_prefEncoding; }
     public int getExtraKeysToggleType() { return gen_extraKeysToggleType; }
     public void setExtraKeysToggleType(int arg_extraKeysToggleType) { gen_extraKeysToggleType = arg_extraKeysToggleType; }
     public long getForceFull() { return gen_forceFull; }
     public void setForceFull(long arg_forceFull) { gen_forceFull = arg_forceFull; }
-    public java.lang.String getRepeaterId() { return gen_repeaterId; }
-    public void setRepeaterId(java.lang.String arg_repeaterId) { gen_repeaterId = arg_repeaterId; }
-    public java.lang.String getInputMode() { return gen_inputMode; }
-    public void setInputMode(java.lang.String arg_inputMode) { gen_inputMode = arg_inputMode; }
-    public java.lang.String getScaleModeAsString() { return gen_SCALEMODE; }
-    public void setScaleModeAsString(java.lang.String arg_SCALEMODE) { gen_SCALEMODE = arg_SCALEMODE; }
+    public String getRepeaterId() { return gen_repeaterId; }
+    public void setRepeaterId(String arg_repeaterId) { gen_repeaterId = arg_repeaterId; }
+    public String getInputMode() { return gen_inputMode; }
+    public void setInputMode(String arg_inputMode) { gen_inputMode = arg_inputMode; }
+    public String getScaleModeAsString() { return gen_SCALEMODE; }
+    public void setScaleModeAsString(String arg_SCALEMODE) { gen_SCALEMODE = arg_SCALEMODE; }
     public boolean getUseDpadAsArrows() { return gen_useDpadAsArrows; }
     public void setUseDpadAsArrows(boolean arg_useDpadAsArrows) { gen_useDpadAsArrows = arg_useDpadAsArrows; }
     public boolean getRotateDpad() { return gen_rotateDpad; }
@@ -458,16 +458,16 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
     public void setLastMetaKeyId(long arg_LAST_META_KEY_ID) { gen_LAST_META_KEY_ID = arg_LAST_META_KEY_ID; }
     public boolean getFollowPan() { return gen_followPan; }
     public void setFollowPan(boolean arg_followPan) { gen_followPan = arg_followPan; }
-    public java.lang.String getUserName() { return gen_userName; }
-    public void setUserName(java.lang.String arg_userName) { gen_userName = arg_userName; }
-    public java.lang.String getRdpDomain() { return gen_rdpDomain; }
-    public void setRdpDomain(java.lang.String arg_rdpDomain) { gen_rdpDomain = arg_rdpDomain; }
-    public java.lang.String getSecureConnectionType() { return gen_secureConnectionType; }
-    public void setSecureConnectionType(java.lang.String arg_secureConnectionType) { gen_secureConnectionType = arg_secureConnectionType; }
+    public String getUserName() { return gen_userName; }
+    public void setUserName(String arg_userName) { gen_userName = arg_userName; }
+    public String getRdpDomain() { return gen_rdpDomain; }
+    public void setRdpDomain(String arg_rdpDomain) { gen_rdpDomain = arg_rdpDomain; }
+    public String getSecureConnectionType() { return gen_secureConnectionType; }
+    public void setSecureConnectionType(String arg_secureConnectionType) { gen_secureConnectionType = arg_secureConnectionType; }
     public boolean getShowZoomButtons() { return gen_showZoomButtons; }
     public void setShowZoomButtons(boolean arg_showZoomButtons) { gen_showZoomButtons = arg_showZoomButtons; }
-    public java.lang.String getDoubleTapActionAsString() { return gen_DOUBLE_TAP_ACTION; }
-    public void setDoubleTapActionAsString(java.lang.String arg_DOUBLE_TAP_ACTION) { gen_DOUBLE_TAP_ACTION = arg_DOUBLE_TAP_ACTION; }
+    public String getDoubleTapActionAsString() { return gen_DOUBLE_TAP_ACTION; }
+    public void setDoubleTapActionAsString(String arg_DOUBLE_TAP_ACTION) { gen_DOUBLE_TAP_ACTION = arg_DOUBLE_TAP_ACTION; }
     public int getRdpResType() { return gen_rdpResType; }
     public void setRdpResType(int arg_rdpResType) { gen_rdpResType = arg_rdpResType; }
     public int getRdpWidth() { return gen_rdpWidth; }
@@ -506,15 +506,15 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
     public void setRemoteSoundType(int arg_remoteSoundType) { gen_remoteSoundType = arg_remoteSoundType; }
     public boolean getViewOnly() { return gen_viewOnly; }
     public void setViewOnly(boolean arg_viewOnly) { gen_viewOnly = arg_viewOnly; }
-    public java.lang.String getLayoutMap() { return gen_layoutMap; }
-    public void setLayoutMap(java.lang.String arg_layoutMap) { gen_layoutMap = arg_layoutMap; }
+    public String getLayoutMap() { return gen_layoutMap; }
+    public void setLayoutMap(String arg_layoutMap) { gen_layoutMap = arg_layoutMap; }
 
-    public java.lang.String getFilename() { return gen_filename; }
-    public void setFilename(java.lang.String arg_filename) { gen_filename = arg_filename; }
-    public void setX509KeySignature(java.lang.String arg_x509KeySignature) { gen_x509KeySignature = arg_x509KeySignature; }
-    public java.lang.String getX509KeySignature() { return gen_x509KeySignature; }
-    public java.lang.String getScreenshotFilename() { return gen_screenshotFilename; }
-    public void setScreenshotFilename(java.lang.String arg_screenshotFilename) { gen_screenshotFilename = arg_screenshotFilename; }
+    public String getFilename() { return gen_filename; }
+    public void setFilename(String arg_filename) { gen_filename = arg_filename; }
+    public void setX509KeySignature(String arg_x509KeySignature) { gen_x509KeySignature = arg_x509KeySignature; }
+    public String getX509KeySignature() { return gen_x509KeySignature; }
+    public String getScreenshotFilename() { return gen_screenshotFilename; }
+    public void setScreenshotFilename(String arg_screenshotFilename) { gen_screenshotFilename = arg_screenshotFilename; }
 
     public boolean getEnableGfx() { return gen_enableGfx; }
     public void setEnableGfx(boolean arg_enableGfx) { gen_enableGfx = arg_enableGfx; }

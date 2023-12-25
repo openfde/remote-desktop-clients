@@ -1,11 +1,12 @@
 package com.iiordanov.bVNC;
 
 import android.content.Context;
+
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
-import androidx.appcompat.app.AppCompatDelegate;
+
 import java.lang.ref.WeakReference;
-import java.security.Security;
 
 public class App extends MultiDexApplication {
 

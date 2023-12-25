@@ -14,7 +14,7 @@ public abstract class SafeObjectPool<R> extends ObjectPool<R> {
      * @see com.antlersoft.util.ObjectPool#release(com.antlersoft.util.ObjectPool.Entry)
      */
     @Override
-    public synchronized void release(com.iiordanov.util.ObjectPool.Entry<R> entry) {
+    public synchronized void release(Entry<R> entry) {
         super.release(entry);
     }
 
@@ -22,7 +22,7 @@ public abstract class SafeObjectPool<R> extends ObjectPool<R> {
      * @see com.antlersoft.util.ObjectPool#reserve()
      */
     @Override
-    public synchronized com.iiordanov.util.ObjectPool.Entry<R> reserve() {
+    public synchronized Entry<R> reserve() {
         return super.reserve();
     }
 

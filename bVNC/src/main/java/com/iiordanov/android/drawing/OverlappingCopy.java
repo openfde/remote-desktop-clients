@@ -1,12 +1,12 @@
 package com.iiordanov.android.drawing;
 
-import com.iiordanov.util.ObjectPool;
-import com.iiordanov.util.SafeObjectPool;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+
+import com.iiordanov.util.ObjectPool;
+import com.iiordanov.util.SafeObjectPool;
 
 public class OverlappingCopy
 {

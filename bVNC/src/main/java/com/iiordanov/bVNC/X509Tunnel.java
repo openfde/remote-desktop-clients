@@ -21,10 +21,6 @@
 
 package com.iiordanov.bVNC;
 
-import java.util.*;
-import java.net.*;
-import javax.net.ssl.*;
-
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
@@ -33,10 +29,22 @@ import android.util.Log;
 import com.undatech.opaque.RemoteClientLibConstants;
 import com.undatech.opaque.RfbConnectable;
 
-import java.security.*;
-import java.security.cert.*;
+import java.io.ByteArrayInputStream;
+import java.net.Socket;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
-import java.io.*;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 public class X509Tunnel extends TLSTunnelBase {
 
@@ -78,7 +86,7 @@ public class X509Tunnel extends TLSTunnelBase {
     supported = sock.getSupportedCipherSuites ();
 
     String[] protocols = sock.getEnabledProtocols();;
-    android.util.Log.d(TAG, "Supported TLS Protocols: " + Arrays.toString(protocols));
+    Log.d(TAG, "Supported TLS Protocols: " + Arrays.toString(protocols));
 
     for (int i = 0; i < supported.length; i++) {
       if (!supported[i].matches(".*DH_anon.*") &&
@@ -86,33 +94,33 @@ public class X509Tunnel extends TLSTunnelBase {
           Log.d(TAG, "Adding cipher: " + supported[i]);
           enabled.add (supported[i]);
       } else {
-          android.util.Log.d(TAG, "Omitting cipher: " + supported[i]);
+          Log.d(TAG, "Omitting cipher: " + supported[i]);
       }
     }
 
     sock.setEnabledCipherSuites ((String[]) enabled.toArray (new String[0]));
   }
 
-  protected void initContext (SSLContext sc) throws java.security.GeneralSecurityException {
+  protected void initContext (SSLContext sc) throws GeneralSecurityException {
     TrustManager[] myTM;
 
     //if (cert != null) {
       myTM = new TrustManager[] { new X509TrustManager () {
         
-        public java.security.cert.X509Certificate[] getAcceptedIssuers ()
+        public X509Certificate[] getAcceptedIssuers ()
         {
           return null;
         }
 
         public void checkClientTrusted (
-            java.security.cert.X509Certificate[] certs, String authType)
+            X509Certificate[] certs, String authType)
             throws CertificateException
         {
           throw new CertificateException ("no clients");
         }
 
         public void checkServerTrusted (
-            java.security.cert.X509Certificate[] certs, String authType)
+            X509Certificate[] certs, String authType)
             throws CertificateException
         {
 

@@ -25,32 +25,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
-import com.iiordanov.android.bc.BCFactory;
-import com.iiordanov.bVNC.MainConfiguration;
+import com.iiordanov.bVNC.Database;
 import com.iiordanov.bVNC.Utils;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-
-import org.xml.sax.SAXException;
-import com.iiordanov.bVNC.*;
-import com.iiordanov.freebVNC.*;
-import com.iiordanov.aRDP.*;
-import com.iiordanov.freeaRDP.*;
-import com.iiordanov.aSPICE.*;
-import com.iiordanov.freeaSPICE.*;
-import com.iiordanov.CustomClientPackage.*;
-import com.undatech.opaque.ConnectionSettings;
 import com.undatech.opaque.RemoteClientLibConstants;
-import com.undatech.remoteClientUi.*;
+import com.undatech.remoteClientUi.R;
 
 /**
  * @author Michael A. MacDonald

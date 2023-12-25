@@ -73,7 +73,7 @@ public class AESEAXCipher {
         try {
             ctrCipher.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(iv));
             ctrCipher.doFinal(input, inputOffset, inputLength, output, outputOffset);
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             throw new IOException("AESEAXCipher: " + e.toString());
         }
     }
@@ -100,7 +100,7 @@ public class AESEAXCipher {
         try {
             byte[] encrypted = cbcCipher.doFinal(cbcData);
             return Arrays.copyOfRange(encrypted, encrypted.length - 16, encrypted.length - 0);
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             throw new IOException("AESEAXCipher: " + e.getMessage());
         }
     }

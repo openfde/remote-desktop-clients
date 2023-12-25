@@ -1,21 +1,12 @@
 package com.iiordanov.bVNC;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import net.sqlcipher.database.SQLiteDatabase;
-
-import com.iiordanov.pubkeygenerator.GeneratePubkeyActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
-
-import androidx.fragment.app.FragmentActivity;
-
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Display;
@@ -34,15 +25,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
+import androidx.fragment.app.FragmentActivity;
 
-import com.iiordanov.util.PermissionGroups;
+import com.iiordanov.pubkeygenerator.GeneratePubkeyActivity;
 import com.undatech.opaque.util.LogcatReader;
-import com.iiordanov.util.PermissionsManager;
+import com.undatech.remoteClientUi.R;
 
-import com.undatech.remoteClientUi.*;
+import net.sqlcipher.database.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public abstract class MainConfiguration extends FragmentActivity {
     private final static String TAG = "MainConfiguration";
@@ -347,7 +339,7 @@ public abstract class MainConfiguration extends FragmentActivity {
         int height = outSize.y;
         int value = height;
         if (android.os.Build.VERSION.SDK_INT >= 14) {
-            android.view.ViewConfiguration vc = ViewConfiguration.get(this);
+            ViewConfiguration vc = ViewConfiguration.get(this);
             if (vc.hasPermanentMenuKey())
                 value = bottom;
         }
@@ -372,7 +364,7 @@ public abstract class MainConfiguration extends FragmentActivity {
         d.getSize(outSize);
         int width = outSize.x;
         if (android.os.Build.VERSION.SDK_INT >= 14) {
-            android.view.ViewConfiguration vc = ViewConfiguration.get(this);
+            ViewConfiguration vc = ViewConfiguration.get(this);
             if (vc.hasPermanentMenuKey())
                 return right;
         }
@@ -453,7 +445,7 @@ public abstract class MainConfiguration extends FragmentActivity {
     }
 
     protected boolean useLastPositionToolbarDefault() {
-        android.util.Log.d(TAG, "UseLastPositionToolbarDefault called");
+        Log.d(TAG, "UseLastPositionToolbarDefault called");
         SharedPreferences sp = getSharedPreferences(Constants.generalSettingsTag, Context.MODE_PRIVATE);
         return sp.getBoolean(Constants.positionToolbarLastUsed, true);
     }

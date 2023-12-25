@@ -19,11 +19,12 @@ package com.iiordanov.bVNC.input;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
-import androidx.annotation.RequiresApi;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ViewConfiguration;
+
+import androidx.annotation.RequiresApi;
 
 public class MyScaleGestureDetector extends ScaleGestureDetector {
     private static final String TAG = "MyScaleGestureDetector";
@@ -82,7 +83,7 @@ public class MyScaleGestureDetector extends ScaleGestureDetector {
 
     /**
      * Creates a ScaleGestureDetector with the supplied listener.
-     * @see android.os.Handler#Handler()
+     * @see Handler#Handler()
      *
      * @param context the application's context
      * @param listener the listener invoked for all the callbacks, this must

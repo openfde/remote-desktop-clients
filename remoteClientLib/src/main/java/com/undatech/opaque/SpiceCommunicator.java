@@ -526,7 +526,7 @@ public class SpiceCommunicator extends RfbConnectable {
                     if (fDesc >= 0) {
                         spiceDetachUsbDeviceByFileDescriptor(fDesc);
                     }
-                    usbDeviceManager.removeRequested(d);
+//                    usbDeviceManager.removeRequested(d);
                     d = usbDeviceManager.getRemoved();
                 }
             }

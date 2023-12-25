@@ -20,16 +20,16 @@
 
 package com.iiordanov.bVNC;
 
-import com.iiordanov.android.drawing.OverlappingCopy;
-import com.iiordanov.android.drawing.RectList;
-import com.iiordanov.util.ObjectPool;
-import com.undatech.opaque.RfbConnectable;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+
+import com.iiordanov.android.drawing.OverlappingCopy;
+import com.iiordanov.android.drawing.RectList;
+import com.iiordanov.util.ObjectPool;
+import com.undatech.opaque.RfbConnectable;
 
 class LargeBitmapData extends AbstractBitmapData {
     

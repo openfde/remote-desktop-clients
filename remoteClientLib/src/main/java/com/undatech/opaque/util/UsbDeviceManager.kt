@@ -44,11 +44,11 @@ class UsbDeviceManager(val context: Context, val usbEnabled: Boolean) {
         return res
     }
 
-    @Synchronized fun removeRequested(device: UsbDevice) {
-        val temp = requested.clone() as HashMap<UsbDevice, Pair<Boolean, Int>>
-        temp.remove(device)
-        requested = temp
-    }
+//    @Synchronized fun removeRequested(device: UsbDevice) {
+//        val temp = requested.clone() as HashMap<UsbDevice, Pair<Boolean, Int>>
+//        temp.remove(device)
+//        requested = temp
+//    }
 
     fun getFileDescriptorForUsbDevice(usbDevice: UsbDevice): Int {
         if (mUsbManager.hasPermission(usbDevice)) {

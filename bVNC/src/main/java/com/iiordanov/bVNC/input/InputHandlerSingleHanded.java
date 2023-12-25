@@ -20,16 +20,16 @@
 
 package com.iiordanov.bVNC.input;
 
-import android.widget.RelativeLayout;
-import android.widget.ImageButton;
 import android.view.MotionEvent;
-import android.view.View.OnClickListener;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import com.iiordanov.bVNC.RemoteCanvas;
 import com.iiordanov.bVNC.RemoteCanvasActivity;
 import com.undatech.opaque.util.GeneralUtils;
-import com.undatech.remoteClientUi.*;
+import com.undatech.remoteClientUi.R;
 
 public class InputHandlerSingleHanded extends InputHandlerDirectSwipePan {
 	static final String TAG = "InputHandlerSingleHand";

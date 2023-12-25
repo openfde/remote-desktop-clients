@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 /**
  * Access to SDK-dependent features of MotionEvent
  * 
- * @see android.view.MotionEvent
+ * @see MotionEvent
  * 
  * @author Michael A. MacDonald
  *
@@ -16,7 +16,7 @@ import android.view.MotionEvent;
 public interface IBCMotionEvent {
     /**
      * Obtain the number of pointers active in the event
-     * @see android.view.MotionEvent#getPointerCount()
+     * @see MotionEvent#getPointerCount()
      * @param evt
      * @return number of pointers
      */

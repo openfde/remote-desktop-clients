@@ -132,7 +132,7 @@ public class Utils {
     }
 
     public static void showErrorMessage(Context _context, String message) {
-        showMessage(_context, _context.getString(R.string.error) + "!", message, android.R.drawable.ic_dialog_alert, new DialogInterface.OnClickListener() {
+        showMessage(_context, _context.getString(R.string.error) + "!", message, android.R.drawable.ic_dialog_alert, new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -141,7 +141,7 @@ public class Utils {
     }
 
     public static void showFatalErrorMessage(final Context _context, String message) {
-        showMessage(_context, _context.getString(R.string.error) + "!", message, android.R.drawable.ic_dialog_alert, new DialogInterface.OnClickListener() {
+        showMessage(_context, _context.getString(R.string.error) + "!", message, android.R.drawable.ic_dialog_alert, new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -153,7 +153,7 @@ public class Utils {
         });
     }
     
-    public static void showMessage(Context _context, String title, String message, int icon, DialogInterface.OnClickListener ackHandler) {
+    public static void showMessage(Context _context, String title, String message, int icon, OnClickListener ackHandler) {
         try {
             if (alertDialog != null && alertDialog.isShowing() && !isContextActivityThatIsFinishing(_context)) {
                 alertDialog.dismiss();
@@ -508,7 +508,7 @@ public class Utils {
         AlertDialog.Builder adb = new AlertDialog.Builder(context)
                 .setMessage(textId)
                 .setPositiveButton(R.string.close,
-                        new DialogInterface.OnClickListener() {
+                        new OnClickListener() {
                             public void onClick(DialogInterface dialog,
                                                 int whichButton) {
                                 // We don't have to do anything.
@@ -553,7 +553,7 @@ public class Utils {
             String packageName = Utils.pName(context);
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(packageName, 0);
             result = pInfo.versionName + "_" + pInfo.versionCode;
-            android.util.Log.d(TAG, "Version of " + packageName + " is " + result);
+            Log.d(TAG, "Version of " + packageName + " is " + result);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

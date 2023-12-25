@@ -20,12 +20,6 @@
 
 package com.iiordanov.bVNC.input;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-
 import android.content.res.Resources;
 import android.os.Handler;
 import android.util.Log;
@@ -35,6 +29,12 @@ import com.iiordanov.bVNC.Constants;
 import com.iiordanov.bVNC.RemoteCanvas;
 import com.undatech.opaque.SpiceCommunicator;
 import com.undatech.opaque.util.GeneralUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 
 public class RemoteSpiceKeyboard extends RemoteKeyboard {
 	private final static String TAG = "RemoteSpiceKeyboard";

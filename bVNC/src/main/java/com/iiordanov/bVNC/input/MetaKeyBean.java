@@ -20,15 +20,13 @@
 
 package com.iiordanov.bVNC.input;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import android.view.KeyEvent;
 
 import com.antlersoft.android.dbimpl.NewInstance;
 import com.undatech.opaque.input.RemoteKeyboard;
 
-import android.view.KeyEvent;
-
-import com.undatech.opaque.input.RemoteKeyboard;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author Michael A. MacDonald

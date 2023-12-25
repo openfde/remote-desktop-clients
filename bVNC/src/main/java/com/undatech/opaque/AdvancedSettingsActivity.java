@@ -19,19 +19,9 @@
 
 package com.undatech.opaque;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.iiordanov.bVNC.Constants;
-import com.iiordanov.util.PermissionGroups;
-import com.iiordanov.util.PermissionsManager;
-import com.undatech.opaque.dialogs.ManageCustomCaFragment;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -45,8 +35,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
+import com.iiordanov.bVNC.Constants;
+import com.iiordanov.util.PermissionGroups;
+import com.iiordanov.util.PermissionsManager;
+import com.undatech.opaque.dialogs.ManageCustomCaFragment;
 import com.undatech.opaque.util.FileUtils;
 import com.undatech.remoteClientUi.R;
+
+import java.io.IOException;
+import java.util.List;
 
 
 public class AdvancedSettingsActivity extends FragmentActivity implements ManageCustomCaFragment.OnFragmentDismissedListener {

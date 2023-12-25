@@ -18,6 +18,12 @@
  */
 package com.iiordanov.bVNC;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.undatech.opaque.RemoteClientLibConstants;
+
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,12 +38,6 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-
-import com.undatech.opaque.RemoteClientLibConstants;
 
 // this is a secure tunnel meant to be established prior to creating the rfb connection
 // it can then be used with standard vnc security

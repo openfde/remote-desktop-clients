@@ -210,7 +210,7 @@ public class RFBSecurityARD {
         byte[] output;
         try {
             // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(input);
             output = digest.digest();
         } catch (NoSuchAlgorithmException e) {

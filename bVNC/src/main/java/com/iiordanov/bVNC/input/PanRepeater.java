@@ -20,9 +20,9 @@
 
 package com.iiordanov.bVNC.input;
 
-import com.iiordanov.bVNC.RemoteCanvas;
-
 import android.os.Handler;
+
+import com.iiordanov.bVNC.RemoteCanvas;
 
 public class PanRepeater implements Runnable {
 	

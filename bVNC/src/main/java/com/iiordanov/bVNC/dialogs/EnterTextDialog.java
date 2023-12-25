@@ -20,28 +20,25 @@
 
 package com.iiordanov.bVNC.dialogs;
 
-import java.util.ArrayList;
-
-import com.undatech.opaque.input.RemoteKeyboard;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import com.iiordanov.bVNC.*;
-import com.iiordanov.freebVNC.*;
-import com.iiordanov.aRDP.*;
-import com.iiordanov.freeaRDP.*;
-import com.iiordanov.aSPICE.*;
-import com.iiordanov.freeaSPICE.*;
-import com.iiordanov.CustomClientPackage.*;
-import com.undatech.remoteClientUi.*;
+
+import com.iiordanov.bVNC.Database;
+import com.iiordanov.bVNC.RemoteCanvasActivity;
+import com.iiordanov.bVNC.SentTextBean;
+import com.undatech.opaque.input.RemoteKeyboard;
+import com.undatech.remoteClientUi.R;
+
+import net.sqlcipher.database.SQLiteDatabase;
+
+import java.util.ArrayList;
 
 /**
  * @author Michael A. MacDonald

@@ -24,6 +24,7 @@ import static com.undatech.opaque.util.InputUtils.isNoQwertyKbd;
 import android.content.Context;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 
@@ -218,6 +219,7 @@ public abstract class RemoteKeyboard {
     }
     
     public void sendText(String s) {
+        Log.d(TAG, "sendText() called with: s = [" + s + "]");
         for (int i = 0; i < s.length(); i++) {
             KeyEvent event = null;
             char c = s.charAt(i);

@@ -21,7 +21,7 @@ public class SentTextBean extends com.antlersoft.android.dbimpl.IdImplementation
 
     // Members corresponding to defined fields
     private long gen__Id;
-    private java.lang.String gen_sentText;
+    private String gen_sentText;
 
 
     public static final com.antlersoft.android.dbimpl.NewInstance<SentTextBean> GEN_NEW = new com.antlersoft.android.dbimpl.NewInstance<SentTextBean>() {
@@ -36,8 +36,8 @@ public class SentTextBean extends com.antlersoft.android.dbimpl.IdImplementation
     // Field accessors
     public long get_Id() { return gen__Id; }
     public void set_Id(long arg__Id) { gen__Id = arg__Id; }
-    public java.lang.String getSentText() { return gen_sentText; }
-    public void setSentText(java.lang.String arg_sentText) { gen_sentText = arg_sentText; }
+    public String getSentText() { return gen_sentText; }
+    public void setSentText(String arg_sentText) { gen_sentText = arg_sentText; }
 
     public android.content.ContentValues Gen_getValues() {
         android.content.ContentValues values=new android.content.ContentValues();

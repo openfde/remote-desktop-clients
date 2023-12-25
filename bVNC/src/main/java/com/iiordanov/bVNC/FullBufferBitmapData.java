@@ -20,13 +20,13 @@
 
 package com.iiordanov.bVNC;
 
-import java.util.Arrays;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.undatech.opaque.RfbConnectable;
+
+import java.util.Arrays;
 
 class FullBufferBitmapData extends AbstractBitmapData {
     /**

@@ -5,9 +5,9 @@ package com.iiordanov.android.drawing;
 
 import android.graphics.Rect;
 
-import java.util.ArrayList;
-
 import com.iiordanov.util.ObjectPool;
+
+import java.util.ArrayList;
 
 /**
  * A list of rectangular regions that together represent an area of interest.  Provides
@@ -430,7 +430,7 @@ public class RectList {
         r.set(toAdd);
         try {
             recursiveAdd(entry,0);
-        } catch (java.lang.StackOverflowError e) {
+        } catch (StackOverflowError e) {
             // Don't add the rectangle if the stack overflowed (if the user is scrolling around too much).
         }
     }
@@ -463,7 +463,7 @@ public class RectList {
         {
             try {
                 recursiveAdd(newList.get(i),0);
-            } catch (java.lang.StackOverflowError e) {
+            } catch (StackOverflowError e) {
                 // Don't add the rectangle if the stack overflowed (if the user is scrolling around too much).
             }
         }
@@ -543,7 +543,7 @@ public class RectList {
         {
             try {
                 recursiveAdd(newList.get(i),0);
-            } catch (java.lang.StackOverflowError e) {
+            } catch (StackOverflowError e) {
                 // Don't add the rectangle if the stack overflowed (if the user is scrolling around too much).
             }
         }

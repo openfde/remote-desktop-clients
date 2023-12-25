@@ -4,12 +4,12 @@
  */
 package com.iiordanov.android.bc;
 
-import java.io.File;
+import android.os.Environment;
 
 import com.iiordanov.bVNC.MainConfiguration;
 import com.iiordanov.bVNC.Utils;
 
-import android.os.Environment;
+import java.io.File;
 
 /**
  * @author Michael A. MacDonald

@@ -25,21 +25,20 @@
 
 package com.iiordanov.bVNC;
 
-import java.io.IOException;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-
-import com.iiordanov.bVNC.input.RemotePointer;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.Log;
+
 import com.github.luben.zstd.Zstd;
+import com.iiordanov.bVNC.input.RemotePointer;
+
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 public class Decoder {
     private final static String TAG = "Decoder";
@@ -349,7 +348,7 @@ public class Decoder {
             }
         }
         handleHextileSubrectPaint.setColor(hextile_bg);
-        handleHextileSubrectPaint.setStyle(Paint.Style.FILL);
+        handleHextileSubrectPaint.setStyle(Style.FILL);
         if ( valid )
             bitmapData.drawRect(tx, ty, tw, th, handleHextileSubrectPaint);
 
@@ -468,7 +467,7 @@ public class Decoder {
                     int pix = handleZRLERectPalette[0];
                     int c = (bytesPerPixel == 1) ? colorPalette[0xFF & pix] : (0xFF000000 | pix);
                     handleZRLERectPaint.setColor(c);
-                    handleZRLERectPaint.setStyle(Paint.Style.FILL);
+                    handleZRLERectPaint.setStyle(Style.FILL);
                     if ( valid)
                         bitmapData.drawRect(tx, ty, tw, th, handleZRLERectPaint);
                     continue;

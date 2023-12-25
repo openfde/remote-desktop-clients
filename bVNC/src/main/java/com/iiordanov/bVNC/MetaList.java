@@ -21,7 +21,7 @@ public class MetaList extends com.antlersoft.android.dbimpl.IdImplementationBase
 
     // Members corresponding to defined fields
     private long gen__Id;
-    private java.lang.String gen_name;
+    private String gen_name;
 
 
     public static final com.antlersoft.android.dbimpl.NewInstance<MetaList> GEN_NEW = new com.antlersoft.android.dbimpl.NewInstance<MetaList>() {
@@ -36,8 +36,8 @@ public class MetaList extends com.antlersoft.android.dbimpl.IdImplementationBase
     // Field accessors
     public long get_Id() { return gen__Id; }
     public void set_Id(long arg__Id) { gen__Id = arg__Id; }
-    public java.lang.String getName() { return gen_name; }
-    public void setName(java.lang.String arg_name) { gen_name = arg_name; }
+    public String getName() { return gen_name; }
+    public void setName(String arg_name) { gen_name = arg_name; }
 
     public android.content.ContentValues Gen_getValues() {
         android.content.ContentValues values=new android.content.ContentValues();

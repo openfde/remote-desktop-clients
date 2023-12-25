@@ -23,7 +23,6 @@ package com.undatech.opaque.dialogs;
 import android.content.DialogInterface;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.util.Xml;
@@ -33,10 +32,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
+import androidx.fragment.app.DialogFragment;
 
 import com.undatech.remoteClientUi.R;
+
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class SelectTextElementFragment extends DialogFragment {
     public static String TAG = "SelectVmFragment";

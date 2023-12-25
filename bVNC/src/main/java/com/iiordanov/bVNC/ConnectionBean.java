@@ -77,7 +77,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
                     InputHandlerDirectSwipePan.ID);
             preferSendingUnicode = Utils.querySharedPreferenceBoolean(context, Constants.preferSendingUnicode);
         } else {
-            android.util.Log.e(TAG, "Failed to query defaults from shared preferences, context is null.");
+            Log.e(TAG, "Failed to query defaults from shared preferences, context is null.");
         }
 
         showOnlyConnectionNicknames = Utils.querySharedPreferenceBoolean(context, Constants.showOnlyConnectionNicknames);
@@ -356,7 +356,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public synchronized void save(Context c) {
-        android.util.Log.d(TAG, "save called");
+        Log.d(TAG, "save called");
         Database database = new Database(c);
         save(database.getWritableDatabase());
         database.close();
@@ -370,7 +370,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public void loadFromSharedPreferences(Context context) {
-        android.util.Log.d(TAG, "loadFromSharedPreferences called");
+        Log.d(TAG, "loadFromSharedPreferences called");
         SharedPreferences sp = context.getSharedPreferences(Long.toString(get_Id()), Context.MODE_PRIVATE);
         useLastPositionToolbar = sp.getBoolean("useLastPositionToolbar", true);
         useLastPositionToolbarX = sp.getInt("useLastPositionToolbarX", 0);
@@ -379,7 +379,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public void saveToSharedPreferences(Context context) {
-        android.util.Log.d(TAG, "saveToSharedPreferences called");
+        Log.d(TAG, "saveToSharedPreferences called");
         SharedPreferences sp = context.getSharedPreferences(Long.toString(get_Id()), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("useLastPositionToolbar", useLastPositionToolbar);
@@ -391,7 +391,7 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
 
 
     private synchronized void save(SQLiteDatabase database) {
-        android.util.Log.d(TAG, "save called with database");
+        Log.d(TAG, "save called with database");
         ContentValues values = Gen_getValues();
         values.remove(GEN_FIELD__ID);
         if (!getKeepSshPassword()) {
@@ -527,20 +527,20 @@ public class ConnectionBean extends AbstractConnectionBean implements Connection
     }
 
     public void saveAndWriteRecent(boolean saveEmpty, Context c) {
-        android.util.Log.d(TAG, "saveAndWriteRecent called");
+        Log.d(TAG, "saveAndWriteRecent called");
         Database database = new Database(c);
         if ((getConnectionType() == Constants.CONN_TYPE_SSH && getSshServer().equals("")
                 || getAddress().equals("")) && !saveEmpty) {
-            android.util.Log.d(TAG, "saveAndWriteRecent not saving due to missing data");
+            Log.d(TAG, "saveAndWriteRecent not saving due to missing data");
         } else {
-            android.util.Log.d(TAG, "saveAndWriteRecent saving connection");
+            Log.d(TAG, "saveAndWriteRecent saving connection");
             saveAndWriteRecent(database);
             saveToSharedPreferences(c);
         }
     }
 
     private void saveAndWriteRecent(Database database) {
-        android.util.Log.d(TAG, "saveAndWriteRecent called with database");
+        Log.d(TAG, "saveAndWriteRecent called with database");
 
         SQLiteDatabase db = database.getWritableDatabase();
         db.beginTransaction();

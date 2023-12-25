@@ -1,11 +1,11 @@
 package com.undatech.opaque.proxmox.pojo;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class SpiceDisplay {
     private String password;

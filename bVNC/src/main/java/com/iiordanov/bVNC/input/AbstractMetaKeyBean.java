@@ -40,12 +40,12 @@ public abstract class AbstractMetaKeyBean extends com.antlersoft.android.dbimpl.
     // Members corresponding to defined fields
     private long gen__Id;
     private long gen_metaListId;
-    private java.lang.String gen_keyDesc;
+    private String gen_keyDesc;
     private int gen_metaFlags;
     private boolean gen_mouseClick;
     private int gen_mouseButtons;
     private int gen_keySym;
-    private java.lang.String gen_shortcut;
+    private String gen_shortcut;
 
 
     public String Gen_tableName() { return GEN_TABLE_NAME; }
@@ -55,8 +55,8 @@ public abstract class AbstractMetaKeyBean extends com.antlersoft.android.dbimpl.
     public void set_Id(long arg__Id) { gen__Id = arg__Id; }
     public long getMetaListId() { return gen_metaListId; }
     public void setMetaListId(long arg_metaListId) { gen_metaListId = arg_metaListId; }
-    public java.lang.String getKeyDesc() { return gen_keyDesc; }
-    public void setKeyDesc(java.lang.String arg_keyDesc) { gen_keyDesc = arg_keyDesc; }
+    public String getKeyDesc() { return gen_keyDesc; }
+    public void setKeyDesc(String arg_keyDesc) { gen_keyDesc = arg_keyDesc; }
     public int getMetaFlags() { return gen_metaFlags; }
     public void setMetaFlags(int arg_metaFlags) { gen_metaFlags = arg_metaFlags; }
     public boolean isMouseClick() { return gen_mouseClick; }
@@ -65,8 +65,8 @@ public abstract class AbstractMetaKeyBean extends com.antlersoft.android.dbimpl.
     public void setMouseButtons(int arg_mouseButtons) { gen_mouseButtons = arg_mouseButtons; }
     public int getKeySym() { return gen_keySym; }
     public void setKeySym(int arg_keySym) { gen_keySym = arg_keySym; }
-    public java.lang.String getShortcut() { return gen_shortcut; }
-    public void setShortcut(java.lang.String arg_shortcut) { gen_shortcut = arg_shortcut; }
+    public String getShortcut() { return gen_shortcut; }
+    public void setShortcut(String arg_shortcut) { gen_shortcut = arg_shortcut; }
 
     public android.content.ContentValues Gen_getValues() {
         android.content.ContentValues values=new android.content.ContentValues();

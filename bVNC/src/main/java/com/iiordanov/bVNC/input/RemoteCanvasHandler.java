@@ -197,10 +197,10 @@ public class RemoteCanvasHandler extends Handler {
                     @Override
                     public void onResponseObtained(boolean result) {
                         if (result) {
-                            android.util.Log.e(TAG, "We were told to continue");
+                            Log.e(TAG, "We were told to continue");
                             saveAndAcceptCert(cert);
                         } else {
-                            android.util.Log.e(TAG, "We were told not to continue");
+                            Log.e(TAG, "We were told not to continue");
                             Utils.justFinish(context);
                         }
                     }
@@ -218,7 +218,7 @@ public class RemoteCanvasHandler extends Handler {
      * @param cert
      */
     private void saveAndAcceptCert(X509Certificate cert) {
-        android.util.Log.d(TAG, "Saving X509 cert fingerprint.");
+        Log.d(TAG, "Saving X509 cert fingerprint.");
         String certificate = null;
         try {
             certificate = Base64.encodeToString(cert.getEncoded(), Base64.DEFAULT);
@@ -357,7 +357,7 @@ public class RemoteCanvasHandler extends Handler {
     @Override
     public void handleMessage(final Message msg) {
         Bundle s;
-        android.util.Log.d(TAG, "Handling message, msg.what: " + msg.what);
+        Log.d(TAG, "Handling message, msg.what: " + msg.what);
         final String messageText = Utils.getStringFromMessage(msg, "message");
         switch (msg.what) {
             case RemoteClientLibConstants.PRO_FEATURE:
@@ -426,11 +426,11 @@ public class RemoteCanvasHandler extends Handler {
                         connection.getPassword(), null, null, connection.getKeepPassword());
                 break;
             case RemoteClientLibConstants.DIALOG_SSH_CERT:
-                android.util.Log.d(TAG, "DIALOG_SSH_CERT");
+                Log.d(TAG, "DIALOG_SSH_CERT");
                 initializeSshHostKey();
                 break;
             case RemoteClientLibConstants.DIALOG_RDP_CERT:
-                android.util.Log.d(TAG, "DIALOG_RDP_CERT");
+                Log.d(TAG, "DIALOG_RDP_CERT");
                 s = (Bundle) msg.obj;
                 validateCert(
                         s.getString("subject"),
@@ -474,13 +474,13 @@ public class RemoteCanvasHandler extends Handler {
                 c.reinitializeCanvas();
                 break;
             case RemoteClientLibConstants.REPORT_TOOLBAR_POSITION:
-                android.util.Log.d(TAG, "Handling message, REPORT_TOOLBAR_POSITION");
+                Log.d(TAG, "Handling message, REPORT_TOOLBAR_POSITION");
                 if (connection.getUseLastPositionToolbar()) {
                     int useLastPositionToolbarX = Utils.getIntFromMessage(msg, "useLastPositionToolbarX");
                     int useLastPositionToolbarY = Utils.getIntFromMessage(msg, "useLastPositionToolbarY");
                     boolean useLastPositionToolbarMoved = Utils.getBooleanFromMessage(msg, "useLastPositionToolbarMoved");
-                    android.util.Log.d(TAG, "Handling message, REPORT_TOOLBAR_POSITION, X Coordinate" + useLastPositionToolbarX);
-                    android.util.Log.d(TAG, "Handling message, REPORT_TOOLBAR_POSITION, Y Coordinate" + useLastPositionToolbarY);
+                    Log.d(TAG, "Handling message, REPORT_TOOLBAR_POSITION, X Coordinate" + useLastPositionToolbarX);
+                    Log.d(TAG, "Handling message, REPORT_TOOLBAR_POSITION, Y Coordinate" + useLastPositionToolbarY);
                     connection.setUseLastPositionToolbarX(useLastPositionToolbarX);
                     connection.setUseLastPositionToolbarY(useLastPositionToolbarY);
                     connection.setUseLastPositionToolbarMoved(useLastPositionToolbarMoved);
@@ -536,7 +536,7 @@ public class RemoteCanvasHandler extends Handler {
                 c.disconnectAndShowMessage(R.string.info_vm_launched_on_stand_by, R.string.info_dialog_title);
                 break;
             case RemoteClientLibConstants.LAUNCH_VNC_VIEWER:
-                android.util.Log.d(TAG, "Trying to launch VNC viewer");
+                Log.d(TAG, "Trying to launch VNC viewer");
 
                 if (!GooglePlayUtils.isPackageInstalled(context, "com.iiordanov.bVNC") &&
                         !GooglePlayUtils.isPackageInstalled(context, "com.iiordanov.freebVNC")) {
@@ -646,7 +646,7 @@ public class RemoteCanvasHandler extends Handler {
                 c.disconnectAndShowMessage(R.string.error_ovirt_timeout, R.string.error_dialog_title);
                 break;
             case RemoteClientLibConstants.DIALOG_X509_CERT:
-                android.util.Log.d(TAG, "DIALOG_X509_CERT");
+                Log.d(TAG, "DIALOG_X509_CERT");
                 X509Certificate cert = (X509Certificate)msg.obj;
                 validateX509Cert(cert);
                 break;
@@ -663,7 +663,7 @@ public class RemoteCanvasHandler extends Handler {
                 });
                 break;
             default:
-                android.util.Log.e(TAG, "Not handling unknown messageId: " + msg.what);
+                Log.e(TAG, "Not handling unknown messageId: " + msg.what);
                 break;
         }
     }

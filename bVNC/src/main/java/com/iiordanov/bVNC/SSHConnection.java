@@ -684,19 +684,19 @@ public class SSHConnection implements InteractiveCallback, GetTextFragment.OnFra
 
         switch (dialogId) {
             case GetTextFragment.DIALOG_ID_GET_VERIFICATIONCODE:
-                android.util.Log.i(TAG, "Text obtained from DIALOG_ID_GET_VERIFICATIONCODE.");
+                Log.i(TAG, "Text obtained from DIALOG_ID_GET_VERIFICATIONCODE.");
                 setVerificationCode(obtainedStrings[0]);
                 break;
             case GetTextFragment.DIALOG_ID_GET_SSH_CREDENTIALS:
-                android.util.Log.i(TAG, "Text obtained from DIALOG_ID_GET_SSH_CREDENTIALS.");
+                Log.i(TAG, "Text obtained from DIALOG_ID_GET_SSH_CREDENTIALS.");
                 setUserAndPassword(obtainedStrings[0], obtainedStrings[1], keep);
                 break;
             case GetTextFragment.DIALOG_ID_GET_SSH_PASSPHRASE:
-                android.util.Log.i(TAG, "Text obtained from DIALOG_ID_GET_SSH_PASSPHRASE.");
+                Log.i(TAG, "Text obtained from DIALOG_ID_GET_SSH_PASSPHRASE.");
                 setPassphrase(obtainedStrings[0], keep);
                 break;
             default:
-                android.util.Log.e(TAG, "Unknown dialog type.");
+                Log.e(TAG, "Unknown dialog type.");
                 break;
         }
     }

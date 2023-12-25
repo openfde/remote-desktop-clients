@@ -25,7 +25,7 @@ import android.view.MotionEvent;
 import com.iiordanov.bVNC.RemoteCanvas;
 import com.iiordanov.bVNC.RemoteCanvasActivity;
 import com.undatech.opaque.util.GeneralUtils;
-import com.undatech.remoteClientUi.*;
+import com.undatech.remoteClientUi.R;
 
 public class InputHandlerTouchpad extends InputHandlerGeneric {
 	static final String TAG = "InputHandlerTouchpad";

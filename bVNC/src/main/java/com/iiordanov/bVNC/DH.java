@@ -39,7 +39,7 @@ public class DH {
         }
 
         private long rng(long limit) {
-                return (long) (java.lang.Math.random() * limit);
+                return (long) (Math.random() * limit);
         }
 
         //Performs the miller-rabin primality test on a guessed prime n.

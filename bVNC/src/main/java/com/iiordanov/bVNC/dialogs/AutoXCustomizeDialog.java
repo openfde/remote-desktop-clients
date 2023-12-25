@@ -19,12 +19,6 @@
 
 package com.iiordanov.bVNC.dialogs;
 
-import com.iiordanov.bVNC.Database;
-import com.iiordanov.bVNC.bVNC;
-import com.iiordanov.bVNC.ConnectionBean;
-import com.iiordanov.util.RandomString;
-import com.iiordanov.bVNC.Constants;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -38,14 +32,19 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
-import com.undatech.remoteClientUi.*;
-import com.iiordanov.bVNC.*;
+
+import com.iiordanov.bVNC.ConnectionBean;
+import com.iiordanov.bVNC.Constants;
+import com.iiordanov.bVNC.Database;
+import com.iiordanov.bVNC.bVNC;
+import com.iiordanov.util.RandomString;
+import com.undatech.remoteClientUi.R;
 
 /**
  * @author Iordan K Iordanov

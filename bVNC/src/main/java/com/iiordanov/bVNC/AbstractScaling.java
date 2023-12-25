@@ -21,14 +21,8 @@
 package com.iiordanov.bVNC;
 
 import android.widget.ImageView;
-import com.iiordanov.bVNC.*;
-import com.iiordanov.freebVNC.*;
-import com.iiordanov.aRDP.*;
-import com.iiordanov.freeaRDP.*;
-import com.iiordanov.aSPICE.*;
-import com.iiordanov.freeaSPICE.*;
-import com.iiordanov.CustomClientPackage.*;
-import com.undatech.remoteClientUi.*;
+
+import com.undatech.remoteClientUi.R;
 
 /**
  * @author Michael A. MacDonald

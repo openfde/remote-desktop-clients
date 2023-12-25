@@ -20,11 +20,7 @@
 
 package com.iiordanov.bVNC.input;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -36,6 +32,9 @@ import com.iiordanov.bVNC.Constants;
 import com.iiordanov.bVNC.RemoteCanvas;
 import com.iiordanov.bVNC.RemoteCanvasActivity;
 import com.undatech.opaque.util.GeneralUtils;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 abstract class InputHandlerGeneric extends GestureDetector.SimpleOnGestureListener 
 										   implements InputHandler, ScaleGestureDetector.OnScaleGestureListener {

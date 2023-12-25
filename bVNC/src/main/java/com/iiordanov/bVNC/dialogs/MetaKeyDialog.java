@@ -20,46 +20,46 @@
 
 package com.iiordanov.bVNC.dialogs;
 
-import java.text.MessageFormat;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map.Entry;
-
-import com.iiordanov.bVNC.ConnectionSettable;
-import com.iiordanov.bVNC.input.MetaKeyBase;
-import com.iiordanov.bVNC.input.MetaKeyBean;
-import com.iiordanov.bVNC.Utils;
-import com.iiordanov.bVNC.RemoteCanvasActivity;
-import com.iiordanov.bVNC.Database;
-import com.undatech.opaque.input.RemoteKeyboard;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.iiordanov.bVNC.*;
+
+import com.iiordanov.bVNC.ConnectionSettable;
+import com.iiordanov.bVNC.Database;
+import com.iiordanov.bVNC.MetaList;
+import com.iiordanov.bVNC.RemoteCanvasActivity;
+import com.iiordanov.bVNC.Utils;
+import com.iiordanov.bVNC.input.MetaKeyBase;
+import com.iiordanov.bVNC.input.MetaKeyBean;
 import com.undatech.opaque.Connection;
-import com.undatech.remoteClientUi.*;
+import com.undatech.opaque.input.RemoteKeyboard;
+import com.undatech.remoteClientUi.R;
+
+import net.sqlcipher.database.SQLiteDatabase;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map.Entry;
 
 /**
  * @author Michael A. MacDonald

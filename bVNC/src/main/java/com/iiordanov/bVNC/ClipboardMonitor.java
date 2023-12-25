@@ -19,9 +19,10 @@
 
 package com.iiordanov.bVNC;
 
-import java.util.TimerTask;
 import android.content.Context;
 import android.text.ClipboardManager;
+
+import java.util.TimerTask;
 
 /*
  * This is a TimerTask which checks the clipboard for changes, and if
