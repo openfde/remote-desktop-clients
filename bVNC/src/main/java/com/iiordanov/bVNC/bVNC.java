@@ -379,6 +379,7 @@ public class bVNC extends MainConfiguration {
                 // do something
                 mLastClickTime = nowTime;
                 Log.d(TAG, "onItemClick() click too quickly");
+                return;
             }
             Log.d(TAG, "onItemClick() called with: itemView = [" + itemView + "], position = [" + position + "], app = [" + app + "], isRight = [" + isRight + "]");
             if (isRight) {
