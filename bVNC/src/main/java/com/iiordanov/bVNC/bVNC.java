@@ -375,7 +375,7 @@ public class bVNC extends MainConfiguration {
         public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight) {
 //            loadingView.setVisibility(View.VISIBLE);
             long nowTime = System.currentTimeMillis();
-            if (nowTime - mLastClickTime > TIME_INTERVAL) {
+            if (nowTime - mLastClickTime < TIME_INTERVAL) {
                 // do something
                 mLastClickTime = nowTime;
                 Log.d(TAG, "onItemClick() click too quickly");
