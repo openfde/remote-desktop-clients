@@ -31,13 +31,13 @@
 
     <color name="tb_desktop_icon_text">#FFFFFF</color>
     <color name="tb_desktop_icon_shadow">#000000</color>
-
+    <color name="transparent">#00000000</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="disable">#4DC52A28</color>
     <color name="text_color">#333333</color>
-
+    <color name="line_bg">#E1E3E6</color>
     <color name="red_normal">#FF0000</color>
     <color name="red_pressed">#FF6666</color>
     <color name="green_normal">#37C000</color>
@@ -48,7 +48,10 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="white_pressed">#CFCFCF</color>
-
+    <color name="press_color">#F6F6F6</color>
     <color name="divider_color">#B7B2B2</color>
+    <color name="text_black2">#CC2D3340</color>
+    <color name="text_black1">#FF34364A</color>
+    <color name="text_black3">#8034364A</color>
 
 </resources>

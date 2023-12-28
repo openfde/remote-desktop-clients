@@ -67,6 +67,10 @@ android {
     lintOptions {
         disable "Instantiatable"
     }
+
+    viewBinding {
+        enabled = true
+    }
 }
 
 dependencies {

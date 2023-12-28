@@ -29,9 +29,9 @@ public class RightClickView extends LinearLayout {
     public boolean dispatchTouchEvent(MotionEvent event) {
         if(event.getToolType(0) == MotionEvent.TOOL_TYPE_MOUSE ){
             if (event.getAction() == MotionEvent.ACTION_CANCEL && listener != null && event.getButtonState() != MotionEvent.BUTTON_PRIMARY) {
-                listener.onRightClick(true);
+                listener.onRightClick(true, event);
             } else if(event.getAction() == MotionEvent.ACTION_UP && event.getButtonState() == 0){
-                listener.onRightClick(false);
+                listener.onRightClick(false, event);
             }
         }
         Log.d(TAG, "dispatchTouchEvent() called with: event = [" + event + "]");
@@ -55,6 +55,6 @@ public class RightClickView extends LinearLayout {
     }
 
     public interface RightClickListener {
-        void onRightClick(boolean b);
+        void onRightClick(boolean b, MotionEvent event);
     }
 }

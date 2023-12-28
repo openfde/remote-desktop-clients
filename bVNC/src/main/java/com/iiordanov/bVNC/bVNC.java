@@ -40,10 +40,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.widget.Adapter;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -61,7 +66,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import android.util.Log;
 
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -75,6 +79,7 @@ import com.undatech.opaque.util.GeneralUtils;
 import com.undatech.remoteClientUi.*;
 import com.xiaokun.dialogtiplib.dialog_tip.TipLoadDialog;
 import com.xiaokun.dialogtiplib.util.AppUtils;
+import com.xiaokun.dialogtiplib.util.DimenUtils;
 import com.xwdz.http.QuietOkHttp;
 import com.xwdz.http.callback.JsonCallBack;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
@@ -82,11 +87,10 @@ import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.kareluo.ui.OptionMenu;
-import me.kareluo.ui.OptionMenuView;
-import me.kareluo.ui.PopupMenuView;
-import me.kareluo.ui.PopupView;
 import okhttp3.Call;
+import razerdp.basepopup.BasePopupWindow;
+import razerdp.util.animation.AnimationHelper;
+import razerdp.util.animation.ScaleConfig;
 
 /**
  * bVNC is the Activity for setting up VNC connections.
@@ -137,6 +141,11 @@ public class bVNC extends MainConfiguration {
     private String shortcuPath;
     private boolean fromShortcut;
     private boolean reentry;
+    private int globalWidth;
+    private int globalHeight;
+    private int screenWidth;
+    private int screenHeight;
+    private int spanCount;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -168,8 +177,6 @@ public class bVNC extends MainConfiguration {
             }
         });
         tipLoadDialog = new TipLoadDialog(this);
-
-
         // Here we say what happens when the Pubkey Checkbox is checked/unchecked.
         checkboxUseSshPubkey = (CheckBox) findViewById(R.id.checkboxUseSshPubkey);
 
@@ -283,13 +290,13 @@ public class bVNC extends MainConfiguration {
         reentry = App.isRunning(getClass().getName());
     }
 
-
     private void initAppList() {
+        spanCount = DimenUtils.getScreenWidth() / (int) DimenUtils.dpToPx(160.0f);
+        spanCount = Math.max(spanCount, 3);
         mRefreshLayout = findViewById(R.id.refresh_layout);
         mRefreshLayout.setOnRefreshListener(mRefreshListener); // 刷新监听。
-
         mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
 //        mRecyclerView.addItemDecoration(new DefaultItemDecoration(getColor( R.color.divider_color)));
 //        mRecyclerView.setOnItemClickListener(mItemClickListener); // RecyclerView Item点击监听。
 
@@ -299,13 +306,20 @@ public class bVNC extends MainConfiguration {
         mAdapter = new AppAdapter(this, mDataList, mItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
         // 请求服务器加载数据。
-        getVncAllApp(false, 0);
+        getVncAllApp(true, 1);
+        mRefreshLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                globalWidth = mRefreshLayout.getMeasuredWidth();
+                globalHeight = mRefreshLayout.getMeasuredHeight();
+            }
+        });
     }
 
     private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            getVncAllApp(true, 0);
+            getVncAllApp(true, 1);
         }
     };
 
@@ -321,6 +335,7 @@ public class bVNC extends MainConfiguration {
                 .addParams("page", new Integer(page).toString())
                 .addParams("page_size", new Integer(pageSize).toString())
                 .addParams("refresh", String.valueOf(forceRefresh))
+                .addParams("page_enable", "true")
                 .setCallbackToMainUIThread(true)
                 .execute(new JsonCallBack<AppListResult>() {
 
@@ -349,6 +364,10 @@ public class bVNC extends MainConfiguration {
                         }
                         mRecyclerView.loadMoreFinish(mDataList.size() == 0, response.getData().getPage().getTotal() > mDataList.size());
                         mRefreshLayout.setRefreshing(false);
+
+                        if(forceRefresh){
+                            mRecyclerView.scrollToPosition(0);
+                        }
                     }
                 });
     }
@@ -362,8 +381,13 @@ public class bVNC extends MainConfiguration {
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
     public interface ItemClickListener {
-        void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight);
+        void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight, MotionEvent event);
     }
 
 
@@ -372,7 +396,7 @@ public class bVNC extends MainConfiguration {
 
     ItemClickListener mItemClickListener = new ItemClickListener() {
         @Override
-        public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight) {
+        public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight, MotionEvent event) {
 //            loadingView.setVisibility(View.VISIBLE);
             long nowTime = System.currentTimeMillis();
             if (nowTime - mLastClickTime < TIME_INTERVAL) {
@@ -383,7 +407,7 @@ public class bVNC extends MainConfiguration {
             }
             Log.d(TAG, "onItemClick() called with: itemView = [" + itemView + "], position = [" + position + "], app = [" + app + "], isRight = [" + isRight + "]");
             if (isRight) {
-                showOptionView(itemView, app);
+                showOptionView(itemView, app, event);
             } else {
                 load2Start(app);
             }
@@ -401,23 +425,89 @@ public class bVNC extends MainConfiguration {
         tryStartVncApp(app);
     }
 
-    private void showOptionView(View itemView, AppListResult.DataBeanX.DataBean app) {
-        PopupMenuView menuView = new PopupMenuView(this, R.menu.vncsessionmenu, new MenuBuilder(this));
-        menuView.setOrientation(LinearLayout.VERTICAL);
-        menuView.setOnMenuClickListener(new OptionMenuView.OnOptionMenuClickListener() {
+
+    private Animation createTranslateAnimation(float fromX, float toX, float fromY, float toY) {
+        Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,
+                fromX,
+                Animation.RELATIVE_TO_SELF,
+                toX,
+                Animation.RELATIVE_TO_SELF,
+                fromY,
+                Animation.RELATIVE_TO_SELF,
+                toY);
+        animation.setDuration(200);
+        animation.setInterpolator(new DecelerateInterpolator());
+        return animation;
+    }
+
+    private void showOptionView(View v, AppListResult.DataBeanX.DataBean app, MotionEvent event) {
+        PopupSlideSmall mPopupSlideSmall;
+        BasePopupWindow popupWindow;
+        int gravity = Gravity.TOP;
+        boolean blur =false;
+        BasePopupWindow.GravityMode horizontalGravityMode = BasePopupWindow.GravityMode.RELATIVE_TO_ANCHOR;
+        BasePopupWindow.GravityMode verticalGravityMode = BasePopupWindow.GravityMode.RELATIVE_TO_ANCHOR;
+        float fromX = 0;
+        float fromY = 0;
+        float toX = 0;
+        float toY = 0;
+        Animation showAnimation = AnimationHelper.asAnimation()
+                .withScale(ScaleConfig.CENTER)
+                .toShow();
+        Animation dismissAnimation = AnimationHelper.asAnimation()
+                .withScale(ScaleConfig.CENTER)
+                .toDismiss();
+        mPopupSlideSmall = new PopupSlideSmall(v.getContext());
+        mPopupSlideSmall.setOptionItemClickListener(new PopupSlideSmall.onAppOptionItemClickListener() {
             @Override
-            public boolean onOptionMenuClick(int position, OptionMenu menu) {
-                if(position == 0){
-                    load2Start(app);
-                }
-                if(position == 2){
-                    createShortcut(app);
-                }
-                return true;
+            public void onOptionOpenClick() {
+                load2Start(app);
+            }
+
+            @Override
+            public void onOptionRefreshClick() {
+                mRefreshLayout.setRefreshing(true);
+                getVncAllApp(true, 1);
+            }
+
+            @Override
+            public void onOptionShortcutClick() {
+                createShortcut(app);
+            }
+
+            @Override
+            public void onOptionInfoClick() {
+
             }
         });
-        menuView.setSites(PopupView.SITE_RIGHT, PopupView.SITE_LEFT, PopupView.SITE_TOP, PopupView.SITE_BOTTOM);
-        menuView.show(itemView);
+        popupWindow = mPopupSlideSmall;
+        boolean withAnchor = true;
+        switch (gravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
+            case Gravity.LEFT:
+                fromX = withAnchor ? 1f : -1f;
+                break;
+            case Gravity.RIGHT:
+                fromX = withAnchor ? -1f : 1f;
+                break;
+        }
+
+        fromY = globalHeight - event.getY() > DimenUtils.dpToPx(240.0f)? -1 : 1;
+        gravity = globalHeight - event.getY() > DimenUtils.dpToPx(240.0f)? Gravity.BOTTOM : Gravity.TOP;
+        if (fromX != 0 || fromY != 0) {
+            showAnimation = createTranslateAnimation(fromX, toX, fromY, toY);
+            dismissAnimation = createTranslateAnimation(toX, fromX, toY, fromY);
+        }
+        popupWindow.setBlurBackgroundEnable(blur);
+        popupWindow.setBackground(null);
+        popupWindow.setPopupGravityMode(horizontalGravityMode, verticalGravityMode);
+        popupWindow.setPopupGravity(gravity);
+        popupWindow.setShowAnimation(showAnimation);
+        popupWindow.setDismissAnimation(dismissAnimation);
+        if (withAnchor) {
+            popupWindow.showPopupWindow(v);
+        } else {
+            popupWindow.showPopupWindow();
+        }
     }
 
     private void createShortcut(AppListResult.DataBeanX.DataBean app) {
@@ -482,6 +572,19 @@ public class bVNC extends MainConfiguration {
                 }
             }, 3000);
         }
+        if(screenHeight == 0 | screenWidth == 0){
+            screenWidth = DimenUtils.getScreenWidth();
+            screenHeight = DimenUtils.getScreenHeight();
+        } else if( screenHeight != DimenUtils.getScreenHeight()){
+            screenWidth = DimenUtils.getScreenWidth();
+            screenHeight = DimenUtils.getScreenHeight();
+            spanCount = DimenUtils.getScreenWidth() / (int) DimenUtils.dpToPx(160.0f);
+            int count = Math.max(spanCount, 3);
+            if(spanCount != count){
+                initAppList();
+            }
+        }
+        Log.d(TAG, "onConfigurationChanged() screenHeight = [" + screenHeight + "] screenWidth = [" + screenWidth + "]");
     }
 
     private void save() {
@@ -539,7 +642,7 @@ public class bVNC extends MainConfiguration {
 //        } else {
 //            ConnectionBean conn = (ConnectionBean) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
 //            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), conn.Gen_getValues());
-            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
+        intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
 //        }
         this.startActivity(intent);
         loadingView.setVisibility(View.GONE);

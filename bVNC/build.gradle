@@ -27,6 +27,10 @@ android {
         }
     }
 
+    viewBinding {
+        enabled = true
+    }
+
     packagingOptions {
         exclude 'lib/armeabi/libsqlcipher.so'
         exclude 'lib/mips64/libsqlcipher.so'
@@ -39,6 +43,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+
 }
 
 dependencies {
@@ -62,6 +68,7 @@ dependencies {
     implementation "com.github.luben:zstd-jni:1.4.3-1@aar"
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'io.github.razerdp:BasePopup:3.2.1'
 
     implementation 'com.google.android.play:review:2.0.1'
     implementation 'com.google.android.play:review-ktx:2.0.1'
