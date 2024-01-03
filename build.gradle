@@ -1,22 +1,37 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = '1.6.21'
+    ext.kotlin_version = '1.7.10'
     repositories {
-        jcenter()
-        mavenCentral()
+
+        maven { url 'https://maven.aliyun.com/repository/releases' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url "https://www.jitpack.io" }
         google()
+        mavenCentral()
+        gradlePluginPortal()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:7.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
-        mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/releases' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url "https://www.jitpack.io" }
         google()
+        mavenCentral()
+        gradlePluginPortal()
+        jcenter()
     }
 }
 
@@ -24,5 +39,5 @@ ext {
     toolsVersion = properties.get('TOOLS_VERSION', '31.0.0')
     compileApi = properties.get('COMPILE_API', 33)
     targetApi = properties.get('TARGET_API', 33)
-    minApi = properties.get('MIN_API', 21)
+    minApi = properties.get('MIN_API', 28)
 }

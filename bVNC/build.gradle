@@ -27,8 +27,8 @@ android {
         }
     }
 
-    viewBinding {
-        enabled = true
+    buildFeatures {
+        viewBinding = true
     }
 
     packagingOptions {
@@ -38,11 +38,12 @@ android {
     }
 
     useLibrary 'org.apache.http.legacy'
+    namespace 'com.undatech.remoteClientUi'
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 
 
 }
@@ -87,5 +88,14 @@ dependencies {
 
 }
 repositories {
+    maven { url 'https://maven.aliyun.com/repository/releases' }
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter' }
+    maven { url 'https://maven.aliyun.com/repository/google' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    maven { url "https://www.jitpack.io" }
+    google()
     mavenCentral()
+    gradlePluginPortal()
+    jcenter()
 }

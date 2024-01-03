@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.undatech.opaque"
     android:versionCode="115129"
     android:versionName="v5.1.2">
 
@@ -31,7 +30,6 @@
         android:allowBackup="true"
         android:banner="@drawable/banner_opaque"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/opaque_app_name"
         android:theme="@android:style/Theme.DeviceDefault">
         <uses-library
             android:name="org.apache.http.legacy"

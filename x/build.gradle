@@ -13,6 +13,7 @@ android {
     }
 
     resourcePrefix 'x_recycler'
+    namespace 'com.yanzhenjie.recyclerview.x'
 }
 
 dependencies {
