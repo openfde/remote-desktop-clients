@@ -1,5 +1,27 @@
 apply plugin: 'com.android.application'
 
+def  appVersionName = "v6.0.0"
+
+def getVersionNameByProperty() {
+    def name
+    if (hasProperty("VersionName") && getProperty('VersionName') != null) {
+        name = getProperties().get('VersionName')
+    } else {
+        name = "2.0-default"
+    }
+    return name
+}
+
+def getVersionCodeByProperty() {
+    def code
+    if (hasProperty("VersionCode") && getProperties().get('VersionCode') != null) {
+        code = getProperties().get('VersionCode')
+    } else {
+        code = 2
+    }
+    return code
+}
+
 android {
     compileSdkVersion compileApi
 
@@ -13,6 +35,7 @@ android {
     }
 
     defaultConfig {
+        versionName getVersionNameByProperty()? getVersionNameByProperty():appVersionName
         targetSdkVersion targetApi
         minSdkVersion project.getProperties().get("SDK_VERSION")
         multiDexEnabled true
@@ -62,12 +85,28 @@ android {
 //        targetCompatibility JavaVersion.VERSION_1_8
 //    }
 
+    task changeVersionName {
+        doLast {
+            def newVersionName = project.hasProperty('newVersionName') ? project.newVersionName : null
+            if (newVersionName != null) {
+                ext.dynamicVersionName = newVersionName
+            	tasks.assembleRelease.configure {
+                	dependsOn 'changeVersionName'
+            	}
+		println "Dynamic Version Name set to: $newVersionName"
+            } else {
+                println "Please provide a new version name using -PnewVersionName=<version_name>"
+            }
+        }
+    }
+
     lintOptions {
         disable "Instantiatable"
     }
     namespace 'com.iiordanov.bVNC'
 
 }
+
 
 dependencies {
     api 'com.android.support:multidex:1.0.3'
