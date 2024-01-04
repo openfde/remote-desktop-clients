@@ -621,10 +621,10 @@ public class RemoteCanvasHandler extends Handler {
                 if (c.pd != null && c.pd.isShowing()) {
                     c.pd.dismiss();
                 }
-                synchronized(c.spicecomm) {
-                    c.spiceUpdateReceived = true;
-                    c.spicecomm.notifyAll();
-                }
+//                synchronized(c.spicecomm) {
+//                    c.spiceUpdateReceived = true;
+//                    c.spicecomm.notifyAll();
+//                }
                 break;
             case RemoteClientLibConstants.SPICE_CONNECT_FAILURE:
                 String e = msg.getData().getString("message");

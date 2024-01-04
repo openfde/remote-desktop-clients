@@ -9,7 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.multidex.MultiDex;
+//import androidx.multidex.MultiDex;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.xwdz.http.QuietOkHttp;

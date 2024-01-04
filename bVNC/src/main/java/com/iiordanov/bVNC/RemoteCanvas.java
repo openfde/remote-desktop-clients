@@ -64,19 +64,13 @@ import com.iiordanov.bVNC.input.InputHandlerTouchpad;
 import com.iiordanov.bVNC.input.RemoteCanvasHandler;
 import com.iiordanov.bVNC.input.RemoteKeyboard;
 import com.iiordanov.bVNC.input.RemotePointer;
-import com.iiordanov.bVNC.input.RemoteRdpKeyboard;
-import com.iiordanov.bVNC.input.RemoteRdpPointer;
-import com.iiordanov.bVNC.input.RemoteSpiceKeyboard;
-import com.iiordanov.bVNC.input.RemoteSpicePointer;
 import com.iiordanov.bVNC.input.RemoteVncKeyboard;
 import com.iiordanov.bVNC.input.RemoteVncPointer;
 import com.tigervnc.rfb.AuthFailureException;
 import com.undatech.opaque.Connection;
 import com.undatech.opaque.MessageDialogs;
-import com.undatech.opaque.RdpCommunicator;
 import com.undatech.opaque.RemoteClientLibConstants;
 import com.undatech.opaque.RfbConnectable;
-import com.undatech.opaque.SpiceCommunicator;
 import com.undatech.opaque.Viewable;
 import com.undatech.opaque.proxmox.ProxmoxClient;
 import com.undatech.opaque.proxmox.pojo.PveRealm;
@@ -119,8 +113,8 @@ public class RemoteCanvas extends AppCompatImageView
     // VNC protocol connection
     public RfbConnectable rfbconn = null;
     public RfbProto rfb = null;
-    private RdpCommunicator rdpcomm = null;
-    public SpiceCommunicator spicecomm = null;
+//    private RdpCommunicator rdpcomm = null;
+//    public SpiceCommunicator spicecomm = null;
     Map<String, String> vmNameToId = new HashMap<String, String>();
 
     public boolean maintainConnection = true;
@@ -253,28 +247,28 @@ public class RemoteCanvas extends AppCompatImageView
         this.hideKeyboardAndExtraKeys = hideKeyboardAndExtraKeys;
         this.vvFileName = vvFileName;
         checkNetworkConnectivity();
-        spicecomm = new SpiceCommunicator(getContext(), handler, this,
-                settings.isRequestingNewDisplayResolution() || settings.getRdpResType() == Constants.RDP_GEOM_SELECT_CUSTOM,
-                !Utils.isFree(getContext()) && settings.isUsbEnabled(), App.debugLog);
-        rfbconn = spicecomm;
-        pointer = new RemoteSpicePointer(spicecomm, this, handler, App.debugLog);
-        try {
-            keyboard = new RemoteSpiceKeyboard(getResources(), spicecomm, this, handler,
-                    settings.getLayoutMap(), App.debugLog);
-        } catch (Throwable e) {
-            handleUncaughtException(e);
-        }
-        maintainConnection = true;
-        if (vvFileName == null) {
-            if (connection.getConnectionTypeString().equals(getResources().getString(R.string.connection_type_pve))) {
-                startPve();
-            } else {
-                connection.setAddress(Utils.getHostFromUriString(connection.getAddress()));
-                startOvirt();
-            }
-        } else {
-            startFromVvFile(vvFileName);
-        }
+//        spicecomm = new SpiceCommunicator(getContext(), handler, this,
+//                settings.isRequestingNewDisplayResolution() || settings.getRdpResType() == Constants.RDP_GEOM_SELECT_CUSTOM,
+//                !Utils.isFree(getContext()) && settings.isUsbEnabled(), App.debugLog);
+//        rfbconn = spicecomm;
+//        pointer = new RemoteSpicePointer(spicecomm, this, handler, App.debugLog);
+//        try {
+//            keyboard = new RemoteSpiceKeyboard(getResources(), spicecomm, this, handler,
+//                    settings.getLayoutMap(), App.debugLog);
+//        } catch (Throwable e) {
+//            handleUncaughtException(e);
+//        }
+//        maintainConnection = true;
+//        if (vvFileName == null) {
+//            if (connection.getConnectionTypeString().equals(getResources().getString(R.string.connection_type_pve))) {
+//                startPve();
+//            } else {
+//                connection.setAddress(Utils.getHostFromUriString(connection.getAddress()));
+//                startOvirt();
+//            }
+//        } else {
+//            startFromVvFile(vvFileName);
+//        }
     }
 
     /**
@@ -378,13 +372,13 @@ public class RemoteCanvas extends AppCompatImageView
         handler = new RemoteCanvasHandler(getContext(), this, connection);
 
         try {
-            if (isSpice) {
-                initializeSpiceConnection();
-            } else if (isRdp) {
-                initializeRdpConnection();
-            } else {
+//            if (isSpice) {
+//                initializeSpiceConnection();
+//            } else if (isRdp) {
+//                initializeRdpConnection();
+//            } else {
                 initializeVncConnection();
-            }
+//            }
         } catch (Throwable e) {
             handleUncaughtException(e);
         }
@@ -410,13 +404,13 @@ public class RemoteCanvas extends AppCompatImageView
                         }
                     }
 
-                    if (isSpice) {
-                        startSpiceConnection();
-                    } else if (isRdp) {
-                        startRdpConnection();
-                    } else {
+//                    if (isSpice) {
+//                        startSpiceConnection();
+//                    } else if (isRdp) {
+//                        startRdpConnection();
+//                    } else {
                         startVncConnection();
-                    }
+//                    }
                 } catch (Throwable e) {
                     handleUncaughtException(e);
                 }
@@ -488,80 +482,80 @@ public class RemoteCanvas extends AppCompatImageView
     /**
      * Initializes a SPICE connection.
      */
-    private void initializeSpiceConnection() throws Exception {
-        spicecomm = new SpiceCommunicator(getContext(), handler, this, true,
-                !Utils.isFree(getContext()) && connection.isUsbEnabled(),
-                App.debugLog);
-        rfbconn = spicecomm;
-        pointer = new RemoteSpicePointer(rfbconn, RemoteCanvas.this, handler, App.debugLog);
-        keyboard = new RemoteSpiceKeyboard(getResources(), spicecomm, RemoteCanvas.this,
-                handler, connection.getLayoutMap(), App.debugLog);
-        //spicecomm.setUIEventListener(RemoteCanvas.this);
-        spicecomm.setHandler(handler);
-    }
+//    private void initializeSpiceConnection() throws Exception {
+//        spicecomm = new SpiceCommunicator(getContext(), handler, this, true,
+//                !Utils.isFree(getContext()) && connection.isUsbEnabled(),
+//                App.debugLog);
+//        rfbconn = spicecomm;
+//        pointer = new RemoteSpicePointer(rfbconn, RemoteCanvas.this, handler, App.debugLog);
+//        keyboard = new RemoteSpiceKeyboard(getResources(), spicecomm, RemoteCanvas.this,
+//                handler, connection.getLayoutMap(), App.debugLog);
+//        //spicecomm.setUIEventListener(RemoteCanvas.this);
+//        spicecomm.setHandler(handler);
+//    }
 
     /**
      * Starts a SPICE connection using libspice.
      */
-    private void startSpiceConnection() throws Exception {
-        // Get the address and port (based on whether an SSH tunnel is being established or not).
-        String address = getAddress();
-        // To prevent an SSH tunnel being created when port or TLS port is not set, we only
-        // getPort when port/tport are positive.
-        int port = connection.getPort();
-        if (port > 0) {
-            port = getRemoteProtocolPort(port);
-        }
-
-        int tport = connection.getTlsPort();
-        if (tport > 0) {
-            tport = getRemoteProtocolPort(tport);
-        }
-
-        spicecomm.connectSpice(address, Integer.toString(port), Integer.toString(tport), connection.getPassword(),
-                connection.getCaCertPath(), null, // TODO: Can send connection.getCaCert() here instead
-                connection.getCertSubject(), connection.getEnableSound());
-    }
+//    private void startSpiceConnection() throws Exception {
+//        // Get the address and port (based on whether an SSH tunnel is being established or not).
+//        String address = getAddress();
+//        // To prevent an SSH tunnel being created when port or TLS port is not set, we only
+//        // getPort when port/tport are positive.
+//        int port = connection.getPort();
+//        if (port > 0) {
+//            port = getRemoteProtocolPort(port);
+//        }
+//
+//        int tport = connection.getTlsPort();
+//        if (tport > 0) {
+//            tport = getRemoteProtocolPort(tport);
+//        }
+//
+//        spicecomm.connectSpice(address, Integer.toString(port), Integer.toString(tport), connection.getPassword(),
+//                connection.getCaCertPath(), null, // TODO: Can send connection.getCaCert() here instead
+//                connection.getCertSubject(), connection.getEnableSound());
+//    }
 
     /**
      * Initializes an RDP connection.
      */
-    private void initializeRdpConnection() throws Exception {
-        Log.i(TAG, "initializeRdpConnection: Initializing RDP connection.");
-
-        rdpcomm = new RdpCommunicator(getContext(), handler, this,
-                connection.getUserName(), connection.getRdpDomain(), connection.getPassword(),
-                App.debugLog);
-        rfbconn = rdpcomm;
-        pointer = new RemoteRdpPointer(rfbconn, RemoteCanvas.this, handler, App.debugLog);
-        keyboard = new RemoteRdpKeyboard(rdpcomm, RemoteCanvas.this, handler, App.debugLog,
-                connection.getPreferSendingUnicode());
-    }
+//    private void initializeRdpConnection() throws Exception {
+//        Log.i(TAG, "initializeRdpConnection: Initializing RDP connection.");
+//
+//        rdpcomm = new RdpCommunicator(getContext(), handler, this,
+//                connection.getUserName(), connection.getRdpDomain(), connection.getPassword(),
+//                App.debugLog);
+//        rfbconn = rdpcomm;
+//        pointer = new RemoteRdpPointer(rfbconn, RemoteCanvas.this, handler, App.debugLog);
+//        keyboard = new RemoteRdpKeyboard(rdpcomm, RemoteCanvas.this, handler, App.debugLog,
+//                connection.getPreferSendingUnicode());
+//    }
 
     /**
      * Starts an RDP connection using the FreeRDP library.
      */
-    private void startRdpConnection() throws Exception {
-        Log.i(TAG, "startRdpConnection: Starting RDP connection.");
-
-        // Get the address and port (based on whether an SSH tunnel is being established or not).
-        String address = getAddress();
-        int rdpPort = getRemoteProtocolPort(connection.getPort());
-        waitUntilInflated();
-        int remoteWidth = getRemoteWidth(getWidth(), getHeight());
-        int remoteHeight = getRemoteHeight(getWidth(), getHeight());
-
-        rdpcomm.setConnectionParameters(address, rdpPort, connection.getNickname(), remoteWidth,
-                remoteHeight, connection.getDesktopBackground(), connection.getFontSmoothing(),
-                connection.getDesktopComposition(), connection.getWindowContents(),
-                connection.getMenuAnimation(), connection.getVisualStyles(),
-                connection.getRedirectSdCard(), connection.getConsoleMode(),
-                connection.getRemoteSoundType(), connection.getEnableRecording(),
-                connection.getRemoteFx(), connection.getEnableGfx(), connection.getEnableGfxH264(),
-                connection.getRdpColor());
-        rdpcomm.connect();
-        pd.dismiss();
-    }
+//    private void startRdpConnection() throws Exception {
+//        Log.i(TAG, "startRdpConnection: Starting RDP connection.");
+//
+//        // Get the address and port (based on whether an SSH tunnel is being established or not).
+//        String address = getAddress();
+//        int rdpPort = getRemoteProtocolPort(connection.getPort());
+//        waitUntilInflated();
+//        int remoteWidth = getRemoteWidth(getWidth(), getHeight());
+//        int remoteHeight = getRemoteHeight(getWidth(), getHeight());
+//
+//        rdpcomm.setConnectionParameters(address, rdpPort, connection.getNickname(), remoteWidth,
+//                remoteHeight, connection.getDesktopBackground(), connection.getFontSmoothing(),
+//                connection.getDesktopComposition(), connection.getWindowContents(),
+//                connection.getMenuAnimation(), connection.getVisualStyles(),
+//                connection.getRedirectSdCard(), connection.getConsoleMode(),
+//                connection.getRemoteSoundType(), connection.getEnableRecording(),
+//                connection.getRemoteFx(), connection.getEnableGfx(), connection.getEnableGfxH264(),
+//                connection.getRdpColor());
+//        rdpcomm.connect();
+//        pd.dismiss();
+//    }
 
     /**
      * Initializes a VNC connection.
@@ -672,9 +666,9 @@ public class RemoteCanvas extends AppCompatImageView
                     if (connection.getPassword().equals("")) {
                         Log.i(TAG, "Displaying a dialog to obtain user's password.");
                         handler.sendEmptyMessage(RemoteClientLibConstants.GET_PASSWORD);
-                        synchronized (spicecomm) {
-                            spicecomm.wait();
-                        }
+//                        synchronized (spicecomm) {
+//                            spicecomm.wait();
+//                        }
                     }
 
                     String ovirtCaFile = null;
@@ -685,49 +679,49 @@ public class RemoteCanvas extends AppCompatImageView
                     }
 
                     // If not VM name is specified, then get a list of VMs and let the user pick one.
-                    if (connection.getVmname().equals("")) {
-                        int success = spicecomm.fetchOvirtVmNames(connection.getHostname(), connection.getUserName(),
-                                connection.getPassword(), ovirtCaFile,
-                                connection.isSslStrict());
-                        // VM retrieval was unsuccessful we do not continue.
-                        ArrayList<String> vmNames = spicecomm.getVmNames();
-                        if (success != 0 || vmNames.isEmpty()) {
-                            return;
-                        } else {
-                            // If there is just one VM, pick it and skip the dialog.
-                            if (vmNames.size() == 1) {
-                                connection.setVmname(vmNames.get(0));
-                                connection.save(getContext());
-                            } else {
-                                while (connection.getVmname().equals("")) {
-                                    Log.i(TAG, "Displaying a dialog with VMs to the user.");
-                                    // Populate the data structure that is used to convert VM names to IDs.
-                                    for (String s : vmNames) {
-                                        vmNameToId.put(s, s);
-                                    }
-                                    handler.sendMessage(RemoteCanvasHandler.getMessageStringList(RemoteClientLibConstants.DIALOG_DISPLAY_VMS,
-                                            "vms", vmNames));
-                                    synchronized (spicecomm) {
-                                        spicecomm.wait();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    spicecomm.setHandler(handler);
-                    spicecomm.connectOvirt(connection.getHostname(),
-                            connection.getVmname(),
-                            connection.getUserName(),
-                            connection.getPassword(),
-                            ovirtCaFile,
-                            connection.isAudioPlaybackEnabled(), connection.isSslStrict());
-
-                    try {
-                        synchronized (spicecomm) {
-                            spicecomm.wait(35000);
-                        }
-                    } catch (InterruptedException e) {
-                    }
+//                    if (connection.getVmname().equals("")) {
+//                        int success = spicecomm.fetchOvirtVmNames(connection.getHostname(), connection.getUserName(),
+//                                connection.getPassword(), ovirtCaFile,
+//                                connection.isSslStrict());
+//                        // VM retrieval was unsuccessful we do not continue.
+//                        ArrayList<String> vmNames = spicecomm.getVmNames();
+//                        if (success != 0 || vmNames.isEmpty()) {
+//                            return;
+//                        } else {
+//                            // If there is just one VM, pick it and skip the dialog.
+//                            if (vmNames.size() == 1) {
+//                                connection.setVmname(vmNames.get(0));
+//                                connection.save(getContext());
+//                            } else {
+//                                while (connection.getVmname().equals("")) {
+//                                    Log.i(TAG, "Displaying a dialog with VMs to the user.");
+//                                    // Populate the data structure that is used to convert VM names to IDs.
+//                                    for (String s : vmNames) {
+//                                        vmNameToId.put(s, s);
+//                                    }
+//                                    handler.sendMessage(RemoteCanvasHandler.getMessageStringList(RemoteClientLibConstants.DIALOG_DISPLAY_VMS,
+//                                            "vms", vmNames));
+////                                    synchronized (spicecomm) {
+////                                        spicecomm.wait();
+////                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                    spicecomm.setHandler(handler);
+//                    spicecomm.connectOvirt(connection.getHostname(),
+//                            connection.getVmname(),
+//                            connection.getUserName(),
+//                            connection.getPassword(),
+//                            ovirtCaFile,
+//                            connection.isAudioPlaybackEnabled(), connection.isSslStrict());
+//
+//                    try {
+//                        synchronized (spicecomm) {
+//                            spicecomm.wait(35000);
+//                        }
+//                    } catch (InterruptedException e) {
+//                    }
 
                     if (!spiceUpdateReceived && maintainConnection) {
                         handler.sendEmptyMessage(RemoteClientLibConstants.OVIRT_TIMEOUT);
@@ -823,11 +817,11 @@ public class RemoteCanvas extends AppCompatImageView
         Thread cThread = new Thread() {
             @Override
             public void run() {
-                try {
-                    spicecomm.startSessionFromVvFile(vvFileName, connection.isAudioPlaybackEnabled());
-                } catch (Throwable e) {
-                    handleUncaughtException(e);
-                }
+//                try {
+//                    spicecomm.startSessionFromVvFile(vvFileName, connection.isAudioPlaybackEnabled());
+//                } catch (Throwable e) {
+//                    handleUncaughtException(e);
+//                }
             }
         };
         cThread.start();
@@ -848,9 +842,9 @@ public class RemoteCanvas extends AppCompatImageView
                     if (connection.getPassword().equals("")) {
                         Log.i(TAG, "Displaying a dialog to obtain user's password.");
                         handler.sendEmptyMessage(RemoteClientLibConstants.GET_PASSWORD);
-                        synchronized (spicecomm) {
-                            spicecomm.wait();
-                        }
+//                        synchronized (spicecomm) {
+//                            spicecomm.wait();
+//                        }
                     }
 
                     String user = connection.getUserName();
@@ -884,9 +878,9 @@ public class RemoteCanvas extends AppCompatImageView
                     if (realms.get(realm).getTfa() != null) {
                         Log.i(TAG, "Displaying a dialog to obtain OTP/TFA.");
                         handler.sendEmptyMessage(RemoteClientLibConstants.GET_OTP_CODE);
-                        synchronized (spicecomm) {
-                            spicecomm.wait();
-                        }
+//                        synchronized (spicecomm) {
+//                            spicecomm.wait();
+//                        }
                     }
 
                     // Login with provided credentials
@@ -931,9 +925,9 @@ public class RemoteCanvas extends AppCompatImageView
                             ArrayList<String> vms = new ArrayList<String>(vmNameToId.keySet());
                             handler.sendMessage(RemoteCanvasHandler.getMessageStringList(
                                     RemoteClientLibConstants.DIALOG_DISPLAY_VMS, "vms", vms));
-                            synchronized (spicecomm) {
-                                spicecomm.wait();
-                            }
+//                            synchronized (spicecomm) {
+//                                spicecomm.wait();
+//                            }
                         }
 
                         // At this point, either the user selected a VM or there was an ID saved.
@@ -2036,16 +2030,16 @@ public class RemoteCanvas extends AppCompatImageView
                 connection.setPassword(obtainedString[0]);
                 connection.setKeepPassword(save);
                 connection.save(getContext());
-                synchronized (spicecomm) {
-                    spicecomm.notify();
-                }
+//                synchronized (spicecomm) {
+//                    spicecomm.notify();
+//                }
                 break;
             case GetTextFragment.DIALOG_ID_GET_OPAQUE_OTP_CODE:
                 Log.i(TAG, "Text obtained from DIALOG_ID_GET_OPAQUE_OTP_CODE");
                 connection.setOtpCode(obtainedString[0]);
-                synchronized (spicecomm) {
-                    spicecomm.notify();
-                }
+//                synchronized (spicecomm) {
+//                    spicecomm.notify();
+//                }
                 break;
             default:
                 Log.e(TAG, "Unknown dialog type.");

@@ -103,7 +103,7 @@ android {
     lintOptions {
         disable "Instantiatable"
     }
-    namespace 'com.iiordanov.bVNC'
+    namespace 'com.iiordanov.bVNC2'
 
 }
 

@@ -1316,9 +1316,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         if (canvas.isVnc && connection.getRdpResType() == Constants.VNC_GEOM_SELECT_AUTOMATIC) {
             canvas.rfbconn.requestResolution(canvas.getWidth(), canvas.getHeight());
         } else if (canvas.isSpice && connection.getRdpResType() == Constants.RDP_GEOM_SELECT_AUTO) {
-            canvas.spicecomm.requestResolution(canvas.getWidth(), canvas.getHeight());
+//            canvas.spicecomm.requestResolution(canvas.getWidth(), canvas.getHeight());
         } else if (canvas.isOpaque && connection.isRequestingNewDisplayResolution()) {
-            canvas.spicecomm.requestResolution(canvas.getWidth(), canvas.getHeight());
+//            canvas.spicecomm.requestResolution(canvas.getWidth(), canvas.getHeight());
         }
 
     }
@@ -1865,9 +1865,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         canvas.pd.show();
         connection.setVmname(canvas.vmNameToId.get(selectedString));
         connection.save(this);
-        synchronized (canvas.spicecomm) {
-            canvas.spicecomm.notify();
-        }
+//        synchronized (canvas.spicecomm) {
+//            canvas.spicecomm.notify();
+//        }
     }
 
     private class ToolbarHiderRunnable implements Runnable {
