@@ -75,8 +75,10 @@ public class ClipboardMonitor extends TimerTask {
             if(text != null){
                 cliptext = text.toString();
             }
-//            Log.d(TAG, vncCanvas.getName() + ":ClipboardMonitor get local String:" + cliptext);
-            if(!vncCanvas.cliptextInited || !cliptext.equals(RfbProto.knownClipboardContents) || !TextUtils.equals(cliptext, vncCanvas.cliptext)){
+            if(TextUtils.isEmpty(cliptext) && TextUtils.isEmpty(RfbProto.knownClipboardContents) && TextUtils.isEmpty(vncCanvas.cliptext)){
+                return;
+            }
+            if(!vncCanvas.cliptextInited || !TextUtils.equals(cliptext,RfbProto.knownClipboardContents) || !TextUtils.equals(cliptext, vncCanvas.cliptext)){
                 if (vncCanvas.rfbconn != null && vncCanvas.rfbconn.isInNormalProtocol()) {
                     vncCanvas.cliptextInited = true;
                     vncCanvas.cliptext = cliptext;
