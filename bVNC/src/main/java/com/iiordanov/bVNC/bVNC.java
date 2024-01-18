@@ -611,9 +611,6 @@ public class bVNC extends MainConfiguration {
             }
             return;
         }
-//        if (app != null) {
-//            com.ft.fdevnc.Constants.app = app.Name;
-//        }
         Utils.hideKeyboard(this, getCurrentFocus());
         android.util.Log.i(TAG, "Launch Connection");
 
@@ -634,16 +631,10 @@ public class bVNC extends MainConfiguration {
         if(!TextUtils.isEmpty(app.getName())){
             intent.putExtra("vnc_activity_name", app.getName());
         }
-//        ConnectionLoader connectionLoader = getConnectionLoader(this);
-//        if (Utils.isOpaque(this)) {
-//            ConnectionSettings cs = (ConnectionSettings) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
-//            cs.loadFromSharedPreferences(getApplicationContext());
-//            intent.putExtra("com.undatech.opaque.ConnectionSettings", cs);
-//        } else {
-//            ConnectionBean conn = (ConnectionBean) connectionLoader.getConnectionsById().get(Integer.toString(app.id));
-//            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), conn.Gen_getValues());
+        if(!TextUtils.isEmpty(app.getName())){
+            intent.putExtra("vnc_app_path", app.getPath());
+        }
         intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
-//        }
         this.startActivity(intent);
         loadingView.setVisibility(View.GONE);
         tipLoadDialog.dismiss();

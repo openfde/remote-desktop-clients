@@ -24,7 +24,9 @@
 package com.iiordanov.bVNC;
 
 import static com.ft.fdevnc.Constants.BASEURL;
+import static com.ft.fdevnc.Constants.BASIP;
 import static com.ft.fdevnc.Constants.URL_KILLAPP;
+import static com.ft.fdevnc.Constants.URL_STOPAPP;
 import static com.undatech.opaque.util.GeneralUtils.debugLog;
 
 import android.annotation.SuppressLint;
@@ -47,6 +49,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.Vibrator;
@@ -81,9 +84,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ft.fdevnc.AppListResult;
 import com.ft.fdevnc.VncResult;
 import com.iiordanov.android.bc.BCFactory;
 import com.iiordanov.bVNC.dialogs.EnterTextDialog;
@@ -186,6 +191,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     private int canvasWidth, canvasHight;
 
     public DetectEventEditText detectEventEditText;
+    private String vnc_activity_name;
+    private String vnc_app_path;
 
     /**
      * This runnable enables immersive mode.
@@ -213,7 +220,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             }
         }
     };
-    private String vnc_activity_name;
 
     /**
      * Enables sticky immersive mode if supported.
@@ -258,16 +264,15 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
     }
 
-
-
-
     @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle icicle) {
-        debugLog(App.debugLog, TAG, "OnCreate called");
+        debugLog(App.debugLog, TAG, "OnCreate called:");
         super.onCreate(icicle);
         if(!bVNC.MOCK_ADDR){
             vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
+            vnc_app_path = getIntent().getStringExtra("vnc_app_path");
+            Log.d(TAG, "onCreate():  vnc_app_path :" + vnc_app_path );
             if(!TextUtils.isEmpty(vnc_activity_name)){
                 setTitle(getString(R.string.bvnc_app_name) + ":" + vnc_activity_name);
                 vnc_activity_name = getString(R.string.bvnc_app_name) + ":" + vnc_activity_name;
@@ -284,27 +289,16 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(vnc_activity_name , bitmap, 0);
             this.setTaskDescription(description);
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this,  PointerIcon.TYPE_NULL));
-//        }
-        // TODO: Implement left-icon
-        //requestWindowFeature(Window.FEATURE_LEFT_ICON);
-        //setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.icon);
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-
         Utils.showMenu(this);
-
         setContentView(R.layout.canvas);
-
         canvas = (RemoteCanvas) findViewById(R.id.canvas);
         canvas.setName(vnc_activity_name);
         detectEventEditText = (DetectEventEditText) findViewById(R.id.inputlayout);
         detectEventEditText.connect2canvas(canvas);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             canvas.setDefaultFocusHighlightEnabled(false);
         }
@@ -312,9 +306,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-
         myVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
         View decorView = getWindow().getDecorView();
         decorView.setOnSystemUiVisibilityChangeListener
                 (new View.OnSystemUiVisibilityChangeListener() {
@@ -328,7 +320,14 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                         //handler.postDelayed(rotationCorrector, 300);
                     }
                 });
+        vncConnect();
+        if(bVNC.MOCK_ADDR){
+            initSendString();
+        }
 
+    }
+
+    private void vncConnect() {
         Runnable setModes = new Runnable() {
             public void run() {
                 try {
@@ -356,10 +355,35 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
         debugLog(App.debugLog, TAG, "OnCreate complete");
 
-        if(bVNC.MOCK_ADDR){
-            initSendString();
-        }
+    }
 
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, "onRestoreInstanceState():  savedInstanceState :" + savedInstanceState + "");
+        retryStartVncApp(vnc_activity_name, vnc_app_path);
+    }
+
+
+    private void retryStartVncApp(String appName, String appPath) {
+        QuietOkHttp.post(BASEURL + URL_STOPAPP)
+                .setCallbackToMainUIThread(true)
+                .addParams("App", appName)
+                .addParams("Path", appPath)
+                .addParams("SysOnly", "false")
+                .execute(new JsonCallBack<VncResult.GetPortResult>() {
+                    @Override
+                    public void onFailure(Call call, Exception e) {
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                    }
+
+                    @Override
+                    public void onSuccess(Call call, VncResult.GetPortResult response) {
+                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        canvas.setPort(response.Data.Port);
+                        vncConnect();
+                    }
+                });
     }
 
     String s = "《中共中央国务院关于促进民营经济发展壮大的意见》（下称《意见》）19日发布，提出31条政策支持民营经济发展。《意见》提出，坚持“两个毫不动摇”，加快营造市场化、法治化、国际化一流营商环境，优化民营经济发展环境，依法保护民营企业产权和企业家权益，全面构建亲清政商关系，使各种所有制经济依法平等使用生产要素、公平参与市场竞争、同等受到法律保护，引导民营企业通过自身改革发展、合规经营、转型升级不断提升发展质量，促进民营经济做大做优做强。《意见》要求，构建高水平社会主义市场经济体制，持续优化稳定公平透明可预期的发展环境，充分激发民营经济生机活力。具体举措包括：持续破除市场准入壁垒，各地区各部门不得以备案、注册、年检、认定、认证、指定、要求设立分公司等形式设定或变相设定准入障碍；全面落实公平竞争政策制度，强化竞争政策基础地位，健全公平竞争制度框架和政策实施机制，坚持对各类所有制企业一视同仁、平等对待；强化制止滥用行政权力排除限制竞争的反垄断执法等。《意见》明确，加大对民营经济政策支持力度，精准制定实施各类支持政策，完善政策执行方式，加强政策协调性，及时回应关切和利益诉求，切实解决实际困难。其中提出，要完善融资支持政策制度。健全银行、保险、担保、券商等多方共同参与的融资风险市场化分担机制；健全中小微企业和个体工商户信用评级和评价体系，加强涉企信用信息归集，推广“信易贷”等服务模式；支持符合条件的民营中小微企业在债券市场融资，鼓励符合条件的民营企业发行科技创新公司债券，推动民营企业债券融资专项支持计划扩大覆盖面、提升增信力度。支持符合条件的民营企业上市融资和再融资。《意见》还要求，健全对各类所有制经济平等保护的法治环境，为民营经济发展营造良好稳定的预期。包括：依法保护民营企业产权和企业家权益；防止和纠正利用行政或刑事手段干预经济纠纷，以及执法司法中的地方保护主义；进一步规范涉产权强制性措施，避免超权限、超范围、超数额、超时限查封扣押冻结财产；对不宜查封扣押冻结的经营性涉案财物，在保证侦查活动正常进行的同时，可以允许有关当事人继续合理使用，并采取必要的保值保管措施，最大限度减少侦查办案对正常办公和合法生产经营的影响；完善涉企案件申诉、再审等机制，健全冤错案件有效防范和常态化纠正机制。《意见》提出，支持提升科技创新能力。鼓励民营企业根据国家战略需要和行业发展趋势，持续加大研发投入，开展关键核心技术攻关，按规定积极承担国家重大科技项目；培育一批关键行业民营科技领军企业、专精特新中小企业和创新能力强的中小企业特色产业集群；加大政府采购创新产品力度，发挥首台（套）保险补偿机制作用，支持民营企业创新产品迭代应用；推动不同所有制企业、大中小企业融通创新，开展共性技术联合攻关；完善高等学校、科研院所管理制度和成果转化机制，调动其支持民营中小微企业创新发展积极性；支持民营企业与科研机构合作建立技术研发中心、产业研究院、中试熟化基地、工程研究中心、制造业创新中心等创新平台；支持民营企业加强基础性前沿性研究和成果转化。此外，《意见》还明确依法规范和引导民营资本健康发展。具体举措包括：健全规范和引导民营资本健康发展的法律制度，为资本设立“红绿灯”，完善资本行为制度规则，集中推出一批“绿灯”投资案例；全面提升资本治理效能，提高资本监管能力和监管体系现代化水平；引导平台经济向开放、创新、赋能方向发展，补齐发展短板弱项，支持平台企业在创造就业、拓展消费、国际竞争中大显身手，推动平台经济规范健康持续发展；鼓励民营企业集中精力做强做优主业，提升核心竞争力。";

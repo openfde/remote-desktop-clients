@@ -50,6 +50,7 @@ android {
             signingConfig signingConfigs.debug
         }
         debug {
+            applicationIdSuffix '.debug'
             minifyEnabled false
         }
     }

@@ -85,6 +85,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -364,6 +365,7 @@ public class RemoteCanvas extends AppCompatImageView
      * @param setModes Callback to run on UI thread after connection is set up
      */
     public RemotePointer initializeCanvas(Connection conn, final Runnable setModes, final Runnable hideKeyboardAndExtraKeys) {
+        Log.d(TAG, "initializeCanvas():  conn :" + conn + ", setModes :" + setModes + ", hideKeyboardAndExtraKeys :" + hideKeyboardAndExtraKeys + "");
         maintainConnection = true;
         this.setModes = setModes;
         this.hideKeyboardAndExtraKeys = hideKeyboardAndExtraKeys;
@@ -606,6 +608,9 @@ public class RemoteCanvas extends AppCompatImageView
         } catch (AuthFailureException e) {
             Log.e(TAG, "TigerVNC AuthFailureException: " + e.getLocalizedMessage());
             handler.sendEmptyMessage(RemoteClientLibConstants.GET_VNC_CREDENTIALS);
+            return;
+        } catch (ConnectException e){
+            Log.e(TAG, "Network exception or Server wasont OK, retry int onrestore:" + e.getMessage());
             return;
         } catch (Exception e) {
             e.printStackTrace();
@@ -2061,5 +2066,11 @@ public class RemoteCanvas extends AppCompatImageView
 
     public String getName() {
         return mAppName;
+    }
+
+    public void setPort(int port) {
+        if(connection != null){
+            connection.setPort(port);
+        }
     }
 }
