@@ -23,6 +23,7 @@
 //
 package com.iiordanov.bVNC;
 
+import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 import static com.ft.fdevnc.Constants.BASEURL;
 import static com.ft.fdevnc.Constants.BASIP;
 import static com.ft.fdevnc.Constants.URL_KILLAPP;
@@ -53,6 +54,7 @@ import android.os.PersistableBundle;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -71,7 +73,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodSubtype;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -87,6 +91,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.ft.fdevnc.AppListResult;
 import com.ft.fdevnc.VncResult;
@@ -125,6 +130,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -151,6 +158,10 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             R.id.itemInputSingleHanded};
     private static final int scalingModeIds[] = {R.id.itemZoomable, R.id.itemFitToScreen,
             R.id.itemOneToOne};
+    public static final int INPUT_MODE_FULL_FUNCTION = 1;
+    public static final int INPUT_MODE_ONLY_KEYBOARD = 2;
+
+    private int mInputModeFlag = INPUT_MODE_FULL_FUNCTION;
 
     public static final Map<Integer, String> inputModeMap;
 
@@ -298,6 +309,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         canvas = (RemoteCanvas) findViewById(R.id.canvas);
         canvas.setName(vnc_activity_name);
         detectEventEditText = (DetectEventEditText) findViewById(R.id.inputlayout);
+        detectEventEditText.setInputMode(mInputModeFlag);
         detectEventEditText.connect2canvas(canvas);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             canvas.setDefaultFocusHighlightEnabled(false);
@@ -1221,6 +1233,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         detectEventEditText.setFocusable(true);
         detectEventEditText.setFocusableInTouchMode(true);
         detectEventEditText.requestFocus();
+        setInputMethod("com.android.inputmethod.latin/.LatinIME");
     }
 
     /**
@@ -1419,7 +1432,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         debugLog(App.debugLog, TAG, "OnCreateOptionsMenu called");
         try {
             getMenuInflater().inflate(R.menu.vnccanvasactivitymenu, menu);
-
             Menu inputMenu = menu.findItem(R.id.itemInputMode).getSubMenu();
             inputModeMenuItems = new MenuItem[inputModeIds.length];
             for (int i = 0; i < inputModeIds.length; i++) {
@@ -1436,10 +1448,10 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 
             // Set the text of the Extra Keys menu item appropriately.
             // TODO: Implement for Opaque
-            if (connection != null && connection.getExtraKeysToggleType() == Constants.EXTRA_KEYS_ON)
-                menu.findItem(R.id.itemExtraKeys).setTitle(R.string.extra_keys_disable);
-            else
-                menu.findItem(R.id.itemExtraKeys).setTitle(R.string.extra_keys_enable);
+//            if (connection != null && connection.getExtraKeysToggleType() == Constants.EXTRA_KEYS_ON)
+//                menu.findItem(R.id.itemExtraKeys).setTitle(R.string.extra_keys_disable);
+//            else
+//                menu.findItem(R.id.itemExtraKeys).setTitle(R.string.extra_keys_enable);
 
             OnTouchListener moveListener = new OnTouchViewMover(toolbar, handler, toolbarHider, hideToolbarDelay);
             ImageButton moveButton = new ImageButton(this);
@@ -1448,6 +1460,9 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 //            MenuItem moveToolbar = menu.findItem(R.id.moveToolbar);
 //            moveToolbar.setActionView(moveButton);
 //            moveToolbar.getActionView().setOnTouchListener(moveListener);
+
+            ((Toolbar)findViewById(R.id.toolbar)).getChildAt(0).setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
+
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -1593,10 +1608,12 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             canvas.closeConnection();
             Utils.justFinish(this);
             return true;
-        } else if (itemId == R.id.itemEnterText) {
-            showDialog(R.layout.entertext);
-            return true;
-        } else if (itemId == R.id.itemCtrlAltDel) {
+        }
+//        else if (itemId == R.id.itemEnterText) {
+//            showDialog(R.layout.entertext);
+//            return true;
+//        }
+        else if (itemId == R.id.itemCtrlAltDel) {
             canvas.getKeyboard().sendMetaKey(MetaKeyBean.keyCtrlAltDel);
             return true;
         } else if (itemId == R.id.itemSendKeyAgain) {
@@ -1606,21 +1623,31 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             //case R.id.itemOpenDoc:
             //    Utils.showDocumentation(this);
             //    return true;
-        } else if (itemId == R.id.itemExtraKeys) {
-            if (connection.getExtraKeysToggleType() == Constants.EXTRA_KEYS_ON) {
-                connection.setExtraKeysToggleType(Constants.EXTRA_KEYS_OFF);
-                item.setTitle(R.string.extra_keys_enable);
-                setExtraKeysVisibility(View.GONE, false);
-            } else {
-                connection.setExtraKeysToggleType(Constants.EXTRA_KEYS_ON);
-                item.setTitle(R.string.extra_keys_disable);
-                setExtraKeysVisibility(View.VISIBLE, false);
-                extraKeysHidden = false;
-            }
-            invalidateOptionsMenu();
-            connection.save(this);
-            return true;
-        } else if (itemId == R.id.itemHelpInputMode) {
+        } else if(itemId == R.id.itemInputModeInputMethod){
+            mInputModeFlag = INPUT_MODE_FULL_FUNCTION;
+            detectEventEditText.setInputMode(mInputModeFlag);
+            item.setChecked(true);
+        } else if(itemId == R.id.itemInputModeKeyboard){
+            mInputModeFlag = INPUT_MODE_ONLY_KEYBOARD;
+            detectEventEditText.setInputMode(mInputModeFlag);
+            item.setChecked(true);
+        }
+//        else if (itemId == R.id.itemExtraKeys) {
+//            if (connection.getExtraKeysToggleType() == Constants.EXTRA_KEYS_ON) {
+//                connection.setExtraKeysToggleType(Constants.EXTRA_KEYS_OFF);
+//                item.setTitle(R.string.extra_keys_enable);
+//                setExtraKeysVisibility(View.GONE, false);
+//            } else {
+//                connection.setExtraKeysToggleType(Constants.EXTRA_KEYS_ON);
+//                item.setTitle(R.string.extra_keys_disable);
+//                setExtraKeysVisibility(View.VISIBLE, false);
+//                extraKeysHidden = false;
+//            }
+//            invalidateOptionsMenu();
+//            connection.save(this);
+//            return true;
+//        }
+        else if (itemId == R.id.itemHelpInputMode) {
             showDialog(R.id.itemHelpInputMode);
             return true;
         } else {
@@ -1821,6 +1848,20 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         } else {
             canvas.hideCursor = false;
         }
+
+        View menuView = ((Toolbar) findViewById(R.id.toolbar));
+        int top = menuView.getTop();
+        int left = menuView.getLeft();
+        int right = menuView.getRight();
+        int bottom = menuView.getBottom();
+
+        if (x > left && x < right && y > top && y < bottom && canvas.rfb != null) {
+            canvas.hideCursor = true;
+            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 0));
+        } else {
+            canvas.hideCursor = false;
+        }
+
         // Ignore TOOL_TYPE_FINGER events that come from the touchscreen with HOVER type action
         // which cause pointer jumping trouble in simulated touchpad for some devices.
         boolean toolTypeFinger = false;
@@ -1882,6 +1923,16 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         handler.removeCallbacks(toolbarHider);
         handler.postAtTime(toolbarHider, SystemClock.uptimeMillis() + hideToolbarDelay);
     }
+
+    private void setInputMethod(String inputMethod){
+//        Settings.Secure.putString(getContentResolver(),
+//                Settings.Secure.DEFAULT_INPUT_METHOD,inputMethod);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.setInputMethod(null, inputMethod);
+        imm.hideSoftInputFromInputMethod(null, HIDE_NOT_ALWAYS );
+
+    }
+
 
     @Override
     public void onTextSelected(String selectedString) {

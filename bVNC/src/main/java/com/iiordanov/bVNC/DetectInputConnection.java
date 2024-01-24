@@ -1,5 +1,7 @@
 package com.iiordanov.bVNC;
 
+import static com.iiordanov.bVNC.RemoteCanvasActivity.INPUT_MODE_ONLY_KEYBOARD;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,6 +25,7 @@ public class DetectInputConnection extends BaseInputConnection {
     private final DetectEventEditText detectEventEditText;
     private int mBatchEditNesting;
     private final InputMethodManager mIMM;
+    private int mInputModeFlag;
 
     public DetectInputConnection(DetectEventEditText textview) {
         super(textview, true);
@@ -183,10 +186,16 @@ public class DetectInputConnection extends BaseInputConnection {
         }
         Reflector.invokeMethodExceptionSafe(detectEventEditText, "resetErrorChangedFlag");
         Reflector.invokeMethodExceptionSafe(detectEventEditText, "hideErrorIfUnchanged");
+        if(mInputModeFlag == INPUT_MODE_ONLY_KEYBOARD){
+            return false;
+        }
         if(!TextUtils.isEmpty(text)){
             detectEventEditText.getCanvas().getKeyboard().keyEvent(0xff, null, text.toString());
         }
         return true;
     }
 
+    public void setInputMode(int inputModeFlag) {
+        this.mInputModeFlag = inputModeFlag;
+    }
 }

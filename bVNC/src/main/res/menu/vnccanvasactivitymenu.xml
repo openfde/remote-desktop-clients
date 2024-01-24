@@ -17,17 +17,26 @@
 <!--        android:onClick="toggleKeyboard"-->
 <!--        android:padding="0dp"/>-->
     
-    <item android:id="@+id/itemExtraKeys" android:title="@string/extra_keys_disable" android:icon="@drawable/extra_keys"/>
+<!--    <item android:id="@+id/itemExtraKeys" android:title="@string/extra_keys_disable" android:icon="@drawable/extra_keys"/>-->
+    <item android:id="@+id/itemHelpInputMode" android:title="@string/input_mode_help" android:icon="@android:drawable/ic_menu_help"/>
     <item android:numericShortcut="5" android:alphabeticShortcut="p" android:id="@+id/itemInputMode" android:title="@string/input_mode" android:icon="@android:drawable/ic_input_get">
-    	<menu>
-	    	<group android:checkableBehavior="single">
-                <item android:id="@+id/itemInputTouchPanZoomMouse" android:title="@string/input_method_direct_swipe_pan"/>
-                <item android:id="@+id/itemInputDragPanZoomMouse" android:title="@string/input_method_direct_drag_pan"/>
-                <item android:id="@+id/itemInputTouchpad" android:title="@string/input_method_touchpad"/>
-                <item android:id="@+id/itemInputSingleHanded" android:title="@string/input_method_single_handed"/>
-		</group>
-	    </menu>
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/itemInputModeInputMethod" android:title="@string/input_method_full_method" android:checked="true"/>
+                <item android:id="@+id/itemInputModeKeyboard" android:title="@string/input_method_keyboard"/>
+            </group>
+        </menu>
     </item>
+<!--    <item android:numericShortcut="5" android:alphabeticShortcut="p" android:id="@+id/itemInputMode" android:title="@string/input_mode" android:icon="@android:drawable/ic_input_get">-->
+<!--    	<menu>-->
+<!--	    	<group android:checkableBehavior="single">-->
+<!--                <item android:id="@+id/itemInputTouchPanZoomMouse" android:title="@string/input_method_direct_swipe_pan"/>-->
+<!--                <item android:id="@+id/itemInputDragPanZoomMouse" android:title="@string/input_method_direct_drag_pan"/>-->
+<!--                <item android:id="@+id/itemInputTouchpad" android:title="@string/input_method_touchpad"/>-->
+<!--                <item android:id="@+id/itemInputSingleHanded" android:title="@string/input_method_single_handed"/>-->
+<!--		</group>-->
+<!--	    </menu>-->
+<!--    </item>-->
     <item android:numericShortcut="4" android:alphabeticShortcut="z" android:id="@+id/itemScaling" android:title="@string/scaling" android:icon="@android:drawable/ic_menu_zoom">
     	<menu>
 	    	<group android:id="@+id/groupScaling" android:checkableBehavior="single">
@@ -41,7 +50,7 @@
     <item android:numericShortcut="1" android:alphabeticShortcut="k" android:id="@+id/itemSpecialKeys" android:title="@string/special_keys" android:icon="@android:drawable/ic_dialog_dialer"/>
     <item android:alphabeticShortcut="g" android:id="@+id/itemSendKeyAgain" android:title="@string/send_key_again"/>
     <item android:numericShortcut="8" android:alphabeticShortcut="r" android:id="@+id/itemCtrlAltDel" android:title="@string/ctrl_alt_del" android:icon="@android:drawable/ic_menu_share"/>
-    <item android:id="@+id/itemEnterText" android:alphabeticShortcut="e" android:title="@string/enter_text" android:icon="@android:drawable/ic_menu_edit" />
+<!--    <item android:id="@+id/itemEnterText" android:alphabeticShortcut="e" android:title="@string/enter_text" android:icon="@android:drawable/ic_menu_edit" />-->
     <!-- <group android:checkableBehavior="all">
     	<item android:numericShortcut="6" android:alphabeticShortcut="f" android:id="@+id/itemFollowMouse" android:title="@string/pan_follow_mouse"/>
     	<item android:title="@string/mouse_follow_pan" android:id="@+id/itemFollowPan"/>
@@ -49,6 +58,5 @@
     <item android:numericShortcut="3" android:alphabeticShortcut="c" android:id="@+id/itemColorMode" android:title="@string/color_mode" android:icon="@android:drawable/ic_menu_preferences"></item>
     <item android:numericShortcut="2" android:alphabeticShortcut="m" android:id="@+id/itemCenterMouse" android:title="@string/center_mouse" android:icon="@android:drawable/ic_menu_mylocation"/>
     <item android:numericShortcut="9" android:alphabeticShortcut="i" android:id="@+id/itemInfo" android:title="@string/info" android:icon="@android:drawable/ic_menu_info_details"></item>
-    <item android:id="@+id/itemHelpInputMode" android:title="@string/input_mode_help" android:icon="@android:drawable/ic_menu_help"/>
     <!-- <item android:id="@+id/itemOpenDoc" android:title="@string/open_doc" android:icon="@android:drawable/ic_menu_help"/> -->
 </menu>

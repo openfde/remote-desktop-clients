@@ -1,7 +1,16 @@
 package com.iiordanov.bVNC;
 
 import static android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS;
+import static android.view.KeyEvent.KEYCODE_0;
+import static android.view.KeyEvent.KEYCODE_1;
+import static android.view.KeyEvent.KEYCODE_9;
+import static android.view.KeyEvent.KEYCODE_NUMPAD_0;
+import static android.view.KeyEvent.KEYCODE_NUMPAD_1;
+import static android.view.KeyEvent.KEYCODE_NUMPAD_9;
 
+import static com.iiordanov.bVNC.RemoteCanvasActivity.INPUT_MODE_ONLY_KEYBOARD;
+
+import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,7 +30,8 @@ public class DetectEventEditText extends EditText {
     public CharSequence commitText;
     private static final boolean DEBUG = true;
     private RemoteCanvas canvas;
-
+    private int mInputModeFlag = INPUT_MODE_ONLY_KEYBOARD;
+    private DetectInputConnection detectInputConnection;
     public DetectEventEditText(Context context) {
         super(context);
         setKeyListener(getDefaultKeyListener());
@@ -43,10 +53,11 @@ public class DetectEventEditText extends EditText {
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
         super.onCreateInputConnection(outAttrs);
-        DetectInputConnection detectInputConnection = new DetectInputConnection(this);
+        detectInputConnection = new DetectInputConnection(this);
         outAttrs.initialSelStart = getSelectionStart();
         outAttrs.initialSelEnd = getSelectionEnd();
         outAttrs.initialCapsMode = detectInputConnection.getCursorCapsMode(getInputType());
+        detectInputConnection.setInputMode(mInputModeFlag);
         return detectInputConnection;
     }
 
@@ -61,6 +72,12 @@ public class DetectEventEditText extends EditText {
     @Override
     public boolean dispatchKeyEventPreIme(KeyEvent event) {
         Log.d(TAG, "dispatchKeyEventPreIme() called with: event = [" + event + "]");
+        if(mInputModeFlag == INPUT_MODE_ONLY_KEYBOARD &&
+                (event.getKeyCode() < KEYCODE_0 ||
+                ( event.getKeyCode() > KEYCODE_9 && event.getKeyCode() < KEYCODE_NUMPAD_0 ) ||
+                event.getKeyCode() > KEYCODE_NUMPAD_9)){
+            canvas.getKeyboard().keyEvent(event.getKeyCode(), event);
+        }
         return super.dispatchKeyEventPreIme(event);
     }
 
@@ -101,5 +118,12 @@ public class DetectEventEditText extends EditText {
 
     public RemoteCanvas getCanvas(){
         return this.canvas;
+    }
+
+    public void setInputMode(int inputModeFlag) {
+        this.mInputModeFlag = inputModeFlag;
+        if(detectInputConnection != null){
+            detectInputConnection.setInputMode(inputModeFlag);
+        }
     }
 }

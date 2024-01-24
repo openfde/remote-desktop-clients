@@ -344,6 +344,9 @@ All Input Methods:
     <string name="input_mode_panning">Desktop Panning Mode</string>
     <string name="input_method_mouse">Mouse Pointer Control</string>
 
+    <string name="input_method_keyboard">Keysym on keyboard, Just like EN</string>
+    <string name="input_method_full_method">Any words from input method</string>
+
     <string name="input_method_direct_swipe_pan">Direct, Swipe Pan</string>
     <string name="input_method_direct_drag_pan">Direct, Hold Pan</string>
     <string name="input_method_single_handed">Single Handed</string>
@@ -351,6 +354,11 @@ All Input Methods:
 
     <string name="input_mode_help">Input Mode Help</string>
     <string name="input_mode_help_text">"
+        Keysym on keyboard, Just like EN: You can input anywhere, password, play game but no complicate unicode. You may switch method to language English better.
+        Any words from input method: Use Android input method for any editable place. It is easy to type words for office software like.
+        "</string>
+
+    <string name="input_mode_help_text_all">"
 In any Input Mode, tap the keyboard icon to get the on-screen keyboard. Also, your device may have its own gesture which bring up the keyboard.
 
 Use the Direct input modes for more intuitive touch-screen control. Use Simulated Touchpad Mode for finer control over the mouse.
