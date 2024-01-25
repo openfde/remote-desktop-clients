@@ -149,7 +149,7 @@ class FullBufferBitmapData extends AbstractBitmapData {
      * @see com.iiordanov.bVNC.AbstractBitmapData#createDrawable()
      */
     @Override
-    AbstractBitmapDrawable createDrawable() {
+    AbstractBitmapDrawable createDrawable(RemoteCanvas canvas) {
         return new Drawable(this);
     }
 
@@ -213,7 +213,7 @@ class FullBufferBitmapData extends AbstractBitmapData {
             dataWidth    = framebufferwidth;
             dataHeight   = framebufferheight;
             bitmapPixels = new int[framebufferwidth * framebufferheight];
-            drawable     = createDrawable();
+            drawable     = createDrawable(vncCanvas);
             drawable.startDrawing();
         }
     }

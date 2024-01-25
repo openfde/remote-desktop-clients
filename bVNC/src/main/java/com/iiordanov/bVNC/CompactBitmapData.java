@@ -37,9 +37,11 @@ class CompactBitmapData extends AbstractBitmapData {
     Bitmap.Config cfg = Bitmap.Config.RGB_565;
     
     class CompactBitmapDrawable extends AbstractBitmapDrawable {
+        private RemoteCanvas canvas;
 
-        CompactBitmapDrawable()    {
+        CompactBitmapDrawable(RemoteCanvas canvas)    {
             super(CompactBitmapData.this);
+            this.canvas = canvas;
         }
 
         /* (non-Javadoc)
@@ -54,6 +56,11 @@ class CompactBitmapData extends AbstractBitmapData {
                     canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, _defaultPaint);
                 }
             } catch (Throwable e) { }
+        }
+
+        @Override
+        public RemoteCanvas getCanvas() {
+            return canvas;
         }
     }
     
@@ -95,8 +102,8 @@ class CompactBitmapData extends AbstractBitmapData {
      * @see com.iiordanov.bVNC.AbstractBitmapData#createDrawable()
      */
     @Override
-    AbstractBitmapDrawable createDrawable() {
-        return new CompactBitmapDrawable();
+    AbstractBitmapDrawable createDrawable(RemoteCanvas canvas) {
+        return new CompactBitmapDrawable(canvas);
     }
 
     /* (non-Javadoc)
@@ -193,7 +200,7 @@ class CompactBitmapData extends AbstractBitmapData {
             bitmapPixels = new int[bitmapwidth * bitmapheight];
             mbitmap      = Bitmap.createBitmap(bitmapwidth, bitmapheight, cfg);
             memGraphics  = new Canvas(mbitmap);
-            drawable     = createDrawable();
+            drawable     = createDrawable(vncCanvas);
             drawable.startDrawing();
         } else {
             android.util.Log.i(TAG, "Both bitmap dimensions same or smaller, no realloc = ("

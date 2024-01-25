@@ -104,7 +104,7 @@ public class RemoteCanvas extends AppCompatImageView
 
     // Connection parameters
     public Connection connection;
-    public boolean hideCursor;
+    public boolean hideCursor = true;
     public boolean cliptextInited;
     public String cliptext;
 
@@ -1242,13 +1242,19 @@ public class RemoteCanvas extends AppCompatImageView
     /**
      * Disposes of the old drawable which holds the remote desktop data.
      */
+    private void disposeDrawable(boolean exit) {
+        if (myDrawable != null)
+            myDrawable.dispose(exit);
+        myDrawable = null;
+        System.gc();
+    }
+
     private void disposeDrawable() {
         if (myDrawable != null)
             myDrawable.dispose();
         myDrawable = null;
         System.gc();
     }
-
 
     /**
      * The remote desktop's size has changed and this method
@@ -1422,7 +1428,7 @@ public class RemoteCanvas extends AppCompatImageView
         screenMessage = null;
         desktopInfo = null;
 
-        disposeDrawable();
+        disposeDrawable(true);
     }
 
 
@@ -1695,19 +1701,20 @@ public class RemoteCanvas extends AppCompatImageView
      */
     public void reDraw(int x, int y, int w, int h) {
         //android.util.Log.i(TAG, "reDraw called: " + x +", " + y + " + " + w + "x" + h);
-        long timeNow = System.currentTimeMillis();
-        if (timeNow - lastDraw > 16.6666) {
-            float scale = getZoomFactor();
-            float shiftedX = x - shiftX;
-            float shiftedY = y - shiftY;
-            // Make the box slightly larger to avoid artifacts due to truncation errors.
-            postInvalidate((int) ((shiftedX - 1) * scale), (int) ((shiftedY - 1) * scale),
-                    (int) ((shiftedX + w + 1) * scale), (int) ((shiftedY + h + 1) * scale));
-            lastDraw = timeNow;
-        } else {
-            handler.removeCallbacks(invalidateCanvasRunnable);
-            handler.postDelayed(invalidateCanvasRunnable, 100);
-        }
+//        long timeNow = System.currentTimeMillis();
+//        if (timeNow - lastDraw > 16.6666) {
+//            float scale = getZoomFactor();
+//            float shiftedX = x - shiftX;
+//            float shiftedY = y - shiftY;
+//            // Make the box slightly larger to avoid artifacts due to truncation errors.
+//            postInvalidate((int) ((shiftedX - 1) * scale), (int) ((shiftedY - 1) * scale),
+//                    (int) ((shiftedX + w + 1) * scale), (int) ((shiftedY + h + 1) * scale));
+//            lastDraw = timeNow;
+//        } else {
+//            handler.removeCallbacks(invalidateCanvasRunnable);
+//            handler.postDelayed(invalidateCanvasRunnable, 100);
+//        }
+        postInvalidate();
     }
 
 
@@ -1716,19 +1723,20 @@ public class RemoteCanvas extends AppCompatImageView
      * Causes a redraw of the myDrawable to happen at the indicated coordinates.
      */
     public void reDraw(float x, float y, float w, float h) {
-        long timeNow = System.currentTimeMillis();
-        if (timeNow - lastDraw > 16.6666) {
-            float scale = getZoomFactor();
-            float shiftedX = x - shiftX;
-            float shiftedY = y - shiftY;
-            // Make the box slightly larger to avoid artifacts due to truncation errors.
-            postInvalidate((int) ((shiftedX - 1.f) * scale), (int) ((shiftedY - 1.f) * scale),
-                    (int) ((shiftedX + w + 1.f) * scale), (int) ((shiftedY + h + 1.f) * scale));
-            lastDraw = timeNow;
-        } else {
-            handler.removeCallbacks(invalidateCanvasRunnable);
-            handler.postDelayed(invalidateCanvasRunnable, 100);
-        }
+//        long timeNow = System.currentTimeMillis();
+//        if (timeNow - lastDraw > 16.6666) {
+//            float scale = getZoomFactor();
+//            float shiftedX = x - shiftX;
+//            float shiftedY = y - shiftY;
+//            // Make the box slightly larger to avoid artifacts due to truncation errors.
+//            postInvalidate((int) ((shiftedX - 1.f) * scale), (int) ((shiftedY - 1.f) * scale),
+//                    (int) ((shiftedX + w + 1.f) * scale), (int) ((shiftedY + h + 1.f) * scale));
+//            lastDraw = timeNow;
+//        } else {
+//            handler.removeCallbacks(invalidateCanvasRunnable);
+//            handler.postDelayed(invalidateCanvasRunnable,100);
+//        }
+        postInvalidate();
     }
 
     /**

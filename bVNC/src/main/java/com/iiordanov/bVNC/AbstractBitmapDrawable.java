@@ -20,6 +20,8 @@
 
 package com.iiordanov.bVNC;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -27,12 +29,15 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.DrawableContainer;
+import android.util.Log;
+import android.view.PointerIcon;
 
 /**
  * @author Michael A. MacDonald
  *
  */
 public class AbstractBitmapDrawable extends DrawableContainer {
+    private static final String TAG = AbstractBitmapDrawable.class.getSimpleName();
     RectF cursorRect;
     int hotX, hotY;
     Bitmap softCursor;
@@ -81,6 +86,7 @@ public class AbstractBitmapDrawable extends DrawableContainer {
         cursorRect.right  = cursorRect.left + w;
         cursorRect.top    = y-hotY;
         cursorRect.bottom = cursorRect.top + h;
+        Log.d(TAG, "setCursorRect:  cursorRect:" + cursorRect + " w:" + cursorRect.width() + " h:" + cursorRect.height());
     }
     
     void moveCursorRect(int x, int y) {
@@ -88,11 +94,21 @@ public class AbstractBitmapDrawable extends DrawableContainer {
     }
 
     void setSoftCursor (int[] newSoftCursorPixels) {
+        Log.d(TAG, "setSoftCursor: cursorRect:" + cursorRect + " w:" + cursorRect.width() + " h:" + cursorRect.height());
         Bitmap oldSoftCursor = softCursor;
         softCursor = Bitmap.createBitmap(newSoftCursorPixels, (int)cursorRect.width(),
                                          (int)cursorRect.height(), Bitmap.Config.ARGB_8888);
+        if(getCanvas() != null){
+            Activity activity = (Activity) getCanvas().getContext();
+            PointerIcon pointerIcon = PointerIcon.create(softCursor, 0, 0);
+            activity.getWindow().getDecorView().setPointerIcon(pointerIcon);
+        }
         softCursorInit = true;
         oldSoftCursor.recycle();
+    }
+
+    protected RemoteCanvas getCanvas(){
+        return null;
     }
     
     /* (non-Javadoc)
@@ -129,7 +145,17 @@ public class AbstractBitmapDrawable extends DrawableContainer {
     
     public void dispose() {
         drawing = false;
-        if (softCursor != null)
+//        if (softCursor != null)
+//            softCursor.recycle();
+        softCursor = null;
+        cursorRect = null;
+        clipRect = null;
+        toDraw = null;
+    }
+
+    public void dispose(boolean exit) {
+        drawing = false;
+        if (softCursor != null && exit)
             softCursor.recycle();
         softCursor = null;
         cursorRect = null;

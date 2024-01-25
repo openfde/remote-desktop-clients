@@ -88,7 +88,7 @@ class UltraCompactBitmapData extends AbstractBitmapData {
     }
 
     @Override
-    AbstractBitmapDrawable createDrawable() {
+    AbstractBitmapDrawable createDrawable(RemoteCanvas canvas) {
         return new UltraCompactBitmapDrawable();
     }
 
@@ -165,7 +165,7 @@ class UltraCompactBitmapData extends AbstractBitmapData {
             bitmapheight = framebufferheight;
             mbitmap      = Bitmap.createBitmap(bitmapwidth, bitmapheight, cfg);
             memGraphics  = new Canvas(mbitmap);
-            drawable     = createDrawable();
+            drawable     = createDrawable(vncCanvas);
             drawable.startDrawing();
         } else {
             android.util.Log.i(TAG, "Both bitmap dimensions same or smaller, no realloc = ("

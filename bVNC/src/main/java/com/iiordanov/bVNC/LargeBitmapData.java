@@ -101,7 +101,7 @@ class LargeBitmapData extends AbstractBitmapData {
     }
 
     @Override
-    AbstractBitmapDrawable createDrawable()    {
+    AbstractBitmapDrawable createDrawable(RemoteCanvas canvas)    {
         return new LargeBitmapDrawable();
     }
 
@@ -419,7 +419,7 @@ class LargeBitmapData extends AbstractBitmapData {
         pendingList  = new RectList(rectPool);
         bitmapRect   = new Rect(0, 0, bitmapwidth, bitmapheight);
         defaultPaint = new Paint();
-        drawable     = createDrawable();
+        drawable     = createDrawable(vncCanvas);
         drawable.startDrawing();
     }
 }

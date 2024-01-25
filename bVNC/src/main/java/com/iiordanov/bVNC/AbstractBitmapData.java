@@ -37,7 +37,7 @@ import com.undatech.opaque.RfbConnectable;
  */
 abstract public class AbstractBitmapData {
     private static final String TAG = "AbstractBitmapData";
-    public boolean hideCursor;
+    public boolean hideCursor = true;
     int framebufferwidth;
     int framebufferheight;
     int bitmapwidth;
@@ -59,7 +59,7 @@ abstract public class AbstractBitmapData {
         vncCanvas = c;
         framebufferwidth  = rfb.framebufferWidth();
         framebufferheight = rfb.framebufferHeight();
-        drawable = createDrawable();
+        drawable = createDrawable(vncCanvas);
         paint = new Paint();
     }
 
@@ -163,7 +163,7 @@ abstract public class AbstractBitmapData {
      * Create drawable appropriate for this data
      * @return drawable
      */
-    abstract AbstractBitmapDrawable createDrawable();
+    abstract AbstractBitmapDrawable createDrawable(RemoteCanvas canvas);
 
 
     /**
@@ -247,12 +247,24 @@ abstract public class AbstractBitmapData {
      */
     abstract void syncScroll();
 
-    /**
-     * Release resources
-     */
     void dispose() {
         if (drawable != null)
             drawable.dispose();
+        drawable = null;
+
+        if (mbitmap != null)
+            mbitmap.recycle();
+        mbitmap      = null;
+
+        memGraphics  = null;
+        bitmapPixels = null;
+    }
+    /**
+     * Release resources
+     */
+    void dispose(boolean exit) {
+        if (drawable != null)
+            drawable.dispose(exit);
         drawable = null;
 
         if (mbitmap != null)

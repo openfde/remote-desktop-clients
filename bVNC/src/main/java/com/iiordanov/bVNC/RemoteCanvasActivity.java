@@ -1461,7 +1461,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
 //            moveToolbar.setActionView(moveButton);
 //            moveToolbar.getActionView().setOnTouchListener(moveListener);
 
-            ((Toolbar)findViewById(R.id.toolbar)).getChildAt(0).setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
+//            ((Toolbar)findViewById(R.id.toolbar)).getChildAt(0).setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
 
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -1836,31 +1836,29 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
 //        Log.d(TAG, "huyang onGenericMotionEvent() called with: event = [" + event + "]");
-        float y = event.getY();
-        float x = event.getX();
-        if (y > 40) {
-            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 0));
-        } else {
-            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
-        }
-        if ((x <= 0 || x >= mDecorViewWidth || y <= 40 || y >= mDecorViewHeight) && canvas.rfb != null) {
-            canvas.hideCursor = true;
-        } else {
-            canvas.hideCursor = false;
-        }
+//
+//        View menuView = ((Toolbar) findViewById(R.id.toolbar));
+//        int top = menuView.getTop();
+//        int left = menuView.getLeft();
+//        int right = menuView.getRight();
+//        int bottom = menuView.getBottom();
+//        float y = event.getY();
+//        float x = event.getX();
+//        if (x > left && x < right && y > top && y < bottom && canvas.rfb != null) {
+//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
+//        } else if (y > 40) {
+//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 0));
+//        } else {
+//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
+//        }
+//
+//        if ((x <= 0 || x >= mDecorViewWidth || y <= 40 || y >= mDecorViewHeight) && canvas.rfb != null) {
+//            canvas.hideCursor = true;
+//        } else {
+//            canvas.hideCursor = false;
+//        }
+//
 
-        View menuView = ((Toolbar) findViewById(R.id.toolbar));
-        int top = menuView.getTop();
-        int left = menuView.getLeft();
-        int right = menuView.getRight();
-        int bottom = menuView.getBottom();
-
-        if (x > left && x < right && y > top && y < bottom && canvas.rfb != null) {
-            canvas.hideCursor = true;
-            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 0));
-        } else {
-            canvas.hideCursor = false;
-        }
 
         // Ignore TOOL_TYPE_FINGER events that come from the touchscreen with HOVER type action
         // which cause pointer jumping trouble in simulated touchpad for some devices.
