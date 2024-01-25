@@ -312,8 +312,8 @@
   <string name="input_mode_panning">桌面平移模式</string>
   <string name="input_method_mouse">鼠标指针控制</string>
 
-  <string name="input_method_keyboard">键盘符号, 等同于英文输入法</string>
-  <string name="input_method_full_method">输入法产生的任意字符</string>
+  <string name="input_method_keyboard">键盘字符, 等同于英文输入法/详见操作帮助</string>
+  <string name="input_method_full_method">使用输入法/详见操作帮助</string>
 
   <string name="input_method_direct_swipe_pan">直接、滑动平移</string>
   <string name="input_method_direct_drag_pan">直接、按住并平移</string>
@@ -322,8 +322,9 @@
 
   <string name="input_mode_help">输入模式操作帮助</string>
   <string name="input_mode_help_text">"
-        键盘符号, 等同于英文输入法: 可以输入英文，可以在任意地方输入，密码框，玩游戏，输入法最好切换成英文.
-        输入法产生的任意字符：完全使用安卓输入法，可以方便的在office等办公软件输入.
+        键盘字符：输入英文，可以在任意地方输入按键，密码框，玩游戏等，输入法最好切换成英文
+
+        安卓输入法：完全使用安卓输入法，可以方便的在office等办公软件和其他软件编辑本文
         "</string>
 
   <string name="input_mode_help_text_all">"
