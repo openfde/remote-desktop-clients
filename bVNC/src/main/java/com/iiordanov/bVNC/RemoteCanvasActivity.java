@@ -1597,6 +1597,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         RemoteKeyboard k = canvas.getKeyboard();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
         if (k != null) {
             k.setAfterMenu(true);
         }
@@ -1643,10 +1645,15 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             mInputModeFlag = INPUT_MODE_FULL_FUNCTION;
             detectEventEditText.setInputMode(mInputModeFlag);
             item.setChecked(true);
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            detectEventEditText.setVisibility(View.VISIBLE);
+            detectEventEditText.requestFocus();
         } else if(itemId == R.id.itemInputModeKeyboard){
             mInputModeFlag = INPUT_MODE_ONLY_KEYBOARD;
             detectEventEditText.setInputMode(mInputModeFlag);
             item.setChecked(true);
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            detectEventEditText.setVisibility(View.GONE);
         } else if (itemId == R.id.itemHelpInputMode) {
             showDialog(R.id.itemHelpInputMode);
             return true;
