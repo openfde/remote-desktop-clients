@@ -39,5 +39,5 @@ ext {
     toolsVersion = properties.get('TOOLS_VERSION', '31.0.0')
     compileApi = properties.get('COMPILE_API', 33)
     targetApi = properties.get('TARGET_API', 33)
-    minApi = properties.get('MIN_API', 28)
+    minApi = properties.get('MIN_API', 30)
 }

@@ -1697,46 +1697,46 @@ public class RemoteCanvas extends AppCompatImageView
 
 
     /**
+     * NO USE now use system mouse
      * Causes a redraw of the myDrawable to happen at the indicated coordinates.
      */
     public void reDraw(int x, int y, int w, int h) {
-        //android.util.Log.i(TAG, "reDraw called: " + x +", " + y + " + " + w + "x" + h);
-//        long timeNow = System.currentTimeMillis();
-//        if (timeNow - lastDraw > 16.6666) {
-//            float scale = getZoomFactor();
-//            float shiftedX = x - shiftX;
-//            float shiftedY = y - shiftY;
-//            // Make the box slightly larger to avoid artifacts due to truncation errors.
-//            postInvalidate((int) ((shiftedX - 1) * scale), (int) ((shiftedY - 1) * scale),
-//                    (int) ((shiftedX + w + 1) * scale), (int) ((shiftedY + h + 1) * scale));
-//            lastDraw = timeNow;
-//        } else {
-//            handler.removeCallbacks(invalidateCanvasRunnable);
-//            handler.postDelayed(invalidateCanvasRunnable, 100);
-//        }
-        postInvalidate();
+        android.util.Log.i(TAG, "reDraw called: " + x +", " + y + " + " + w + "x" + h);
+        long timeNow = System.currentTimeMillis();
+        if (timeNow - lastDraw > 16.6666) {
+            float scale = getZoomFactor();
+            float shiftedX = x - shiftX;
+            float shiftedY = y - shiftY;
+            // Make the box slightly larger to avoid artifacts due to truncation errors.
+            postInvalidate((int) ((shiftedX - 1) * scale), (int) ((shiftedY - 1) * scale),
+                    (int) ((shiftedX + w + 1) * scale), (int) ((shiftedY + h + 1) * scale));
+            lastDraw = timeNow;
+        } else {
+            handler.removeCallbacks(invalidateCanvasRunnable);
+            handler.postDelayed(invalidateCanvasRunnable, 100);
+        }
     }
 
 
     /**
+     * NO USE now use system mouse
      * This is a float-accepting version of reDraw().
      * Causes a redraw of the myDrawable to happen at the indicated coordinates.
      */
     public void reDraw(float x, float y, float w, float h) {
-//        long timeNow = System.currentTimeMillis();
-//        if (timeNow - lastDraw > 16.6666) {
-//            float scale = getZoomFactor();
-//            float shiftedX = x - shiftX;
-//            float shiftedY = y - shiftY;
-//            // Make the box slightly larger to avoid artifacts due to truncation errors.
-//            postInvalidate((int) ((shiftedX - 1.f) * scale), (int) ((shiftedY - 1.f) * scale),
-//                    (int) ((shiftedX + w + 1.f) * scale), (int) ((shiftedY + h + 1.f) * scale));
-//            lastDraw = timeNow;
-//        } else {
-//            handler.removeCallbacks(invalidateCanvasRunnable);
-//            handler.postDelayed(invalidateCanvasRunnable,100);
-//        }
-        postInvalidate();
+        long timeNow = System.currentTimeMillis();
+        if (timeNow - lastDraw > 16.6666) {
+            float scale = getZoomFactor();
+            float shiftedX = x - shiftX;
+            float shiftedY = y - shiftY;
+            // Make the box slightly larger to avoid artifacts due to truncation errors.
+            postInvalidate((int) ((shiftedX - 1.f) * scale), (int) ((shiftedY - 1.f) * scale),
+                    (int) ((shiftedX + w + 1.f) * scale), (int) ((shiftedY + h + 1.f) * scale));
+            lastDraw = timeNow;
+        } else {
+            handler.removeCallbacks(invalidateCanvasRunnable);
+            handler.postDelayed(invalidateCanvasRunnable,100);
+        }
     }
 
     /**

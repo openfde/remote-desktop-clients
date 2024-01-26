@@ -70,6 +70,7 @@ import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
@@ -162,6 +163,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public static final int INPUT_MODE_ONLY_KEYBOARD = 2;
 
     private int mInputModeFlag = INPUT_MODE_FULL_FUNCTION;
+    ViewOutlineProvider outlineProvider;
 
     public static final Map<Integer, String> inputModeMap;
 
@@ -336,7 +338,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         if(bVNC.MOCK_ADDR){
             initSendString();
         }
-
+        outlineProvider = getWindow().getDecorView().getOutlineProvider();
+        updateStyle();
     }
 
     private void vncConnect() {
@@ -1365,12 +1368,25 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         enableImmersive();
+        updateStyle();
         try {
             setExtraKeysVisibility(View.GONE, false);
 
             // Correct a few times just in case. There is no visual effect.
             handler.postDelayed(rotationCorrector, 300);
         } catch (NullPointerException e) {
+        }
+    }
+
+    private void updateStyle() {
+        WindowManager manager = this.getWindowManager();
+        Rect bounds = manager.getCurrentWindowMetrics().getBounds();
+        int top = bounds.top;
+        Log.d(TAG, "updateStyle():  top:" + top);
+        if (top == 0) {
+            getWindow().getDecorView().setOutlineProvider(null);
+        } else {
+            getWindow().getDecorView().setOutlineProvider(outlineProvider);
         }
     }
 
@@ -1631,23 +1647,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             mInputModeFlag = INPUT_MODE_ONLY_KEYBOARD;
             detectEventEditText.setInputMode(mInputModeFlag);
             item.setChecked(true);
-        }
-//        else if (itemId == R.id.itemExtraKeys) {
-//            if (connection.getExtraKeysToggleType() == Constants.EXTRA_KEYS_ON) {
-//                connection.setExtraKeysToggleType(Constants.EXTRA_KEYS_OFF);
-//                item.setTitle(R.string.extra_keys_enable);
-//                setExtraKeysVisibility(View.GONE, false);
-//            } else {
-//                connection.setExtraKeysToggleType(Constants.EXTRA_KEYS_ON);
-//                item.setTitle(R.string.extra_keys_disable);
-//                setExtraKeysVisibility(View.VISIBLE, false);
-//                extraKeysHidden = false;
-//            }
-//            invalidateOptionsMenu();
-//            connection.save(this);
-//            return true;
-//        }
-        else if (itemId == R.id.itemHelpInputMode) {
+        } else if (itemId == R.id.itemHelpInputMode) {
             showDialog(R.id.itemHelpInputMode);
             return true;
         } else {
@@ -1835,31 +1835,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     // Send e.g. mouse events like hover and scroll to be handled.
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-//        Log.d(TAG, "huyang onGenericMotionEvent() called with: event = [" + event + "]");
-//
-//        View menuView = ((Toolbar) findViewById(R.id.toolbar));
-//        int top = menuView.getTop();
-//        int left = menuView.getLeft();
-//        int right = menuView.getRight();
-//        int bottom = menuView.getBottom();
-//        float y = event.getY();
-//        float x = event.getX();
-//        if (x > left && x < right && y > top && y < bottom && canvas.rfb != null) {
-//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
-//        } else if (y > 40) {
-//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 0));
-//        } else {
-//            getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, 1000));
-//        }
-//
-//        if ((x <= 0 || x >= mDecorViewWidth || y <= 40 || y >= mDecorViewHeight) && canvas.rfb != null) {
-//            canvas.hideCursor = true;
-//        } else {
-//            canvas.hideCursor = false;
-//        }
-//
-
-
         // Ignore TOOL_TYPE_FINGER events that come from the touchscreen with HOVER type action
         // which cause pointer jumping trouble in simulated touchpad for some devices.
         boolean toolTypeFinger = false;
