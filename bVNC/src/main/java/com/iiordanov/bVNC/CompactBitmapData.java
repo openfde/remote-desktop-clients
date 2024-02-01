@@ -23,6 +23,7 @@ package com.iiordanov.bVNC;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.undatech.opaque.RfbConnectable;
 
@@ -53,7 +54,9 @@ class CompactBitmapData extends AbstractBitmapData {
             try {
                 synchronized (this) {
                     canvas.drawBitmap(data.mbitmap, 0.0f, 0.0f, _defaultPaint);
-                    canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, _defaultPaint);
+                    if (!AbstractBitmapData.hideCursor) {
+                        canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, _defaultPaint);
+                    }
                 }
             } catch (Throwable e) { }
         }

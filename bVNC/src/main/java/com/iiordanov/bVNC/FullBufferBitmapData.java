@@ -23,6 +23,7 @@ package com.iiordanov.bVNC;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.undatech.opaque.RfbConnectable;
 
@@ -88,7 +89,9 @@ class FullBufferBitmapData extends AbstractBitmapData {
                 synchronized (this) {
                     canvas.drawBitmap(data.bitmapPixels, offset(xo, yo), data.framebufferwidth,
                             xo, yo, drawWidth, drawHeight, false, _defaultPaint);
-                    canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, _defaultPaint);
+                    if (!AbstractBitmapData.hideCursor) {
+                        canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, _defaultPaint);
+                    }
                 }
             } catch (Throwable e) { }
         }
