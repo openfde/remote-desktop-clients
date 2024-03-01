@@ -1236,7 +1236,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         detectEventEditText.setFocusable(true);
         detectEventEditText.setFocusableInTouchMode(true);
         detectEventEditText.requestFocus();
-        setInputMethod("com.android.inputmethod.latin/.LatinIME");
+//        setInputMethod("com.android.inputmethod.latin/.LatinIME");
+        canvas.sendPointer(100, 100);
     }
 
     /**
@@ -1297,7 +1298,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                         });
         Dialog d = adb.setView(new ListView(this)).create();
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(d.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         d.show();
@@ -1917,7 +1917,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public void onTextSelected(String selectedString) {
         Log.i(TAG, "onTextSelected called with selectedString: " + selectedString);
-        canvas.pd.show();
+//        canvas.pd.show();
         connection.setVmname(canvas.vmNameToId.get(selectedString));
         connection.save(this);
 //        synchronized (canvas.spicecomm) {

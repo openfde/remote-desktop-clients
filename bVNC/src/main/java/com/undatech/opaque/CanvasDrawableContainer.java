@@ -26,6 +26,9 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.RectF;
 import android.graphics.drawable.DrawableContainer;
+import android.util.Log;
+
+import com.iiordanov.bVNC.AbstractBitmapData;
 
 public class CanvasDrawableContainer extends DrawableContainer {
     static final int CAPACITY_FACTOR = 7;
@@ -67,7 +70,9 @@ public class CanvasDrawableContainer extends DrawableContainer {
         try {
             synchronized (this) {
                 canvas.drawBitmap(bitmap, 0.f, 0.f, paint);
-                canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, paint);
+                if (!AbstractBitmapData.hideCursor) {
+                    canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, paint);
+                }
             }
         } catch (Throwable e) { }
     }

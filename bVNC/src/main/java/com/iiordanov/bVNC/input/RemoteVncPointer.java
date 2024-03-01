@@ -20,6 +20,7 @@
 package com.iiordanov.bVNC.input;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.iiordanov.bVNC.RemoteCanvas;
 import com.undatech.opaque.RfbConnectable;
@@ -116,7 +117,7 @@ public class RemoteVncPointer extends RemotePointer {
      * @param metaState
      * @param isMoving
      */
-    private void sendPointerEvent(int x, int y, int metaState, boolean isMoving) {
+    public void sendPointerEvent(int x, int y, int metaState, boolean isMoving) {
         
         int combinedMetaState = metaState|canvas.getKeyboard().getMetaState();
         
@@ -124,7 +125,7 @@ public class RemoteVncPointer extends RemotePointer {
         // send it with the pointer flag "not down" to clear the action.
         if (!isMoving) {
             // If this is a new mouse down event, release previous button pressed to avoid confusing the remote OS.
-            if (prevPointerMask != 0 && prevPointerMask != pointerMask) {
+            if (prevPointerMask != 0 && prevPointerMask != pointerMask && canvas.isConnected()) {
                 protocomm.writePointerEvent(pointerX, pointerY-40,
                                             combinedMetaState,
                                             prevPointerMask & ~POINTER_DOWN_MASK, false);
@@ -134,7 +135,7 @@ public class RemoteVncPointer extends RemotePointer {
         
         canvas.invalidateMousePosition();
         pointerX = x;
-        pointerY = y-40;
+        pointerY = y - 40;
         
         // Do not let mouse pointer leave the bounds of the desktop.
         if (pointerX < 0) {
@@ -150,6 +151,8 @@ public class RemoteVncPointer extends RemotePointer {
         canvas.invalidateMousePosition();
         GeneralUtils.debugLog(this.debugLogging, TAG, "Sending absolute mouse event at: " + pointerX +
                 ", " + pointerY + ", pointerMask: " + pointerMask);
-        protocomm.writePointerEvent(pointerX, pointerY, combinedMetaState, pointerMask, false);
+        if (canvas.isConnected()) {
+            protocomm.writePointerEvent(pointerX, pointerY, combinedMetaState, pointerMask, false);
+        }
     }
 }

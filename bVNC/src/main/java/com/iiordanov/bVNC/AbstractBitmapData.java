@@ -37,7 +37,7 @@ import com.undatech.opaque.RfbConnectable;
  */
 abstract public class AbstractBitmapData {
     private static final String TAG = "AbstractBitmapData";
-    public boolean hideCursor = true;
+    public static boolean hideCursor = true;
     int framebufferwidth;
     int framebufferheight;
     int bitmapwidth;

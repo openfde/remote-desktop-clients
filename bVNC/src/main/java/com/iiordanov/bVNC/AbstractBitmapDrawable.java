@@ -74,7 +74,9 @@ public class AbstractBitmapDrawable extends DrawableContainer {
         try {
             synchronized (this) {
                 canvas.drawBitmap(data.mbitmap, xoff, yoff, _defaultPaint);
-                canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, _defaultPaint);
+                if (!AbstractBitmapData.hideCursor) {
+                    canvas.drawBitmap(softCursor, cursorRect.left, cursorRect.top, _defaultPaint);
+                }
             }
         } catch (Throwable e) { }
     }
@@ -96,14 +98,15 @@ public class AbstractBitmapDrawable extends DrawableContainer {
     void setSoftCursor (int[] newSoftCursorPixels) {
         Log.d(TAG, "setSoftCursor: cursorRect:" + cursorRect + " w:" + cursorRect.width() + " h:" + cursorRect.height());
         Bitmap oldSoftCursor = softCursor;
-        softCursor = Bitmap.createBitmap(newSoftCursorPixels, (int)cursorRect.width(),
-                                         (int)cursorRect.height(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(newSoftCursorPixels, (int) cursorRect.width(),
+                (int) cursorRect.height(), Bitmap.Config.ARGB_8888);
+//        softCursor = bitmap;
         if(getCanvas() != null){
             Activity activity = (Activity) getCanvas().getContext();
-            PointerIcon pointerIcon = PointerIcon.create(softCursor, 0, 0);
+            PointerIcon pointerIcon = PointerIcon.create(bitmap, 0, 0);
             activity.getWindow().getDecorView().setPointerIcon(pointerIcon);
         }
-        softCursorInit = true;
+//        softCursorInit = true;
         oldSoftCursor.recycle();
     }
 

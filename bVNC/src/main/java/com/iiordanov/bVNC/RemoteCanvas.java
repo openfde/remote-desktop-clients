@@ -50,6 +50,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -124,7 +125,7 @@ public class RemoteCanvas extends AppCompatImageView
     Decoder decoder = null;
 
     // The remote pointer and keyboard
-    RemotePointer pointer;
+    RemoteVncPointer pointer;
     RemoteKeyboard keyboard;
 
     // Internal bitmap data
@@ -201,6 +202,7 @@ public class RemoteCanvas extends AppCompatImageView
     String vvFileName;
     private boolean isConnected;
     private String mAppName;
+    private boolean mResetPointer;
 
     /**
      * Constructor used by the inflation apparatus
@@ -223,22 +225,22 @@ public class RemoteCanvas extends AppCompatImageView
         displayDensity = metrics.density;
 
         // Startup the connection thread with a progress dialog
-        pd = ProgressDialog.show(getContext(), getContext().getString(R.string.info_progress_dialog_connecting),
-                getContext().getString(R.string.info_progress_dialog_establishing),
-                true, true, new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        closeConnection();
-                        handler.post(new Runnable() {
-                            public void run() {
-                                Utils.showFatalErrorMessage(getContext(), getContext().getString(R.string.info_progress_dialog_aborted));
-                            }
-                        });
-                    }
-                });
-
-        // Make this dialog cancellable only upon hitting the Back button and not touching outside.
-        pd.setCanceledOnTouchOutside(false);
+//        pd = ProgressDialog.show(getContext(), getContext().getString(R.string.info_progress_dialog_connecting),
+//                getContext().getString(R.string.info_progress_dialog_establishing),
+//                true, true, new DialogInterface.OnCancelListener() {
+//                    @Override
+//                    public void onCancel(DialogInterface dialog) {
+//                        closeConnection();
+//                        handler.post(new Runnable() {
+//                            public void run() {
+//                                Utils.showFatalErrorMessage(getContext(), getContext().getString(R.string.info_progress_dialog_aborted));
+//                            }
+//                        });
+//                    }
+//                });
+//
+//        // Make this dialog cancellable only upon hitting the Back button and not touching outside.
+//        pd.setCanceledOnTouchOutside(false);
     }
 
     void init(final Connection settings, final Handler handler, final Runnable setModes, final Runnable hideKeyboardAndExtraKeys, final String vvFileName) {
@@ -420,7 +422,21 @@ public class RemoteCanvas extends AppCompatImageView
         };
         t.start();
 //        initializeClipboardMonitor();
+
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                resetPointerLocation();
+            }
+        });
         return pointer;
+    }
+
+    private void resetPointerLocation() {
+        if (!mResetPointer) {
+            sendPointer(100, 100);
+            mResetPointer = true;
+        }
     }
 
     private void handleUncaughtException(Throwable e) {
@@ -631,20 +647,20 @@ public class RemoteCanvas extends AppCompatImageView
         reallocateDrawable(displayWidth, displayHeight);
         decoder.setPixelFormat(rfb);
 
-        handler.post(new Runnable() {
-            public void run() {
-                pd.setMessage(getContext().getString(R.string.info_progress_dialog_downloading));
-            }
-        });
+//        handler.post(new Runnable() {
+//            public void run() {
+//                pd.setMessage(getContext().getString(R.string.info_progress_dialog_downloading));
+//            }
+//        });
 
         sendUnixAuth();
         handler.post(drawableSetter);
 
         // Hide progress dialog
-        if (pd.isShowing()){
-            pd.dismiss();
-            Log.e(TAG, "Authentication success, ready to input");
-        }
+//        if (pd.isShowing()){
+//            pd.dismiss();
+//            Log.e(TAG, "Authentication success, ready to input");
+//        }
 
         try {
             rfb.processProtocol();
@@ -660,8 +676,8 @@ public class RemoteCanvas extends AppCompatImageView
      * Initialize the canvas to show the remote desktop
      */
     void startOvirt() {
-        if (!pd.isShowing())
-            pd.show();
+//        if (!pd.isShowing())
+//            pd.show();
 
         Thread cThread = new Thread() {
             @Override
@@ -836,8 +852,8 @@ public class RemoteCanvas extends AppCompatImageView
      * Initialize the canvas to show the remote desktop
      */
     void startPve() {
-        if (!pd.isShowing())
-            pd.show();
+//        if (!pd.isShowing())
+//            pd.show();
 
         Thread cThread = new Thread() {
             @Override
@@ -2060,6 +2076,8 @@ public class RemoteCanvas extends AppCompatImageView
         }
     }
 
+
+
     public void setConnected(boolean connected) {
         isConnected = connected;
     }
@@ -2079,6 +2097,12 @@ public class RemoteCanvas extends AppCompatImageView
     public void setPort(int port) {
         if(connection != null){
             connection.setPort(port);
+        }
+    }
+
+    public void sendPointer(int x, int y){
+        if(pointer != null){
+            pointer.sendPointerEvent(x, y, 0, true);
         }
     }
 }
