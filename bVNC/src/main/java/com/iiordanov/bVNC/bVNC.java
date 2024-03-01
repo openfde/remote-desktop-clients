@@ -551,7 +551,7 @@ public class bVNC extends MainConfiguration {
 
                     @Override
                     public void onSuccess(Call call, VncResult.GetPortResult response) {
-                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        Log.i(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         ipText.setText(BASIP);
                         portText.setText(Integer.toString(response.Data.Port));
                         save();
@@ -596,6 +596,13 @@ public class bVNC extends MainConfiguration {
     }
 
     private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
+        if(app.Name.contains("~")){
+            String[] arrName = app.getName().split("~");
+            app.Name = arrName[0] + "~"+System.currentTimeMillis();
+        }else {
+            app.Name =  app.getName() +"~"+ System.currentTimeMillis() ;
+        }
+
         if (MOCK_ADDR) {
             ipText.setText("10.31.91.87");
             portText.setText("5903");
@@ -629,7 +636,12 @@ public class bVNC extends MainConfiguration {
             intent.putExtra("vnc_activity_icon", Utils.getScaledBitmap(decode, this));
         }
         if(!TextUtils.isEmpty(app.getName())){
-            intent.putExtra("vnc_activity_name", app.getName());
+            String showAppName = app.getName();
+            if(app.getName().contains("~")){
+                String[] arrName = app.getName().split("~");
+                showAppName = arrName[0]  ;
+            }
+            intent.putExtra("vnc_activity_name", showAppName);
         }
         if(!TextUtils.isEmpty(app.getName())){
             intent.putExtra("vnc_app_path", app.getPath());
