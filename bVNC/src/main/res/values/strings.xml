@@ -956,6 +956,7 @@ Below that is where you configure your connection.
     <string name="info_x_app">应用信息</string>
     <string name="shortcut_x_app">创建快捷方式</string>
     <string name="refresh_x_app">刷新</string>
+    <string name="compatible_config_x_app">兼容配置</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

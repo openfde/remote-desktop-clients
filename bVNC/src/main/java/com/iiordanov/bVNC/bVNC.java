@@ -30,6 +30,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
@@ -74,6 +75,7 @@ import com.ft.fdevnc.AppListResult;
 import com.ft.fdevnc.VncResult;
 import com.iiordanov.bVNC.dialogs.AutoXCustomizeDialog;
 import com.iiordanov.bVNC.dialogs.RepeaterDialog;
+import com.iiordanov.util.CompatibleConfig;
 import com.undatech.opaque.util.ConnectionLoader;
 import com.undatech.opaque.util.GeneralUtils;
 import com.undatech.remoteClientUi.*;
@@ -479,6 +481,20 @@ public class bVNC extends MainConfiguration {
             public void onOptionInfoClick() {
 
             }
+
+            @Override
+            public void onOptionCompatibleClick() {
+                String showAppName = getRealAppName(app);
+                Log.i("bella","app "+app.toString()+" ,showAppName "+showAppName);
+
+                Intent intent = new Intent();
+                ComponentName cn = ComponentName.unflattenFromString("com.android.settings/.Settings$SetCompatibleActivity");
+                intent.setComponent(cn);
+                intent.putExtra("appName", "VNC_"+showAppName);
+                intent.putExtra("packageName", showAppName);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
         });
         popupWindow = mPopupSlideSmall;
         boolean withAnchor = true;
@@ -595,12 +611,25 @@ public class bVNC extends MainConfiguration {
         }
     }
 
-    private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
-        if(app.Name.contains("~")){
+    private String getRealAppName(AppListResult.DataBeanX.DataBean app){
+        String showAppName = app.getName();
+        if(app.getName().contains("~")){
             String[] arrName = app.getName().split("~");
-            app.Name = arrName[0] + "~"+System.currentTimeMillis();
-        }else {
-            app.Name =  app.getName() +"~"+ System.currentTimeMillis() ;
+            showAppName = arrName[0]  ;
+        }
+        return  showAppName;
+    }
+    private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
+        String showAppName = getRealAppName(app);
+        String queryValue = CompatibleConfig.queryValueData(this.getApplicationContext(),showAppName,"isAllowMuliWindows");
+        Log.i("bellavnc","queryValue "+queryValue);
+        if(queryValue !=null && "true".equals(queryValue)){
+            if(app.Name.contains("~")){
+                String[] arrName = app.getName().split("~");
+                app.Name = arrName[0] + "~"+System.currentTimeMillis();
+            }else {
+                app.Name =  app.getName() +"~"+ System.currentTimeMillis() ;
+            }
         }
 
         if (MOCK_ADDR) {
@@ -636,11 +665,6 @@ public class bVNC extends MainConfiguration {
             intent.putExtra("vnc_activity_icon", Utils.getScaledBitmap(decode, this));
         }
         if(!TextUtils.isEmpty(app.getName())){
-            String showAppName = app.getName();
-            if(app.getName().contains("~")){
-                String[] arrName = app.getName().split("~");
-                showAppName = arrName[0]  ;
-            }
             intent.putExtra("vnc_activity_name", showAppName);
         }
         if(!TextUtils.isEmpty(app.getName())){
