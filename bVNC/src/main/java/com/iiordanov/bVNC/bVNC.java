@@ -25,6 +25,7 @@ import static com.ft.fdevnc.Constants.BASEURL;
 import static com.ft.fdevnc.Constants.BASIP;
 import static com.ft.fdevnc.Constants.URL_GETALLAPP;
 import static com.ft.fdevnc.Constants.URL_STOPAPP;
+import com.iiordanov.util.ReflectionUtils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -580,6 +581,8 @@ public class bVNC extends MainConfiguration {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() called");
+        ReflectionUtils.set("fde.click_as_touch", "false");
+
         if (MOCK_ADDR) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -601,6 +604,23 @@ public class bVNC extends MainConfiguration {
             }
         }
         Log.d(TAG, "onConfigurationChanged() screenHeight = [" + screenHeight + "] screenWidth = [" + screenWidth + "]");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause() called");
+        ReflectionUtils.set("fde.click_as_touch", "true");
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus){
+        Log.d(TAG,"onWindowFocusChanged: " + hasFocus);
+        if(hasFocus) {
+            ReflectionUtils.set("fde.click_as_touch", "false");
+        }else{
+            ReflectionUtils.set("fde.click_as_touch", "true");
+        }
     }
 
     private void save() {

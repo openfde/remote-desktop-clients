@@ -108,6 +108,7 @@ import com.iiordanov.bVNC.input.MetaKeyBean;
 import com.iiordanov.bVNC.input.Panner;
 import com.iiordanov.bVNC.input.RemoteCanvasHandler;
 import com.iiordanov.bVNC.input.RemoteKeyboard;
+import com.iiordanov.util.ReflectionUtils;
 import com.iiordanov.util.SamsungDexUtils;
 import com.iiordanov.util.UriIntentParser;
 import com.undatech.opaque.Connection;
@@ -272,8 +273,12 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        Log.d(TAG,"onWindowFocusChanged: " + hasFocus);
         if (hasFocus) {
             enableImmersive();
+            ReflectionUtils.set("fde.click_as_touch", "false");
+        }else{
+            ReflectionUtils.set("fde.click_as_touch", "true");
         }
     }
 
@@ -1217,6 +1222,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause called.");
+        ReflectionUtils.set("fde.click_as_touch", "true");
         try {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(canvas.getWindowToken(), 0);
@@ -1228,6 +1234,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume called.");
+        ReflectionUtils.set("fde.click_as_touch", "false");
         try {
             canvas.postInvalidateDelayed(600);
         } catch (NullPointerException e) {
