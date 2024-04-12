@@ -27,10 +27,15 @@ public class RightClickView extends LinearLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if(event.getToolType(0) == MotionEvent.TOOL_TYPE_MOUSE ){
+        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_MOUSE) {
             if (event.getAction() == MotionEvent.ACTION_CANCEL && listener != null && event.getButtonState() != MotionEvent.BUTTON_PRIMARY) {
                 listener.onRightClick(true, event);
-            } else if(event.getAction() == MotionEvent.ACTION_UP && event.getButtonState() == 0){
+            } else if (event.getAction() == MotionEvent.ACTION_UP && event.getButtonState() == 0) {
+                listener.onRightClick(false, event);
+            } else {
+            }
+        } else if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
+            if (event.getAction() == MotionEvent.ACTION_UP && event.getButtonState() == 0) {
                 listener.onRightClick(false, event);
             }
         }

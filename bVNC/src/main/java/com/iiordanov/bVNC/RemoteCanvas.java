@@ -444,7 +444,7 @@ public class RemoteCanvas extends AppCompatImageView
             Log.e(TAG, e.toString());
             e.printStackTrace();
             // Ensure we dismiss the progress dialog before we finish
-            if (pd.isShowing())
+            if (pd !=null && pd.isShowing())
                 pd.dismiss();
 
             if (e instanceof OutOfMemoryError) {
