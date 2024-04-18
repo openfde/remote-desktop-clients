@@ -404,10 +404,10 @@ public class bVNC extends MainConfiguration {
             long nowTime = System.currentTimeMillis();
             if (nowTime - mLastClickTime < TIME_INTERVAL) {
                 // do something
-                mLastClickTime = nowTime;
                 Log.d(TAG, "onItemClick() click too quickly");
                 return;
             }
+            mLastClickTime = nowTime;
             Log.d(TAG, "onItemClick() called with: itemView = [" + itemView + "], position = [" + position + "], app = [" + app + "], isRight = [" + isRight + "]");
             if (isRight) {
                 showOptionView(itemView, app, event);
