@@ -581,7 +581,7 @@ public class bVNC extends MainConfiguration {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() called");
-        ReflectionUtils.set("fde.click_as_touch", "false");
+//        ReflectionUtils.set("fde.click_as_touch", "false");
 
         if (MOCK_ADDR) {
             new Handler().postDelayed(new Runnable() {
@@ -610,17 +610,17 @@ public class bVNC extends MainConfiguration {
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() called");
-        ReflectionUtils.set("fde.click_as_touch", "true");
+//        ReflectionUtils.set("fde.click_as_touch", "true");
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus){
         Log.d(TAG,"onWindowFocusChanged: " + hasFocus);
-        if(hasFocus) {
-            ReflectionUtils.set("fde.click_as_touch", "false");
-        }else{
-            ReflectionUtils.set("fde.click_as_touch", "true");
-        }
+//        if(hasFocus) {
+//            ReflectionUtils.set("fde.click_as_touch", "false");
+//        }else{
+//            ReflectionUtils.set("fde.click_as_touch", "true");
+//        }
     }
 
     private void save() {

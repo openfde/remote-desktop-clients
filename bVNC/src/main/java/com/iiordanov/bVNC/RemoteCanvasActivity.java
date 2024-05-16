@@ -274,12 +274,12 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         Log.d(TAG,"onWindowFocusChanged: " + hasFocus);
-        if (hasFocus) {
-            enableImmersive();
-            ReflectionUtils.set("fde.click_as_touch", "false");
-        }else{
-            ReflectionUtils.set("fde.click_as_touch", "true");
-        }
+//        if (hasFocus) {
+//            enableImmersive();
+//            ReflectionUtils.set("fde.click_as_touch", "false");
+//        }else{
+//            ReflectionUtils.set("fde.click_as_touch", "true");
+//        }
     }
 
     @SuppressLint("ResourceType")
@@ -1222,7 +1222,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause called.");
-        ReflectionUtils.set("fde.click_as_touch", "true");
+//        ReflectionUtils.set("fde.click_as_touch", "true");
         try {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(canvas.getWindowToken(), 0);
@@ -1234,7 +1234,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume called.");
-        ReflectionUtils.set("fde.click_as_touch", "false");
+//        ReflectionUtils.set("fde.click_as_touch", "false");
         try {
             canvas.postInvalidateDelayed(600);
         } catch (NullPointerException e) {
