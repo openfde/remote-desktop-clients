@@ -32,7 +32,7 @@ import java.util.TimerTask;
  * a change is detected, sends the new contents to the VNC server.
  */
 
-public class ClipboardMonitor extends TimerTask {
+public class ClipboardMonitor implements Runnable {
     private ClipboardManager clipboard;
     private String TAG = "ClipboardMonitor hy";
     private Context context;

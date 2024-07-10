@@ -206,7 +206,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public DetectEventEditText detectEventEditText;
     private String vnc_activity_name;
     private String vnc_app_path;
-
+    android.content.ClipboardManager mClipboardManager;
     /**
      * This runnable enables immersive mode.
      */
@@ -272,8 +272,20 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            enableImmersive();
+        Log.d(TAG,"onWindowFocusChanged: " + hasFocus);
+        updateClipboard();
+
+//        if (hasFocus) {
+//            enableImmersive();
+//            ReflectionUtils.set("fde.click_as_touch", "false");
+//        }else{
+//            ReflectionUtils.set("fde.click_as_touch", "true");
+//        }
+    }
+
+    private void updateClipboard() {
+        if(canvas != null && handler != null){
+            handler.post(new ClipboardMonitor(this, canvas, mClipboardManager));
         }
     }
 
@@ -340,6 +352,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
         outlineProvider = getWindow().getDecorView().getOutlineProvider();
         updateStyle();
+        mClipboardManager = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
     }
 
     private void vncConnect() {
@@ -1217,6 +1231,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause called.");
+//        ReflectionUtils.set("fde.click_as_touch", "true");
         try {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(canvas.getWindowToken(), 0);
@@ -1228,6 +1243,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume called.");
+//        ReflectionUtils.set("fde.click_as_touch", "false");
         try {
             canvas.postInvalidateDelayed(600);
         } catch (NullPointerException e) {
