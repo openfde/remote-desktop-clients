@@ -108,7 +108,6 @@ import com.iiordanov.bVNC.input.MetaKeyBean;
 import com.iiordanov.bVNC.input.Panner;
 import com.iiordanov.bVNC.input.RemoteCanvasHandler;
 import com.iiordanov.bVNC.input.RemoteKeyboard;
-import com.iiordanov.util.ReflectionUtils;
 import com.iiordanov.util.SamsungDexUtils;
 import com.iiordanov.util.UriIntentParser;
 import com.undatech.opaque.Connection;
@@ -207,7 +206,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public DetectEventEditText detectEventEditText;
     private String vnc_activity_name;
     private String vnc_app_path;
-
+    android.content.ClipboardManager mClipboardManager;
     /**
      * This runnable enables immersive mode.
      */
@@ -274,12 +273,20 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         Log.d(TAG,"onWindowFocusChanged: " + hasFocus);
+        updateClipboard();
+
 //        if (hasFocus) {
 //            enableImmersive();
 //            ReflectionUtils.set("fde.click_as_touch", "false");
 //        }else{
 //            ReflectionUtils.set("fde.click_as_touch", "true");
 //        }
+    }
+
+    private void updateClipboard() {
+        if(canvas != null && handler != null){
+            handler.post(new ClipboardMonitor(this, canvas, mClipboardManager));
+        }
     }
 
     @SuppressLint("ResourceType")
@@ -345,6 +352,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
         outlineProvider = getWindow().getDecorView().getOutlineProvider();
         updateStyle();
+        mClipboardManager = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
     }
 
     private void vncConnect() {

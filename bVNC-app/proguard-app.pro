@@ -118,3 +118,5 @@ public static int d(...);
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }
+
+-keep class net.i2p.crypto.eddsa.** { *; }

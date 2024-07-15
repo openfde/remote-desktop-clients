@@ -138,10 +138,7 @@ public class RemoteCanvas extends AppCompatImageView
     public ProgressDialog pd;
 
     // Used to set the contents of the clipboard.
-    android.content.ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener;
     android.content.ClipboardManager mClipboardManager;
-    Timer clipboardMonitorTimer;
-    ClipboardMonitor clipboardMonitor;
     public boolean serverJustCutText = false;
 
     public Runnable setModes;
@@ -313,33 +310,9 @@ public class RemoteCanvas extends AppCompatImageView
     }
 
     /**
-     * Initializes the clipboard monitor.
      */
     public void initializeClipboardMonitor() {
         mClipboardManager = (android.content.ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        mOnPrimaryClipChangedListener = new android.content.ClipboardManager.OnPrimaryClipChangedListener() {
-            @Override
-            public void onPrimaryClipChanged() {
-                if (mClipboardManager.hasPrimaryClip()
-                        && mClipboardManager.getPrimaryClip().getItemCount() > 0) {
-                    // 获取复制、剪切的文本内容
-                    CharSequence content =
-                            mClipboardManager.getPrimaryClip().getItemAt(0).getText();
-                    Log.d(TAG, "clip:content:" + content);
-                }
-            }
-        };
-        mClipboardManager.addPrimaryClipChangedListener(mOnPrimaryClipChangedListener);
-        clipboardMonitor = new ClipboardMonitor(getContext(), this, mClipboardManager);
-        if (clipboardMonitor != null) {
-            clipboardMonitorTimer = new Timer();
-            if (clipboardMonitorTimer != null) {
-                try {
-                    clipboardMonitorTimer.schedule(clipboardMonitor, 0, 300);
-                } catch (NullPointerException e) {
-                }
-            }
-        }
     }
 
     /**
@@ -1430,13 +1403,6 @@ public class RemoteCanvas extends AppCompatImageView
         Log.v(TAG, "Cleaning up resources");
 
         removeCallbacksAndMessages();
-        if (clipboardMonitorTimer != null) {
-            clipboardMonitorTimer.cancel();
-            // Occasionally causes a NullPointerException
-            //clipboardMonitorTimer.purge();
-            clipboardMonitorTimer = null;
-        }
-        clipboardMonitor = null;
         setModes = null;
         decoder = null;
         canvasZoomer = null;
