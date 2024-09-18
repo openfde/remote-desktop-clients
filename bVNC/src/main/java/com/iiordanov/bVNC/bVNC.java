@@ -370,6 +370,28 @@ public class bVNC extends MainConfiguration {
                         if(forceRefresh){
                             mRecyclerView.scrollToPosition(0);
                         }
+
+                        String fromOther =  getIntent().getStringExtra("fromOther");
+                        String appName =  getIntent().getStringExtra("appName");
+                        if(fromOther !=null){
+                            if(mDataList !=null){
+                                AppListResult.DataBeanX.DataBean app = new AppListResult.DataBeanX.DataBean();
+
+                                for(int i = 0 ; i < mDataList.size();i++){
+                                    if(appName.equals(mDataList.get(i).getName())||appName.equals(mDataList.get(i).getZhName()) ){
+                                        app = mDataList.get(i);
+                                        break ;
+                                    }
+                                }
+                                Log.d(TAG, "tryStartVncApp:  "+app +", appName "+appName);
+                                if(app.getName() !=null){
+                                    tryStartVncApp(app);
+                                    //finish();
+                                }
+                            }
+                        }else {
+                            Log.d(TAG, "fromOther is null .....");
+                        }
                     }
                 });
     }
