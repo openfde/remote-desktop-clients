@@ -3,6 +3,8 @@
 // is being edited by hand.
 package com.iiordanov.bVNC;
 
+import android.content.ContentValues;
+
 public abstract class AbstractConnectionBean extends com.antlersoft.android.dbimpl.IdImplementationBase implements IConnectionBean {
 
     public static final String GEN_TABLE_NAME = "CONNECTION_BEAN";
@@ -979,95 +981,126 @@ public abstract class AbstractConnectionBean extends com.antlersoft.android.dbim
         }
     }
 
+
+    private String getString(ContentValues values, String key){
+        String res = "";
+        try {
+             res = values.getAsString(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  res ;
+    }
+
+    private long getLong(ContentValues values, String key){
+        long res = 0;
+        try {
+            res = values.getAsLong(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  res ;
+    }
+
+    private int getInteger(ContentValues values, String key){
+        int res = 0;
+        try {
+            res = (int)values.getAsInteger(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  res ;
+    }
+
     /**
      * Populate one instance from a ContentValues
      */
     public void Gen_populate(android.content.ContentValues values) {
-        gen__Id = values.getAsLong(GEN_FIELD__ID);
-        gen_nickname = values.getAsString(GEN_FIELD_NICKNAME);
-        gen_connectionType = (int)values.getAsInteger(GEN_FIELD_CONNECTIONTYPE);
-        gen_sshServer = values.getAsString(GEN_FIELD_SSHSERVER);
-        gen_sshPort = (int)values.getAsInteger(GEN_FIELD_SSHPORT);
-        gen_sshUser = values.getAsString(GEN_FIELD_SSHUSER);
-        gen_sshPassword = values.getAsString(GEN_FIELD_SSHPASSWORD);
-        gen_keepSshPassword = (values.getAsInteger(GEN_FIELD_KEEPSSHPASSWORD) != 0);
-        gen_sshPubKey = values.getAsString(GEN_FIELD_SSHPUBKEY);
-        gen_sshPrivKey = values.getAsString(GEN_FIELD_SSHPRIVKEY);
-        gen_sshPassPhrase = values.getAsString(GEN_FIELD_SSHPASSPHRASE);
-        gen_useSshPubKey = (values.getAsInteger(GEN_FIELD_USESSHPUBKEY) != 0);
-        gen_sshRemoteCommandOS = (int)values.getAsInteger(GEN_FIELD_SSHREMOTECOMMANDOS);
-        gen_sshRemoteCommandType = (int)values.getAsInteger(GEN_FIELD_SSHREMOTECOMMANDTYPE);
-        gen_autoXType = (int)values.getAsInteger(GEN_FIELD_AUTOXTYPE);
-        gen_autoXCommand = values.getAsString(GEN_FIELD_AUTOXCOMMAND);
-        gen_autoXEnabled = (values.getAsInteger(GEN_FIELD_AUTOXENABLED) != 0);
-        gen_autoXResType = (int)values.getAsInteger(GEN_FIELD_AUTOXRESTYPE);
-        gen_autoXWidth = (int)values.getAsInteger(GEN_FIELD_AUTOXWIDTH);
-        gen_autoXHeight = (int)values.getAsInteger(GEN_FIELD_AUTOXHEIGHT);
-        gen_autoXSessionProg = values.getAsString(GEN_FIELD_AUTOXSESSIONPROG);
-        gen_autoXSessionType = (int)values.getAsInteger(GEN_FIELD_AUTOXSESSIONTYPE);
-        gen_autoXUnixpw = (values.getAsInteger(GEN_FIELD_AUTOXUNIXPW) != 0);
-        gen_autoXUnixAuth = (values.getAsInteger(GEN_FIELD_AUTOXUNIXAUTH) != 0);
-        gen_autoXRandFileNm = values.getAsString(GEN_FIELD_AUTOXRANDFILENM);
-        gen_sshRemoteCommand = values.getAsString(GEN_FIELD_SSHREMOTECOMMAND);
-        gen_sshRemoteCommandTimeout = (int)values.getAsInteger(GEN_FIELD_SSHREMOTECOMMANDTIMEOUT);
-        gen_useSshRemoteCommand = (values.getAsInteger(GEN_FIELD_USESSHREMOTECOMMAND) != 0);
-        gen_sshHostKey = values.getAsString(GEN_FIELD_SSHHOSTKEY);
-        gen_address = values.getAsString(GEN_FIELD_ADDRESS);
-        gen_port = (int)values.getAsInteger(GEN_FIELD_PORT);
-        gen_caCert = values.getAsString(GEN_FIELD_CACERT);
-        gen_caCertPath = values.getAsString(GEN_FIELD_CACERTPATH);
-        gen_tlsPort = (int)values.getAsInteger(GEN_FIELD_TLSPORT);
-        gen_certSubject = values.getAsString(GEN_FIELD_CERTSUBJECT);
-        gen_password = values.getAsString(GEN_FIELD_PASSWORD);
-        gen_colorModel = values.getAsString(GEN_FIELD_COLORMODEL);
-        gen_prefEncoding = (int)values.getAsInteger(GEN_FIELD_PREFENCODING);
-        gen_extraKeysToggleType = (int)values.getAsInteger(GEN_FIELD_EXTRAKEYSTOGGLETYPE);
-        gen_forceFull = values.getAsLong(GEN_FIELD_FORCEFULL);
-        gen_repeaterId = values.getAsString(GEN_FIELD_REPEATERID);
-        gen_inputMode = values.getAsString(GEN_FIELD_INPUTMODE);
-        gen_SCALEMODE = values.getAsString(GEN_FIELD_SCALEMODE);
-        gen_useDpadAsArrows = (values.getAsInteger(GEN_FIELD_USEDPADASARROWS) != 0);
-        gen_rotateDpad = (values.getAsInteger(GEN_FIELD_ROTATEDPAD) != 0);
-        gen_usePortrait = (values.getAsInteger(GEN_FIELD_USEPORTRAIT) != 0);
-        gen_useLocalCursor = (int)values.getAsInteger(GEN_FIELD_USELOCALCURSOR);
-        gen_keepPassword = (values.getAsInteger(GEN_FIELD_KEEPPASSWORD) != 0);
-        gen_followMouse = (values.getAsInteger(GEN_FIELD_FOLLOWMOUSE) != 0);
-        gen_useRepeater = (values.getAsInteger(GEN_FIELD_USEREPEATER) != 0);
-        gen_metaListId = values.getAsLong(GEN_FIELD_METALISTID);
-        gen_LAST_META_KEY_ID = values.getAsLong(GEN_FIELD_LAST_META_KEY_ID);
-        gen_followPan = (values.getAsInteger(GEN_FIELD_FOLLOWPAN) != 0);
-        gen_userName = values.getAsString(GEN_FIELD_USERNAME);
-        gen_rdpDomain = values.getAsString(GEN_FIELD_RDPDOMAIN);
-        gen_secureConnectionType = values.getAsString(GEN_FIELD_SECURECONNECTIONTYPE);
-        gen_showZoomButtons = (values.getAsInteger(GEN_FIELD_SHOWZOOMBUTTONS) != 0);
-        gen_DOUBLE_TAP_ACTION = values.getAsString(GEN_FIELD_DOUBLE_TAP_ACTION);
-        gen_rdpResType = (int)values.getAsInteger(GEN_FIELD_RDPRESTYPE);
-        gen_rdpWidth = (int)values.getAsInteger(GEN_FIELD_RDPWIDTH);
-        gen_rdpHeight = (int)values.getAsInteger(GEN_FIELD_RDPHEIGHT);
-        gen_rdpColor = (int)values.getAsInteger(GEN_FIELD_RDPCOLOR);
-        gen_remoteFx = (values.getAsInteger(GEN_FIELD_REMOTEFX) != 0);
-        gen_desktopBackground = (values.getAsInteger(GEN_FIELD_DESKTOPBACKGROUND) != 0);
-        gen_fontSmoothing = (values.getAsInteger(GEN_FIELD_FONTSMOOTHING) != 0);
-        gen_desktopComposition = (values.getAsInteger(GEN_FIELD_DESKTOPCOMPOSITION) != 0);
-        gen_windowContents = (values.getAsInteger(GEN_FIELD_WINDOWCONTENTS) != 0);
-        gen_menuAnimation = (values.getAsInteger(GEN_FIELD_MENUANIMATION) != 0);
-        gen_visualStyles = (values.getAsInteger(GEN_FIELD_VISUALSTYLES) != 0);
-        gen_redirectSdCard = (values.getAsInteger(GEN_FIELD_REDIRECTSDCARD) != 0);
-        gen_consoleMode = (values.getAsInteger(GEN_FIELD_CONSOLEMODE) != 0);
-        gen_enableSound = (values.getAsInteger(GEN_FIELD_ENABLESOUND) != 0);
-        gen_enableRecording = (values.getAsInteger(GEN_FIELD_ENABLERECORDING) != 0);
-        gen_remoteSoundType = (int)values.getAsInteger(GEN_FIELD_REMOTESOUNDTYPE);
-        gen_viewOnly = (values.getAsInteger(GEN_FIELD_VIEWONLY) != 0);
-        gen_layoutMap = values.getAsString(GEN_FIELD_LAYOUTMAP);
+        gen__Id = getLong(values,GEN_FIELD__ID);
+        gen_nickname = getString(values,GEN_FIELD_NICKNAME);
+        gen_connectionType = getInteger(values,GEN_FIELD_CONNECTIONTYPE);
+        gen_sshServer = getString(values,GEN_FIELD_SSHSERVER);
+        gen_sshPort = getInteger(values,GEN_FIELD_SSHPORT);
+        gen_sshUser = getString(values,GEN_FIELD_SSHUSER);
+        gen_sshPassword = getString(values,GEN_FIELD_SSHPASSWORD);
+        gen_keepSshPassword = (getInteger(values,GEN_FIELD_KEEPSSHPASSWORD) != 0);
+        gen_sshPubKey = getString(values,GEN_FIELD_SSHPUBKEY);
+        gen_sshPrivKey = getString(values,GEN_FIELD_SSHPRIVKEY);
+        gen_sshPassPhrase = getString(values,GEN_FIELD_SSHPASSPHRASE);
+        gen_useSshPubKey = (getInteger(values,GEN_FIELD_USESSHPUBKEY) != 0);
+        gen_sshRemoteCommandOS = getInteger(values,GEN_FIELD_SSHREMOTECOMMANDOS);
+        gen_sshRemoteCommandType = getInteger(values,GEN_FIELD_SSHREMOTECOMMANDTYPE);
+        gen_autoXType = getInteger(values,GEN_FIELD_AUTOXTYPE);
+        gen_autoXCommand = getString(values,GEN_FIELD_AUTOXCOMMAND);
+        gen_autoXEnabled = (getInteger(values,GEN_FIELD_AUTOXENABLED) != 0);
+        gen_autoXResType = getInteger(values,GEN_FIELD_AUTOXRESTYPE);
+        gen_autoXWidth = getInteger(values,GEN_FIELD_AUTOXWIDTH);
+        gen_autoXHeight = getInteger(values,GEN_FIELD_AUTOXHEIGHT);
+        gen_autoXSessionProg = getString(values,GEN_FIELD_AUTOXSESSIONPROG);
+        gen_autoXSessionType = getInteger(values,GEN_FIELD_AUTOXSESSIONTYPE);
+        gen_autoXUnixpw = (getInteger(values,GEN_FIELD_AUTOXUNIXPW) != 0);
+        gen_autoXUnixAuth = (getInteger(values,GEN_FIELD_AUTOXUNIXAUTH) != 0);
+        gen_autoXRandFileNm = getString(values,GEN_FIELD_AUTOXRANDFILENM);
+        gen_sshRemoteCommand = getString(values,GEN_FIELD_SSHREMOTECOMMAND);
+        gen_sshRemoteCommandTimeout = getInteger(values,GEN_FIELD_SSHREMOTECOMMANDTIMEOUT);
+        gen_useSshRemoteCommand = (getInteger(values,GEN_FIELD_USESSHREMOTECOMMAND) != 0);
+        gen_sshHostKey = getString(values,GEN_FIELD_SSHHOSTKEY);
+        gen_address = getString(values,GEN_FIELD_ADDRESS);
+        gen_port = getInteger(values,GEN_FIELD_PORT);
+        gen_caCert = getString(values,GEN_FIELD_CACERT);
+        gen_caCertPath = getString(values,GEN_FIELD_CACERTPATH);
+        gen_tlsPort = getInteger(values,GEN_FIELD_TLSPORT);
+        gen_certSubject = getString(values,GEN_FIELD_CERTSUBJECT);
+        gen_password = getString(values,GEN_FIELD_PASSWORD);
+        gen_colorModel = getString(values,GEN_FIELD_COLORMODEL);
+        gen_prefEncoding = getInteger(values,GEN_FIELD_PREFENCODING);
+        gen_extraKeysToggleType = getInteger(values,GEN_FIELD_EXTRAKEYSTOGGLETYPE);
+        gen_forceFull = getLong(values,GEN_FIELD_FORCEFULL);
+        gen_repeaterId = getString(values,GEN_FIELD_REPEATERID);
+        gen_inputMode = getString(values,GEN_FIELD_INPUTMODE);
+        gen_SCALEMODE = getString(values,GEN_FIELD_SCALEMODE);
+        gen_useDpadAsArrows = (getInteger(values,GEN_FIELD_USEDPADASARROWS) != 0);
+        gen_rotateDpad = (getInteger(values,GEN_FIELD_ROTATEDPAD) != 0);
+        gen_usePortrait = (getInteger(values,GEN_FIELD_USEPORTRAIT) != 0);
+        gen_useLocalCursor = getInteger(values,GEN_FIELD_USELOCALCURSOR);
+        gen_keepPassword = (getInteger(values,GEN_FIELD_KEEPPASSWORD) != 0);
+        gen_followMouse = (getInteger(values,GEN_FIELD_FOLLOWMOUSE) != 0);
+        gen_useRepeater = (getInteger(values,GEN_FIELD_USEREPEATER) != 0);
+        gen_metaListId = getLong(values,GEN_FIELD_METALISTID);
+        gen_LAST_META_KEY_ID = getLong(values,GEN_FIELD_LAST_META_KEY_ID);
+        gen_followPan = (getInteger(values,GEN_FIELD_FOLLOWPAN) != 0);
+        gen_userName = getString(values,GEN_FIELD_USERNAME);
+        gen_rdpDomain = getString(values,GEN_FIELD_RDPDOMAIN);
+        gen_secureConnectionType = getString(values,GEN_FIELD_SECURECONNECTIONTYPE);
+        gen_showZoomButtons = (getInteger(values,GEN_FIELD_SHOWZOOMBUTTONS) != 0);
+        gen_DOUBLE_TAP_ACTION = getString(values,GEN_FIELD_DOUBLE_TAP_ACTION);
+        gen_rdpResType = getInteger(values,GEN_FIELD_RDPRESTYPE);
+        gen_rdpWidth = getInteger(values,GEN_FIELD_RDPWIDTH);
+        gen_rdpHeight = getInteger(values,GEN_FIELD_RDPHEIGHT);
+        gen_rdpColor = getInteger(values,GEN_FIELD_RDPCOLOR);
+        gen_remoteFx = (getInteger(values,GEN_FIELD_REMOTEFX) != 0);
+        gen_desktopBackground = (getInteger(values,GEN_FIELD_DESKTOPBACKGROUND) != 0);
+        gen_fontSmoothing = (getInteger(values,GEN_FIELD_FONTSMOOTHING) != 0);
+        gen_desktopComposition = (getInteger(values,GEN_FIELD_DESKTOPCOMPOSITION) != 0);
+        gen_windowContents = (getInteger(values,GEN_FIELD_WINDOWCONTENTS) != 0);
+        gen_menuAnimation = (getInteger(values,GEN_FIELD_MENUANIMATION) != 0);
+        gen_visualStyles = (getInteger(values,GEN_FIELD_VISUALSTYLES) != 0);
+        gen_redirectSdCard = (getInteger(values,GEN_FIELD_REDIRECTSDCARD) != 0);
+        gen_consoleMode = (getInteger(values,GEN_FIELD_CONSOLEMODE) != 0);
+        gen_enableSound = (getInteger(values,GEN_FIELD_ENABLESOUND) != 0);
+        gen_enableRecording = (getInteger(values,GEN_FIELD_ENABLERECORDING) != 0);
+        gen_remoteSoundType = getInteger(values,GEN_FIELD_REMOTESOUNDTYPE);
+        gen_viewOnly = (getInteger(values,GEN_FIELD_VIEWONLY) != 0);
+        gen_layoutMap = getString(values,GEN_FIELD_LAYOUTMAP);
 
-        gen_filename = values.getAsString(GEN_FIELD_FILENAME);
-        gen_x509KeySignature = values.getAsString(GEN_FIELD_X509KEYSIGNATURE);
-        gen_screenshotFilename = values.getAsString(GEN_FIELD_SCREENSHOTFILENAME);
+        gen_filename = getString(values,GEN_FIELD_FILENAME);
+        gen_x509KeySignature = getString(values,GEN_FIELD_X509KEYSIGNATURE);
+        gen_screenshotFilename = getString(values,GEN_FIELD_SCREENSHOTFILENAME);
 
-        gen_enableGfx = (values.getAsInteger(GEN_FIELD_ENABLEGFX) != 0);
-        gen_enableGfxH264 = (values.getAsInteger(GEN_FIELD_ENABLEGFXH264) != 0);
+        gen_enableGfx = (getInteger(values,GEN_FIELD_ENABLEGFX) != 0);
+        gen_enableGfxH264 = (getInteger(values,GEN_FIELD_ENABLEGFXH264) != 0);
 
-        gen_preferSendingUnicode = (values.getAsInteger(GEN_FIELD_PREFERSENDINGUNICODE) != 0);
-        gen_app = values.getAsInteger(GEN_FIELD_APP);
+        gen_preferSendingUnicode = (getInteger(values,GEN_FIELD_PREFERSENDINGUNICODE) != 0);
+        gen_app = getInteger(values,GEN_FIELD_APP);
     }
 }
