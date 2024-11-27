@@ -26,6 +26,7 @@ package com.iiordanov.bVNC;
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 import static com.ft.fdevnc.Constants.BASEURL;
 import static com.ft.fdevnc.Constants.BASIP;
+import static com.ft.fdevnc.Constants.URL_GETALLAPP;
 import static com.ft.fdevnc.Constants.URL_KILLAPP;
 import static com.ft.fdevnc.Constants.URL_STOPAPP;
 import static com.undatech.opaque.util.GeneralUtils.debugLog;
@@ -294,26 +295,35 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public void onCreate(Bundle icicle) {
         debugLog(App.debugLog, TAG, "OnCreate called:");
         super.onCreate(icicle);
-        if(!bVNC.MOCK_ADDR){
-            vnc_activity_name = getIntent().getStringExtra("vnc_activity_name");
-            vnc_app_path = getIntent().getStringExtra("vnc_app_path");
-            Log.d(TAG, "onCreate():  vnc_app_path :" + vnc_app_path );
-            if(!TextUtils.isEmpty(vnc_activity_name)){
-                setTitle(getString(R.string.bvnc_app_name) + ":" + vnc_activity_name);
-                vnc_activity_name = getString(R.string.bvnc_app_name) + ":" + vnc_activity_name;
-            } else {
-                setTitle(getString(R.string.bvnc_app_name));
-                vnc_activity_name = getString(R.string.bvnc_app_name);
-            }
-
-            Bitmap bitmap = (Bitmap) getIntent().getExtras().get("vnc_activity_icon");
-            if( bitmap == null){
-                String path = getIntent().getExtras().getString("vnc_activity_icon_path");
-                bitmap = Utils.getSVGBitmap(path);
-            }
-            ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(vnc_activity_name , bitmap, 0);
-            this.setTaskDescription(description);
+        String fromOther =  getIntent().getStringExtra("fromOther");
+        vnc_activity_name =  getIntent().getStringExtra("vnc_activity_name");
+        vnc_app_path =  getIntent().getStringExtra("vnc_app_path");
+        if(!TextUtils.isEmpty(vnc_activity_name)){
+            setTitle(getString(R.string.bvnc_app_name) + ":" + vnc_activity_name);
+            vnc_activity_name = getString(R.string.bvnc_app_name) + ":" + vnc_activity_name;
+        } else {
+            setTitle(getString(R.string.bvnc_app_name));
+            vnc_activity_name = getString(R.string.bvnc_app_name);
         }
+
+        if(fromOther != null){
+//            getVncAllApp(true, 1,vnc_activity_name);
+//            retryStartVncApp(vnc_activity_name,vnc_app_path);
+        }else {
+            if(!bVNC.MOCK_ADDR){
+                Log.d(TAG, "onCreate():  vnc_app_path :" + vnc_app_path );
+
+
+//                Bitmap bitmap = (Bitmap) getIntent().getExtras().get("vnc_activity_icon");
+//                if( bitmap == null){
+//                    String path = getIntent().getExtras().getString("vnc_activity_icon_path");
+//                    bitmap = Utils.getSVGBitmap(path);
+//                }
+//                ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(vnc_activity_name , bitmap, 0);
+//                this.setTaskDescription(description);
+            }
+        }
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -355,7 +365,6 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         mClipboardManager = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
     }
-
     private void vncConnect() {
         Runnable setModes = new Runnable() {
             public void run() {
@@ -393,7 +402,31 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         retryStartVncApp(vnc_activity_name, vnc_app_path);
     }
 
+    private void getVncAllApp(boolean forceRefresh, int page,String appName) {
+        QuietOkHttp.get(BASEURL + URL_GETALLAPP)
+                .addParams("page", new Integer(page).toString())
+                .addParams("page_size", "100")
+                .addParams("refresh", String.valueOf(forceRefresh))
+                .addParams("page_enable", "true")
+                .setCallbackToMainUIThread(true)
+                .execute(new JsonCallBack<AppListResult>() {
 
+                    @Override
+                    public void onFailure(Call call, Exception e) {
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                    }
+
+                    @Override
+                    public void onSuccess(Call call, AppListResult response) {
+                        Log.d(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
+                        List<AppListResult.DataBeanX.DataBean> listLinuxApps = response.getData().getData();
+                        if(listLinuxApps !=null){
+
+                        }
+
+                    }
+                });
+    }
     private void retryStartVncApp(String appName, String appPath) {
         QuietOkHttp.post(BASEURL + URL_STOPAPP)
                 .setCallbackToMainUIThread(true)
@@ -1743,22 +1776,26 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     }
 
     private void stopApp() {
-        int app = connection.getApp();
-        QuietOkHttp.post(BASEURL + URL_KILLAPP)
-                .setCallbackToMainUIThread(true)
-                .addParams("App", App.getRunName(getClass().getName()))
-                .addParams("SysOnly", "false")
-                .execute(new JsonCallBack<VncResult.GetPortResult>() {
-                    @Override
-                    public void onFailure(Call call, Exception e) {
-                        Log.e(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
-                    }
+        try {
+            int app = connection.getApp();
+            QuietOkHttp.post(BASEURL + URL_KILLAPP)
+                    .setCallbackToMainUIThread(true)
+                    .addParams("App", App.getRunName(getClass().getName()))
+                    .addParams("SysOnly", "false")
+                    .execute(new JsonCallBack<VncResult.GetPortResult>() {
+                        @Override
+                        public void onFailure(Call call, Exception e) {
+                            Log.e(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                        }
 
-                    @Override
-                    public void onSuccess(Call call, VncResult.GetPortResult response) {
-                        com.ft.fdevnc.Constants.app = null;
-                    }
-                });
+                        @Override
+                        public void onSuccess(Call call, VncResult.GetPortResult response) {
+                            com.ft.fdevnc.Constants.app = null;
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -2029,33 +2066,33 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         }
     }
 
-    public static class RemoteCanvasActivity1 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity2 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity3 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity4 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity5 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity6 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity7 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity8 extends RemoteCanvasActivity{
-
-    }
-    public static class RemoteCanvasActivity9 extends RemoteCanvasActivity{
-
-    }
+//    public static class RemoteCanvasActivity1 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity2 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity3 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity4 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity5 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity6 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity7 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity8 extends RemoteCanvasActivity{
+//
+//    }
+//    public static class RemoteCanvasActivity9 extends RemoteCanvasActivity{
+//
+//    }
 
 
 

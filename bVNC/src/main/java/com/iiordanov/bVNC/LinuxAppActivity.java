@@ -1,46 +1,20 @@
-/**
- * Copyright (C) 2012 Iordan Iordanov
- * Copyright (C) 20?? Michael A. MacDonald
- * <p>
- * This is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * <p>
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with this software; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
- * USA.
- */
-
-
 package com.iiordanov.bVNC;
 
 import static com.ft.fdevnc.Constants.BASEURL;
 import static com.ft.fdevnc.Constants.BASIP;
 import static com.ft.fdevnc.Constants.URL_GETALLAPP;
 import static com.ft.fdevnc.Constants.URL_STOPAPP;
-import com.iiordanov.util.ReflectionUtils;
 
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -53,20 +27,7 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -74,11 +35,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ft.fdevnc.AppAdapter;
 import com.ft.fdevnc.AppListResult;
 import com.ft.fdevnc.VncResult;
-import com.iiordanov.bVNC.dialogs.AutoXCustomizeDialog;
-import com.iiordanov.bVNC.dialogs.RepeaterDialog;
 import com.iiordanov.util.CompatibleConfig;
-import com.undatech.opaque.util.ConnectionLoader;
-import com.undatech.opaque.util.GeneralUtils;
 import com.undatech.remoteClientUi.R;
 import com.xiaokun.dialogtiplib.dialog_tip.TipLoadDialog;
 import com.xiaokun.dialogtiplib.util.AppUtils;
@@ -89,57 +46,28 @@ import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import razerdp.basepopup.BasePopupWindow;
 import razerdp.util.animation.AnimationHelper;
 import razerdp.util.animation.ScaleConfig;
 
-/**
- * bVNC is the Activity for setting up VNC connections.
- */
-public class bVNC extends MainConfiguration {
-    private final static String TAG = "androidVNC";
-    private LinearLayout layoutUseX11Vnc;
-    private LinearLayout layoutAdvancedSettings;
-    private EditText sshServer;
-    private EditText sshPort;
-    private EditText sshUser;
-    private EditText portText;
-    private EditText passwordText;
-    private Button repeaterButton;
-    private Button buttonCustomizeX11Vnc;
-    private ToggleButton toggleAdvancedSettings;
-    private LinearLayout repeaterEntry;
-    private TextView repeaterText;
-    private RadioGroup groupForceFullScreen;
-    private Spinner colorSpinner;
-    private EditText textNickname;
-    private EditText textUsername;
-    private TextView autoXStatus;
-    private CheckBox checkboxKeepPassword;
-    private CheckBox checkboxUseDpadAsArrows;
-    private CheckBox checkboxRotateDpad;
-    private CheckBox checkboxUseLastPositionToolbar;
-    private CheckBox checkboxUseSshPubkey;
-    private CheckBox checkboxPreferHextile;
-    private CheckBox checkboxViewOnly;
-    private boolean repeaterTextSet;
-    public TipLoadDialog tipLoadDialog;
+public class LinuxAppActivity extends MainConfiguration {
+    private final static String TAG = "LinuxAppActivity";
 
-    private Spinner spinnerVncGeometry;
-    private EditText resWidth;
-    private EditText resHeight;
-    private ProgressBar loadingView;
     private SwipeRefreshLayout mRefreshLayout;
     private SwipeRecyclerView mRecyclerView;
     private AppAdapter mAdapter;
     private List<AppListResult.DataBeanX.DataBean> mDataList = new ArrayList<>();
 
+    public TipLoadDialog tipLoadDialog;
+
+    private int port  ;
+
     private int mPage = 1;
     private int pageSize = 100;
-    //todo mock addr
-    public static boolean MOCK_ADDR = false;
+
     private String shortcutApp;
     private String shortcuPath;
     private boolean fromShortcut;
@@ -150,149 +78,39 @@ public class bVNC extends MainConfiguration {
     private int screenHeight;
     private int spanCount;
 
+    private long mLastClickTime = 0;
+    public static final long TIME_INTERVAL = 300L;
     @Override
     public void onCreate(Bundle icicle) {
-        Log.d(TAG, "onCreate called");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-        layoutID = R.layout.main;
+        layoutID = R.layout.activity_linux_app;
+//        setContentView(R.layout.activity_linux_app);
         super.onCreate(icicle);
+        tipLoadDialog = new TipLoadDialog(this);
         AppUtils.init(this);
         initAppList();
 
-        sshServer = (EditText) findViewById(R.id.sshServer);
-        sshPort = (EditText) findViewById(R.id.sshPort);
-        sshUser = (EditText) findViewById(R.id.sshUser);
-        layoutUseX11Vnc = (LinearLayout) findViewById(R.id.layoutUseX11Vnc);
-        portText = (EditText) findViewById(R.id.textPORT);
-        passwordText = (EditText) findViewById(R.id.textPASSWORD);
-        textNickname = (EditText) findViewById(R.id.textNickname);
-        textUsername = (EditText) findViewById(R.id.textUsername);
-        autoXStatus = (TextView) findViewById(R.id.autoXStatus);
-        loadingView = (ProgressBar) findViewById(R.id.loadingView);
-        // Define what happens when the Repeater button is pressed.
-        repeaterButton = (Button) findViewById(R.id.buttonRepeater);
-        repeaterEntry = (LinearLayout) findViewById(R.id.repeaterEntry);
-        repeaterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog(R.layout.repeater_dialog);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume() called");
+
+        if(screenHeight == 0 | screenWidth == 0){
+            screenWidth = DimenUtils.getScreenWidth();
+            screenHeight = DimenUtils.getScreenHeight();
+        } else if( screenHeight != DimenUtils.getScreenHeight()){
+            screenWidth = DimenUtils.getScreenWidth();
+            screenHeight = DimenUtils.getScreenHeight();
+            spanCount = DimenUtils.getScreenWidth() / (int) DimenUtils.dpToPx(160.0f);
+            int count = Math.max(spanCount, 3);
+            if(spanCount != count){
+                initAppList();
             }
-        });
-        tipLoadDialog = new TipLoadDialog(this);
-        // Here we say what happens when the Pubkey Checkbox is checked/unchecked.
-        checkboxUseSshPubkey = (CheckBox) findViewById(R.id.checkboxUseSshPubkey);
-
-        // Define what happens when somebody clicks on the customize auto X session dialog.
-        buttonCustomizeX11Vnc = (Button) findViewById(R.id.buttonCustomizeX11Vnc);
-        buttonCustomizeX11Vnc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bVNC.this.updateSelectedFromView();
-                showDialog(R.layout.auto_x_customize);
-            }
-        });
-
-        // Define what happens when somebody selects different VNC connection types.
-        connectionType = (Spinner) findViewById(R.id.connectionType);
-        connectionType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> ad, View view, int itemIndex, long id) {
-                android.util.Log.d(TAG, "connectionType onItemSelected called");
-                selectedConnType = itemIndex;
-                selected.setConnectionType(selectedConnType);
-                selected.save(bVNC.this);
-                if (selectedConnType == Constants.CONN_TYPE_PLAIN ||
-                        selectedConnType == Constants.CONN_TYPE_ANONTLS ||
-                        selectedConnType == Constants.CONN_TYPE_STUNNEL) {
-                    setVisibilityOfSshWidgets(View.GONE);
-                    setVisibilityOfUltraVncWidgets(View.GONE);
-                    ipText.setHint(R.string.address_caption_hint);
-                    textUsername.setHint(R.string.username_hint_optional);
-                } else if (selectedConnType == Constants.CONN_TYPE_SSH) {
-                    setVisibilityOfSshWidgets(View.VISIBLE);
-                    setVisibilityOfUltraVncWidgets(View.GONE);
-                    if (ipText.getText().toString().equals(""))
-                        ipText.setText("localhost");
-                    ipText.setHint(R.string.address_caption_hint_tunneled);
-                    textUsername.setHint(R.string.username_hint_optional);
-                } else if (selectedConnType == Constants.CONN_TYPE_ULTRAVNC) {
-                    setVisibilityOfSshWidgets(View.GONE);
-                    setVisibilityOfUltraVncWidgets(View.VISIBLE);
-                    ipText.setHint(R.string.address_caption_hint);
-                    textUsername.setHint(R.string.username_hint);
-                } else if (selectedConnType == Constants.CONN_TYPE_VENCRYPT) {
-                    setVisibilityOfSshWidgets(View.GONE);
-                    textUsername.setVisibility(View.VISIBLE);
-                    repeaterEntry.setVisibility(View.GONE);
-                    if (passwordText.getText().toString().equals(""))
-                        checkboxKeepPassword.setChecked(false);
-                    ipText.setHint(R.string.address_caption_hint);
-                    textUsername.setHint(R.string.username_hint_vencrypt);
-                }
-                updateViewFromSelected();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> ad) {
-            }
-        });
-
-        // The advanced settings button.
-        toggleAdvancedSettings = (ToggleButton) findViewById(R.id.toggleAdvancedSettings);
-        layoutAdvancedSettings = (LinearLayout) findViewById(R.id.layoutAdvancedSettings);
-        toggleAdvancedSettings.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean checked) {
-                if (checked)
-                    layoutAdvancedSettings.setVisibility(View.VISIBLE);
-                else
-                    layoutAdvancedSettings.setVisibility(View.GONE);
-            }
-        });
-
-        colorSpinner = (Spinner) findViewById(R.id.colorformat);
-        COLORMODEL[] models = COLORMODEL.values();
-        ArrayAdapter<COLORMODEL> colorSpinnerAdapter = new ArrayAdapter<COLORMODEL>(this, R.layout.connection_list_entry, models);
-        groupForceFullScreen = (RadioGroup) findViewById(R.id.groupForceFullScreen);
-        checkboxKeepPassword = (CheckBox) findViewById(R.id.checkboxKeepPassword);
-        checkboxUseDpadAsArrows = (CheckBox) findViewById(R.id.checkboxUseDpadAsArrows);
-        checkboxRotateDpad = (CheckBox) findViewById(R.id.checkboxRotateDpad);
-        checkboxUseLastPositionToolbar = (CheckBox) findViewById(R.id.checkboxUseLastPositionToolbar);
-        checkboxPreferHextile = (CheckBox) findViewById(R.id.checkboxPreferHextile);
-        checkboxViewOnly = (CheckBox) findViewById(R.id.checkboxViewOnly);
-        colorSpinner.setAdapter(colorSpinnerAdapter);
-        colorSpinner.setSelection(0);
-
-        spinnerVncGeometry = (Spinner) findViewById(R.id.spinnerVncGeometry);
-        resWidth = (EditText) findViewById(R.id.rdpWidth);
-        resHeight = (EditText) findViewById(R.id.rdpHeight);
-
-        spinnerVncGeometry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View view, int itemIndex, long id) {
-                if (selected != null) {
-                    selected.setRdpResType(itemIndex);
-                    setRemoteWidthAndHeight();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-        });
-        repeaterText = (TextView) findViewById(R.id.textRepeaterId);
-
-        setConnectionTypeSpinnerAdapter(R.array.connection_type);
-        if(getIntent() != null && getIntent().getExtras() != null){
-            shortcutApp = (String)getIntent().getExtras().get("App");
-            shortcuPath = (String)getIntent().getExtras().get("Path");
-            Log.d(TAG, "onCreate() called with: shortcutApp = [" + shortcuPath + "]  shortcutApp = [" + shortcuPath + "]");
-            fromShortcut = !TextUtils.isEmpty(shortcuPath) && !TextUtils.isEmpty(shortcutApp);
         }
-        reentry = App.isRunning(getClass().getName());
-
-
+        Log.d(TAG, "onConfigurationChanged() screenHeight = [" + screenHeight + "] screenWidth = [" + screenWidth + "]");
     }
 
     private void initAppList() {
@@ -302,8 +120,6 @@ public class bVNC extends MainConfiguration {
         mRefreshLayout.setOnRefreshListener(mRefreshListener); // 刷新监听。
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
-//        mRecyclerView.addItemDecoration(new DefaultItemDecoration(getColor( R.color.divider_color)));
-//        mRecyclerView.setOnItemClickListener(mItemClickListener); // RecyclerView Item点击监听。
 
         mRecyclerView.useDefaultLoadMore(); // 使用默认的加载更多的View。
         mRecyclerView.setLoadMoreListener(mLoadMoreListener); // 加载更多的监听。
@@ -320,6 +136,7 @@ public class bVNC extends MainConfiguration {
             }
         });
     }
+
 
     private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
@@ -365,7 +182,7 @@ public class bVNC extends MainConfiguration {
                         mDataList.addAll(data);
                         mAdapter.notifyDataSetChanged();
                         if (data.size() > 0) {
-                            bVNC.this.mPage = page;
+                            mPage = page;
                         }
                         mRecyclerView.loadMoreFinish(mDataList.size() == 0, response.getData().getPage().getTotal() > mDataList.size());
                         mRefreshLayout.setRefreshing(false);
@@ -417,21 +234,16 @@ public class bVNC extends MainConfiguration {
         void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight, MotionEvent event);
     }
 
-
-    private long mLastClickTime = 0;
-    public static final long TIME_INTERVAL = 300L;
-
-    ItemClickListener mItemClickListener = new ItemClickListener() {
+    bVNC.ItemClickListener mItemClickListener = new bVNC.ItemClickListener() {
         @Override
         public void onItemClick(View itemView, int position, AppListResult.DataBeanX.DataBean app, boolean isRight, MotionEvent event) {
-//            loadingView.setVisibility(View.VISIBLE);
             long nowTime = System.currentTimeMillis();
             if (nowTime - mLastClickTime < TIME_INTERVAL) {
                 // do something
+                mLastClickTime = nowTime;
                 Log.d(TAG, "onItemClick() click too quickly");
                 return;
             }
-            mLastClickTime = nowTime;
             Log.d(TAG, "onItemClick() called with: itemView = [" + itemView + "], position = [" + position + "], app = [" + app + "], isRight = [" + isRight + "]");
             if (isRight) {
                 showOptionView(itemView, app, event);
@@ -451,7 +263,6 @@ public class bVNC extends MainConfiguration {
         selected.setApp(app.id);
         tryStartVncApp(app);
     }
-
 
     private Animation createTranslateAnimation(float fromX, float toX, float fromY, float toY) {
         Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,
@@ -594,57 +405,11 @@ public class bVNC extends MainConfiguration {
                     public void onSuccess(Call call, VncResult.GetPortResult response) {
                         Log.i(TAG, "onSuccess() called with: call = [" + call + "], response = [" + response + "]");
                         ipText.setText(BASIP);
-                        portText.setText(Integer.toString(response.Data.Port));
+                        port = response.Data.Port;
                         save();
                         tryLunchApp(app);
                     }
                 });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume() called");
-//        ReflectionUtils.set("fde.click_as_touch", "false");
-
-        if (MOCK_ADDR) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    tryLunchApp(null);
-                }
-            }, 3000);
-        }
-        if(screenHeight == 0 | screenWidth == 0){
-            screenWidth = DimenUtils.getScreenWidth();
-            screenHeight = DimenUtils.getScreenHeight();
-        } else if( screenHeight != DimenUtils.getScreenHeight()){
-            screenWidth = DimenUtils.getScreenWidth();
-            screenHeight = DimenUtils.getScreenHeight();
-            spanCount = DimenUtils.getScreenWidth() / (int) DimenUtils.dpToPx(160.0f);
-            int count = Math.max(spanCount, 3);
-            if(spanCount != count){
-                initAppList();
-            }
-        }
-        Log.d(TAG, "onConfigurationChanged() screenHeight = [" + screenHeight + "] screenWidth = [" + screenWidth + "]");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause() called");
-//        ReflectionUtils.set("fde.click_as_touch", "true");
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus){
-        Log.d(TAG,"onWindowFocusChanged: " + hasFocus);
-//        if(hasFocus) {
-//            ReflectionUtils.set("fde.click_as_touch", "false");
-//        }else{
-//            ReflectionUtils.set("fde.click_as_touch", "true");
-//        }
     }
 
     private void save() {
@@ -666,7 +431,7 @@ public class bVNC extends MainConfiguration {
     private void tryLunchApp(AppListResult.DataBeanX.DataBean app) {
         String showAppName = getRealAppName(app);
         String queryValue = CompatibleConfig.queryValueData(this.getApplicationContext(),showAppName,"isAllowMuliWindows");
-        android.util.Log.i(TAG,"queryValue "+queryValue + " ----app: "+app);
+        Log.i(TAG,"queryValue "+queryValue + " ----app: "+app);
         if(queryValue !=null && "true".equals(queryValue)){
             if(app.Name.contains("~")){
                 String[] arrName = app.getName().split("~");
@@ -676,35 +441,17 @@ public class bVNC extends MainConfiguration {
             }
         }
 
-        if (MOCK_ADDR) {
-            ipText.setText("10.31.91.87");
-            portText.setText("5903");
-            save();
-            Intent intent = new Intent(this, GeneralUtils.getClassByName("com.iiordanov.bVNC.RemoteCanvasActivity"));
-            intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
-            this.startActivity(intent);
-            loadingView.setVisibility(View.GONE);
-            tipLoadDialog.dismiss();
-            if(fromShortcut && reentry){
-                finish();
-                App.getApp().movetoBack(getClass().getName());
-            }
-            return;
-        }
+
         Utils.hideKeyboard(this, getCurrentFocus());
-        android.util.Log.i(TAG, "Launch Connection");
+        Log.i(TAG, "Launch Connection");
 
         ActivityManager.MemoryInfo info = Utils.getMemoryInfo(this);
         if (info.lowMemory)
         {
+            Log.i(TAG,"lowMemory............ ");
             System.gc();
         }
-//        if (App.generateCanvasActivityName(app.Name) == null) {
-//            Toast.makeText(this, "最多打开10个程序", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        Intent intent = new Intent(this, GeneralUtils.getClassByName(App.generateCanvasActivityName(app.Name)));
-//        Intent intent = new Intent(this, LinuxAppActivity.class);
+
         Intent intent = new Intent(this, RemoteCanvasActivity.class);
 
         if (Constants.SURFFIX_SVG.equals(app.getIconType()) || Constants.SURFFIX_SVGZ.equals(app.getIconType()) ) {
@@ -719,10 +466,17 @@ public class bVNC extends MainConfiguration {
         if(!TextUtils.isEmpty(app.getName())){
             intent.putExtra("vnc_app_path", app.getPath());
         }
-        intent.putExtra(Utils.getConnectionString(this.getApplicationContext()), selected.Gen_getValues());
+        String p = Utils.getConnectionString(this.getApplicationContext());
+        ContentValues v = selected.Gen_getValues();
+        for (Map.Entry<String, Object> entry : v.valueSet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            // 处理键值对
+            Log.d("bella", "ContentValues Key: " + key + ", Value: " + value);
+        }
+        intent.putExtra(p, v);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.startActivity(intent);
-        loadingView.setVisibility(View.GONE);
         tipLoadDialog.dismiss();
         if(fromShortcut && reentry){
             finish();
@@ -730,59 +484,6 @@ public class bVNC extends MainConfiguration {
         }
     }
 
-    private ConnectionLoader getConnectionLoader(Context context) {
-        boolean connectionsInSharedPrefs = Utils.isOpaque(context);
-        ConnectionLoader connectionLoader = new ConnectionLoader(context.getApplicationContext(), (Activity) context, connectionsInSharedPrefs);
-        return connectionLoader;
-    }
-
-
-    /**
-     * Makes the ssh-related widgets visible/invisible.
-     */
-    protected void setVisibilityOfSshWidgets(int visibility) {
-        Log.d(TAG, "setVisibilityOfSshWidgets called");
-        super.setVisibilityOfSshWidgets(visibility);
-        layoutUseX11Vnc.setVisibility(visibility);
-    }
-
-    /**
-     * Enables and disables the EditText boxes for width and height of remote desktop.
-     */
-    private void setRemoteWidthAndHeight() {
-        Log.d(TAG, "setRemoteWidthAndHeight called");
-        if (selected.getRdpResType() != Constants.VNC_GEOM_SELECT_CUSTOM) {
-            resWidth.setEnabled(false);
-            resHeight.setEnabled(false);
-        } else {
-            resWidth.setEnabled(true);
-            resHeight.setEnabled(true);
-        }
-    }
-
-    /**
-     * Makes the uvnc-related widgets visible/invisible.
-     */
-    private void setVisibilityOfUltraVncWidgets(int visibility) {
-        Log.d(TAG, "setVisibilityOfUltraVncWidgets called");
-        repeaterEntry.setVisibility(visibility);
-    }
-
-    /* (non-Javadoc)
-     * @see android.app.Activity#onCreateDialog(int)
-     */
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        Log.d(TAG, "onCreateDialog called");
-        if (id == R.layout.repeater_dialog) {
-            return new RepeaterDialog(this);
-        } else if (id == R.layout.auto_x_customize) {
-            Dialog d = new AutoXCustomizeDialog(this, null);
-            d.setCancelable(false);
-            return d;
-        }
-        return null;
-    }
 
     public void updateViewFromSelected() {
         Log.d(TAG, "updateViewFromSelected called");
@@ -790,45 +491,17 @@ public class bVNC extends MainConfiguration {
             return;
         super.commonUpdateViewFromSelected();
 
-        sshServer.setText(selected.getSshServer());
-        sshPort.setText(Integer.toString(selected.getSshPort()));
-        sshUser.setText(selected.getSshUser());
-
-        checkboxUseSshPubkey.setChecked(selected.getUseSshPubKey());
 
         // If we are doing automatic X session discovery, then disable
         // vnc address, vnc port, and vnc password, and vice-versa
         if (selectedConnType == 1 && selected.getAutoXEnabled()) {
             ipText.setVisibility(View.GONE);
-            portText.setVisibility(View.GONE);
-            textUsername.setVisibility(View.GONE);
-            passwordText.setVisibility(View.GONE);
-            checkboxKeepPassword.setVisibility(View.GONE);
-            autoXStatus.setText(R.string.auto_x_enabled);
         } else {
             ipText.setVisibility(View.VISIBLE);
-            portText.setVisibility(View.VISIBLE);
-            textUsername.setVisibility(View.VISIBLE);
-            passwordText.setVisibility(View.VISIBLE);
-            checkboxKeepPassword.setVisibility(View.VISIBLE);
-            autoXStatus.setText(R.string.auto_x_disabled);
         }
 
-        portText.setText(Integer.toString(selected.getPort()));
 
-        if (selected.getKeepPassword() || selected.getPassword().length() > 0) {
-            passwordText.setText(selected.getPassword());
-        }
-        groupForceFullScreen.check(selected.getForceFull() == BitmapImplHint.AUTO ?
-                R.id.radioForceFullScreenAuto : R.id.radioForceFullScreenOn);
-        checkboxKeepPassword.setChecked(selected.getKeepPassword());
-        checkboxUseDpadAsArrows.setChecked(selected.getUseDpadAsArrows());
-        checkboxRotateDpad.setChecked(selected.getRotateDpad());
-        checkboxUseLastPositionToolbar.setChecked((!isNewConnection) ? selected.getUseLastPositionToolbar() : this.useLastPositionToolbarDefault());
-        checkboxPreferHextile.setChecked(selected.getPrefEncoding() == RfbProto.EncodingHextile);
-        checkboxViewOnly.setChecked(selected.getViewOnly());
         textNickname.setText(selected.getNickname());
-        textUsername.setText(selected.getUserName());
         COLORMODEL cm = COLORMODEL.C24bit;
         try {
             cm = COLORMODEL.valueOf(selected.getColorModel());
@@ -837,16 +510,6 @@ public class bVNC extends MainConfiguration {
         }
         COLORMODEL[] colors = COLORMODEL.values();
 
-        spinnerVncGeometry.setSelection(selected.getRdpResType());
-        resWidth.setText(Integer.toString(selected.getRdpWidth()));
-        resHeight.setText(Integer.toString(selected.getRdpHeight()));
-
-        for (int i = 0; i < colors.length; ++i) {
-            if (colors[i] == cm) {
-                colorSpinner.setSelection(i);
-                break;
-            }
-        }
         updateRepeaterInfo(selected.getUseRepeater(), selected.getRepeaterId());
     }
 
@@ -859,12 +522,8 @@ public class bVNC extends MainConfiguration {
     public void updateRepeaterInfo(boolean useRepeater, String repeaterId) {
         Log.d(TAG, "updateRepeaterInfo called");
         if (useRepeater) {
-            repeaterText.setText(repeaterId);
-            repeaterTextSet = true;
             ipText.setHint(R.string.repeater_caption_hint);
         } else {
-            repeaterText.setText(getText(R.string.repeater_empty_text));
-            repeaterTextSet = false;
             ipText.setHint(R.string.address_caption_hint);
         }
     }
@@ -876,54 +535,13 @@ public class bVNC extends MainConfiguration {
         if (selected == null) {
             return;
         }
-        try {
-            selected.setPort(Integer.parseInt(portText.getText().toString()));
-            selected.setSshPort(Integer.parseInt(sshPort.getText().toString()));
-        } catch (NumberFormatException nfe) {
-        }
-
+        selected.setPort(port);
         selected.setNickname(textNickname.getText().toString());
-        selected.setSshServer(sshServer.getText().toString());
-        selected.setSshUser(sshUser.getText().toString());
-
-        // If we are using an SSH key, then the ssh password box is used
-        // for the key pass-phrase instead.
-        selected.setUseSshPubKey(checkboxUseSshPubkey.isChecked());
-        selected.setUserName(textUsername.getText().toString());
-        selected.setForceFull(groupForceFullScreen.getCheckedRadioButtonId() == R.id.radioForceFullScreenAuto ? BitmapImplHint.AUTO : (groupForceFullScreen.getCheckedRadioButtonId() == R.id.radioForceFullScreenOn ? BitmapImplHint.FULL : BitmapImplHint.TILE));
-        selected.setPassword(passwordText.getText().toString());
-        selected.setKeepPassword(checkboxKeepPassword.isChecked());
-        selected.setUseDpadAsArrows(checkboxUseDpadAsArrows.isChecked());
-        selected.setRotateDpad(checkboxRotateDpad.isChecked());
-        selected.setUseLastPositionToolbar(checkboxUseLastPositionToolbar.isChecked());
-        if (!checkboxUseLastPositionToolbar.isChecked()) {
-            selected.setUseLastPositionToolbarMoved(false);
-        }
-        if (checkboxPreferHextile.isChecked())
-            selected.setPrefEncoding(RfbProto.EncodingHextile);
-        else
-            selected.setPrefEncoding(RfbProto.EncodingTight);
-        selected.setViewOnly(checkboxViewOnly.isChecked());
-        selected.setRdpResType(spinnerVncGeometry.getSelectedItemPosition());
-
-        try {
-            selected.setRdpWidth(Integer.parseInt(resWidth.getText().toString()));
-            selected.setRdpHeight(Integer.parseInt(resHeight.getText().toString()));
-        } catch (NumberFormatException nfe) {
-        }
-
-        selected.setColorModel(((COLORMODEL) colorSpinner.getSelectedItem()).nameString());
-        if (repeaterTextSet) {
-            selected.setRepeaterId(repeaterText.getText().toString());
-            selected.setUseRepeater(true);
-        } else {
-            selected.setUseRepeater(false);
-        }
     }
 
     public void save(MenuItem item) {
         Log.d(TAG, "save called");
-        if (ipText.getText().length() != 0 && portText.getText().length() != 0) {
+        if (port != 0) {
             saveConnectionAndCloseLayout();
         } else {
             Toast.makeText(this, R.string.vnc_server_empty, Toast.LENGTH_LONG).show();
