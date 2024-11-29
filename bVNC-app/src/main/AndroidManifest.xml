@@ -99,9 +99,9 @@
             android:resizeableActivity="true">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+                <data android:mimeType="application/vnd.desktop" />
             </intent-filter>
 
         </activity>
